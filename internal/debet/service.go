@@ -5,6 +5,7 @@ import (
 	"log/slog"
 )
 
+// Service предоставляет бизнес-логику для работы с таблицей debet
 type Service struct {
 	repo *Repository
 }
@@ -17,7 +18,7 @@ func NewService(repo *Repository) *Service {
 func (s *Service) GetAllDebets(ctx context.Context) ([]Debet, error) {
 	debets, err := s.repo.GetAllDebet(ctx)
 	if err != nil {
-		slog.Warn("Failed to get debets", "error", err.Error())
+		slog.Warn("Failed to get debets", "error", err)
 		return nil, err
 	}
 
@@ -29,10 +30,16 @@ func (s *Service) GetAllDebets(ctx context.Context) ([]Debet, error) {
 	return debets, nil
 }
 
-func (s *Service) GetByOrgName(ctx context.Context, on string) (*Debet, error) {
-	debet, err := s.repo.GetByOrgName(ctx, on)
+// GetByOrgName возвращается запись из таблицы debet по названию организации
+func (s *Service) GetByOrgName(ctx context.Context, orgName string) (*Debet, error) {
+	if orgName == "" {
+		slog.Warn("OrgName is empty")
+		return nil, nil
+	}
+
+	debet, err := s.repo.GetByOrgName(ctx, orgName)
 	if err != nil {
-		slog.Warn("Failed to get debets", "error", err.Error())
+		slog.Warn("Failed to get debet by orgName", "error", err)
 		return nil, err
 	}
 

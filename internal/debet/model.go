@@ -3,7 +3,7 @@ package debet
 import "time"
 
 type Debet struct {
-	ID                 uint32    `db:"id" json:"id"`                                           //
+	ID                 int       `db:"id" json:"id"`                                           //
 	OrgName            string    `db:"source_org_name" json:"Застройщик"`                      // Застройщик
 	ContractorName     string    `db:"counterparty_name" json:"Подрядчик"`                     // Подрядчик
 	ContractNumber     string    `db:"contract_number" json:"Номер Контракта"`                 // Номер контракта
