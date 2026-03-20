@@ -39,7 +39,7 @@ func (s *Service) GetById(ctx context.Context, id string) (*View, error) {
 
 	intId, err := strconv.Atoi(id)
 	if err != nil {
-		slog.Warn("Cant convert id to int")
+		slog.Warn("Cant convert contract id to int")
 		return nil, err
 	}
 

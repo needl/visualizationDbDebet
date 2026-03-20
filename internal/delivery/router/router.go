@@ -6,7 +6,11 @@ import (
 )
 
 // NewRouter создаёт новый роутер и регистрирует все маршруты приложения.
-func NewRouter(debetHandler *handler.DebetHandler, contractHandler *handler.ContractHandler) *mux.Router {
+func NewRouter(
+	debetHandler *handler.DebetHandler,
+	contractHandler *handler.ContractHandler,
+	blockfactorHandler *handler.BlockFactorHandler,
+) *mux.Router {
 	r := mux.NewRouter()
 
 	// Группа маршрутов для debet
@@ -18,9 +22,9 @@ func NewRouter(debetHandler *handler.DebetHandler, contractHandler *handler.Cont
 	contract.HandleFunc("", contractHandler.GetAll).Methods("GET")
 	contract.HandleFunc("/{id}", contractHandler.GetById).Methods("GET")
 
-	// Здесь можно добавить другие группы, например:
-	// contract := r.PathPrefix("/contract").Subrouter()
-	// contract.HandleFunc("", contractsHandler.GetAll).Methods("GET")
+	blockfactor := r.PathPrefix("/blockfactor").Subrouter()
+	blockfactor.HandleFunc("", blockfactorHandler.GetAll).Methods("GET")
+	blockfactor.HandleFunc("/{orgName}", blockfactorHandler.GetById).Methods("GET")
 
 	// Middleware можно добавить глобально или на подроутер
 	// r.Use(middleware.Logger, middleware.Recoverer)

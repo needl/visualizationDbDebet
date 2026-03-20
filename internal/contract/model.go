@@ -3,7 +3,7 @@ package contract
 import "time"
 
 type Contract struct {
-	ID                         int        `db:"id" json:"id"`
+	ID                         *int       `db:"id" json:"id"`
 	RowNumber                  *int       `db:"row_number" json:"row_number"`                                     // Номер строки
 	Title                      *string    `db:"titul" json:"titul"`                                               // Титул
 	Payer                      *string    `db:"payer" json:"payer"`                                               // Платильщик
@@ -53,7 +53,7 @@ type Contract struct {
 }
 
 type View struct {
-	ID              int      `db:"id" json:"id"`
+	ID              *int     `db:"id" json:"id"`
 	UnpaidAdvance   *float64 `db:"unrepaid_advance" json:"unpaid_advance"`   // Неоплаченный аванс (МГЗ)
 	ContractCost    *float64 `db:"contract_cost" json:"contract_cost"`       // Сумма контракта
 	ObjectName      *string  `db:"object_name" json:"object_name"`           //

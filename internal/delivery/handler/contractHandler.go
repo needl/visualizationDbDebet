@@ -41,7 +41,6 @@ func (h *ContractHandler) GetById(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 	view, err := h.service.GetById(ctx, id)
-
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 	}

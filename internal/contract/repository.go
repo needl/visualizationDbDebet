@@ -22,7 +22,23 @@ func NewRepository(db *sqlx.DB) *Repository {
 // всех сущностей contract без учёта Мосинжпроекта
 // ctx используется для отмены, таймаутов и тп
 func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
-	var debets []View
+	var contracts []View
+
+	/*query := `
+		select c.id,
+			c.unrepaid_advance,
+			c.contract_cost,
+			c.object_name,
+			c.status,
+			c.tdc_amount,
+			c.object_state,
+			c.object_readiness
+		from contracts c
+		inner join debet d
+		on c.titul = d.construction_title
+		and c.contract_number = d.contract_number
+		order by id
+	`*/
 
 	query := `
 				select c.id,
@@ -33,14 +49,14 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 					c.tdc_amount,
 					c.object_state,
 					c.object_readiness
-				from contracts c
-				inner join debet d
+				from debet d
+				left join contracts c
 				on c.titul = d.construction_title
 				and c.contract_number = d.contract_number
 				order by id
 			`
 
-	if err := r.db.SelectContext(ctx, &debets, query); err != nil {
+	if err := r.db.SelectContext(ctx, &contracts, query); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
@@ -48,14 +64,14 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 		return nil, err
 	}
 
-	return debets, nil
+	return contracts, nil
 }
 
 // GetViewById отвечает за обращение к базе для получения конкретной
 // сущности contract по его id(id)
 // ctx используется для отмены, таймаутов и тп
 func (r *Repository) GetViewById(ctx context.Context, id int) (*View, error) {
-	var debet View
+	var contract View
 
 	query := `
 				select 
@@ -71,7 +87,7 @@ func (r *Repository) GetViewById(ctx context.Context, id int) (*View, error) {
 				where id = $1
 			`
 
-	if err := r.db.GetContext(ctx, &debet, query, id); err != nil {
+	if err := r.db.GetContext(ctx, &contract, query, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
@@ -79,5 +95,5 @@ func (r *Repository) GetViewById(ctx context.Context, id int) (*View, error) {
 		return nil, err
 	}
 
-	return &debet, nil
+	return &contract, nil
 }

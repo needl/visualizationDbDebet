@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"visualizationBdDebet/internal/blockfactor"
 	"visualizationBdDebet/internal/config"
 	"visualizationBdDebet/internal/contract"
 	"visualizationBdDebet/internal/debet"
@@ -41,7 +42,11 @@ func main() {
 	contractService := contract.NewService(contractRepo)
 	contractHandler := handler.NewContractHandler(contractService)
 
-	r := router.NewRouter(debetHandler, contractHandler)
+	blockfactorRepo := blockfactor.NewRepository(db)
+	blockfactorService := blockfactor.NewService(blockfactorRepo)
+	blockfactorHandler := handler.NewBlockFactorHandler(blockfactorService)
+
+	r := router.NewRouter(debetHandler, contractHandler, blockfactorHandler)
 
 	srv := http.Server{
 		Handler:      r,

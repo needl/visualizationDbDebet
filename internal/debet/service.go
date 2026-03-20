@@ -18,12 +18,12 @@ func NewService(repo *Repository) *Service {
 func (s *Service) GetAll(ctx context.Context) ([]View, error) {
 	debets, err := s.repo.GetAllView(ctx)
 	if err != nil {
-		slog.Warn("Failed to get debets", "error", err)
+		slog.Error("Failed to get debets", "error", err)
 		return nil, err
 	}
 
 	if len(debets) == 0 {
-		slog.Warn("No debets found")
+		slog.Error("No debets found")
 		return []View{}, nil
 	}
 

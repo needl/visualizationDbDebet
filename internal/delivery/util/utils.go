@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func RespondJSON(w http.ResponseWriter, data interface{}) {
+func RespondJSON(w http.ResponseWriter, data any) {
 	buf, err := json.Marshal(data)
 	if err != nil {
 		//slog.Error(err.Error(), "info", "Ошибка парса ответа")
