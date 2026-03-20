@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"log/slog"
 )
@@ -14,7 +15,7 @@ type Config struct {
 	Port       string
 }
 
-func LoadConfig() (*Config, error) {
+func Load() (*Config, error) {
 	viper.SetConfigFile(".env")
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
@@ -22,18 +23,21 @@ func LoadConfig() (*Config, error) {
 	if err := viper.ReadInConfig(); err != nil {
 		slog.Error("Файл .env не найден", "error", err)
 		panic(err)
-
 	}
 
 	config := &Config{
-		DBHost:     viper.GetString("DBHost"),
-		DBPort:     viper.GetString("DBPort"),
-		DBUser:     viper.GetString("DBUser"),
-		DBPassword: viper.GetString("DBPassword"),
-		DBName:     viper.GetString("DBName"),
-		//Port:       viper.GetString("Port"),
+		DBHost:     viper.GetString("DB_HOST"),
+		DBPort:     viper.GetString("DB_PORT"),
+		DBUser:     viper.GetString("DB_USER"),
+		DBPassword: viper.GetString("DB_PASSWORD"),
+		DBName:     viper.GetString("DB_NAME"),
+		Port:       viper.GetString("PORT"),
 	}
 
 	return config, nil
+}
 
+func (c *Config) DBConnString() string {
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		c.DBHost, c.DBPort, c.DBUser, c.DBPassword, c.DBName)
 }

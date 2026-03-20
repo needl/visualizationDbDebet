@@ -25,8 +25,9 @@ func (r *Repository) GetAllDebet(ctx context.Context) ([]Debet, error) {
 	var debets []Debet
 
 	query := `
-			select source_org_name,
-			       counterparty_name,
+			select  id, 
+			    	source_org_name,
+			        counterparty_name,
 					contract_number,
 					contract_date,
 					contract_amount,
@@ -60,7 +61,7 @@ func (r *Repository) GetByOrgName(ctx context.Context, orgName string) (*Debet, 
 	var debet Debet
 
 	query := `
-				select source_org_name,
+				select  source_org_name,
 			       		counterparty_name,
 						contract_number,
 						contract_date,
