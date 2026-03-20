@@ -18,11 +18,11 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-// GetAllDebet отвечает за обращение к базе для получения списка
+// GetAllView отвечает за обращение к базе для получения списка
 // всех сущностей debet без учёта Мосинжпроекта
 // ctx используется для отмены, таймаутов и тп
-func (r *Repository) GetAllDebet(ctx context.Context) ([]Debet, error) {
-	var debets []Debet
+func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
+	var debets []View
 
 	query := `
 			select  id, 
@@ -36,29 +36,25 @@ func (r *Repository) GetAllDebet(ctx context.Context) ([]Debet, error) {
 					debt_2025_12_31_overdue,
 					construction_title
 				from debet
-			where source_org_name not like '%Мосинж%'
+			where source_org_name != 'АО Мосинжпроект'
+			order by id
 			`
 
 	// Проверка ошибки
 	if err := r.db.SelectContext(ctx, &debets, query); err != nil {
-
-		// Если возвращается ошибка sql.ErrNoRows -> данные не найдены в базе
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
-
 		// Непредвиденная ошибка при обращении к базе
 		return nil, err
 	}
 
 	return debets, nil
+
 }
 
-// GetByOrgName отвечает за обращение к базе для получения конкретной
+// GetViewByOrgName отвечает за обращение к базе для получения конкретной
 // сущности debet по его названию(orgName)
 // ctx используется для отмены, таймаутов и тп
-func (r *Repository) GetByOrgName(ctx context.Context, orgName string) (*Debet, error) {
-	var debet Debet
+func (r *Repository) GetViewByOrgName(ctx context.Context, orgName string) (*View, error) {
+	var debet View
 
 	query := `
 				select  source_org_name,
@@ -75,6 +71,10 @@ func (r *Repository) GetByOrgName(ctx context.Context, orgName string) (*Debet, 
 			`
 
 	if err := r.db.GetContext(ctx, &debet, query, orgName); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 

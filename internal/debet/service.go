@@ -14,9 +14,9 @@ func NewService(repo *Repository) *Service {
 	return &Service{repo: repo}
 }
 
-// GetAllDebets возвращает все записи debet (за исключением "Мосинж")
-func (s *Service) GetAllDebets(ctx context.Context) ([]Debet, error) {
-	debets, err := s.repo.GetAllDebet(ctx)
+// GetAll возвращает все записи View debet (за исключением "Мосинж")
+func (s *Service) GetAll(ctx context.Context) ([]View, error) {
+	debets, err := s.repo.GetAllView(ctx)
 	if err != nil {
 		slog.Warn("Failed to get debets", "error", err)
 		return nil, err
@@ -24,27 +24,27 @@ func (s *Service) GetAllDebets(ctx context.Context) ([]Debet, error) {
 
 	if len(debets) == 0 {
 		slog.Warn("No debets found")
-		return []Debet{}, nil
+		return []View{}, nil
 	}
 
 	return debets, nil
 }
 
 // GetByOrgName возвращается запись из таблицы debet по названию организации
-func (s *Service) GetByOrgName(ctx context.Context, orgName string) (*Debet, error) {
+func (s *Service) GetByOrgName(ctx context.Context, orgName string) (*View, error) {
 	if orgName == "" {
 		slog.Warn("OrgName is empty")
 		return nil, nil
 	}
 
-	debet, err := s.repo.GetByOrgName(ctx, orgName)
+	debet, err := s.repo.GetViewByOrgName(ctx, orgName)
 	if err != nil {
 		slog.Warn("Failed to get debet by orgName", "error", err)
 		return nil, err
 	}
 
 	if debet == nil {
-		slog.Warn("Debet not found")
+		slog.Warn("View not found", "orgName", orgName)
 		return nil, nil
 	}
 

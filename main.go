@@ -12,9 +12,10 @@ import (
 	"syscall"
 	"time"
 	"visualizationBdDebet/internal/config"
+	"visualizationBdDebet/internal/contract"
 	"visualizationBdDebet/internal/debet"
-	"visualizationBdDebet/internal/delivery"
 	"visualizationBdDebet/internal/delivery/handler"
+	"visualizationBdDebet/internal/delivery/router"
 )
 
 func main() {
@@ -34,10 +35,13 @@ func main() {
 
 	debetRepo := debet.NewRepository(db)
 	debetService := debet.NewService(debetRepo)
-
 	debetHandler := handler.NewDebetHandler(debetService)
 
-	r := delivery.NewRouter(debetHandler)
+	contractRepo := contract.NewRepository(db)
+	contractService := contract.NewService(contractRepo)
+	contractHandler := handler.NewContractHandler(contractService)
+
+	r := router.NewRouter(debetHandler, contractHandler)
 
 	srv := http.Server{
 		Handler:      r,
