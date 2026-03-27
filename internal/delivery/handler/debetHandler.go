@@ -31,6 +31,20 @@ func (h *DebetHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	slog.Info("Get all debets")
 }
 
+func (h *DebetHandler) GetAllWithMIP(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	debets, err := h.service.GetAllWithMIP(ctx)
+	if err != nil {
+		//slog.Error(err.Error(), "info", "упал на получение данных в хендлере")
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	util.RespondJSON(w, debets)
+	slog.Info("Get all debets")
+}
+
 func (h *DebetHandler) GetByOrgName(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	orgName := vars["orgName"]

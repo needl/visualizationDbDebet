@@ -25,22 +25,49 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 	var debets []View
 
 	query := `
-			select  id, 
-			    	source_org_name,
-			        counterparty_name,
-					contract_number,
-					contract_date,
-					contract_amount,
-					construction_object,
-					debt_2025_12_31_total,
-					debt_2025_12_31_overdue,
-					construction_title
+				select  id, 
+						source_org_name,
+						counterparty_name,
+						contract_number,
+						contract_date,
+						contract_amount,
+						construction_object,
+						debt_2025_12_31_total,
+						debt_2024_12_31_total,
+						debt_2025_12_31_overdue,
+						construction_title
 				from debet
-			where source_org_name != 'АО Мосинжпроект'
-			order by id
+				where source_org_name != 'АО Мосинжпроект'
+				order by id
 			`
 
-	// Проверка ошибки
+	if err := r.db.SelectContext(ctx, &debets, query); err != nil {
+		// Непредвиденная ошибка при обращении к базе
+		return nil, err
+	}
+
+	return debets, nil
+
+}
+
+func (r *Repository) GetAllViewWithMip(ctx context.Context) ([]View, error) {
+	var debets []View
+
+	query := `
+				select  id, 
+						source_org_name,
+						counterparty_name,
+						contract_number,
+						contract_date,
+						contract_amount,
+						construction_object,
+						debt_2025_12_31_total,
+						debt_2025_12_31_overdue,
+						construction_title
+					from debet
+				order by id
+			`
+
 	if err := r.db.SelectContext(ctx, &debets, query); err != nil {
 		// Непредвиденная ошибка при обращении к базе
 		return nil, err

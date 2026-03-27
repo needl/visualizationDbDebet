@@ -30,6 +30,22 @@ func (s *Service) GetAll(ctx context.Context) ([]View, error) {
 	return debets, nil
 }
 
+// GetAllWithMIP возвращает все записи View debet
+func (s *Service) GetAllWithMIP(ctx context.Context) ([]View, error) {
+	debets, err := s.repo.GetAllViewWithMip(ctx)
+	if err != nil {
+		slog.Error("Failed to get debets", "error", err)
+		return nil, err
+	}
+
+	if len(debets) == 0 {
+		slog.Error("No debets found")
+		return []View{}, nil
+	}
+
+	return debets, nil
+}
+
 // GetByOrgName возвращается запись из таблицы debet по названию организации
 func (s *Service) GetByOrgName(ctx context.Context, orgName string) (*View, error) {
 	if orgName == "" {

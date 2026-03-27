@@ -12,7 +12,7 @@ type Debet struct {
 	ContractDate                  *time.Time `db:"contract_date" json:"Дата контракта"`                                  // Дата контракта
 	ContractAmount                *float64   `db:"contract_amount" json:"Сумма контракта"`                               // Сумма контракта
 	PaidAmount                    *float64   `db:"paid_amount" json:"Сумма выплат"`                                      // Сумма выплат
-	AcceptedAmount                *float64   `db:"accepted_amount" json:"Принятые выплат"`                               // Принятые выплаты
+	AcceptedAmount                *float64   `db:"accepted_amount" json:"Принятые выплаты"`                              // Принятые выплаты
 	WorkStartDate                 *time.Time `db:"work_start_date" json:"Дата начала строительства"`                     // Дата начала строительства
 	WorkStartEnd                  *time.Time `db:"work_start_end" json:"Дата окончания строительства"`                   // Дата окончания строительства
 	ConstructionObject            *string    `db:"construction_object" json:"Наименование объекта"`                      // Наименование объекта получения
@@ -52,13 +52,14 @@ type Debet struct {
 
 type View struct {
 	ID                 int        `db:"id" json:"id"`                                           //
-	OrgName            string     `db:"source_org_name" json:"Застройщик"`                      // Застройщик
-	ContractorName     *string    `db:"counterparty_name" json:"Подрядчик"`                     // Подрядчик
-	ContractNumber     *string    `db:"contract_number" json:"Номер Контракта"`                 // Номер контракта
-	ContractDate       *time.Time `db:"contract_date" json:"Дата контракта"`                    // Дата контракта
-	ContractAmount     *float64   `db:"contract_amount" json:"Сумма контракта"`                 // Сумма контракта
-	ConstructionObject *string    `db:"construction_object" json:"Наименование объекта"`        // Наименование объекта получения
-	DebetTotal         *float64   `db:"debt_2025_12_31_total" json:"Дебеторская задолженность"` // Дебеторская задолженность (письмо)
-	DebetOverdose      *float64   `db:"debt_2025_12_31_overdue" json:"Дебеторская переплата"`   // Дебеторская переплата?
-	ConstructionTitle  *string    `db:"construction_title" json:"Титул"`                        // Титул
+	OrgName            string     `db:"source_org_name" json:"source_org_name"`                 // Застройщик
+	ContractorName     *string    `db:"counterparty_name" json:"counterparty_name"`             // Подрядчикё
+	ContractNumber     *string    `db:"contract_number" json:"contract_number"`                 // Номер контракта
+	ContractDate       *time.Time `db:"contract_date" json:"contract_date"`                     // Дата контракта
+	ContractAmount     *float64   `db:"contract_amount" json:"contract_amount"`                 // Сумма контракта
+	ConstructionObject *string    `db:"construction_object" json:"construction_object"`         // Наименование объекта получения
+	DebetTotal         *float64   `db:"debt_2025_12_31_total" json:"debt_2025_12_31_total"`     // Дебеторская задолженность (письмо)
+	DebetTotal2024     *float64   `db:"debt_2024_12_31_total" json:"debt_2024_12_31_total"`     // Дебеторская задолженность (письмо)
+	DebetOverdose      *float64   `db:"debt_2025_12_31_overdue" json:"debt_2025_12_31_overdue"` // Дебеторская задолженность(просроченная)
+	ConstructionTitle  *string    `db:"construction_title" json:"construction_title"`           // Титул
 }
