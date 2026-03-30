@@ -23,7 +23,7 @@ func (s *Service) GetAll(ctx context.Context) ([]View, error) {
 	}
 
 	if len(debets) == 0 {
-		slog.Error("No debets found")
+		slog.Warn("No debets found")
 		return []View{}, nil
 	}
 

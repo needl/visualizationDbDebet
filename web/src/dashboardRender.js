@@ -1,9 +1,15 @@
-// src/dashboardRenderer.js
-import { ChartComponent } from "./componets/chartForDeb.js";
+// src/dashboardRenderer.js – исправленная версия с добавленными классами для контейнеров
+
+import {ChartComponent} from "./componets/chartForDeb.js";
 import {PieChartComponent} from "./componets/pieChartForDeb.js";
-import { MetricCard } from "./componets/metricCard.js";
-import { StatsTable } from "./componets/statsTableForDebet.js";
-import { appState } from "./state/appState.js";
+import {MetricCard} from "./componets/metricCard.js";
+import {StatsTable} from "./componets/statsTableForDebet.js";
+import {appState} from "./state/appState.js";
+import {CustomerFilter} from "./componets/customerFilter.js";
+import {CustomerCard} from "./componets/customerCard.js";
+import {HorizontalBarChart} from "./componets/horizonBarChart.js";
+import {BlockFactorsChart} from "./componets/blockFactorChart.js";
+import {DebtStructure} from "./componets/debtStructure.js";
 
 export class DashboardRenderer {
     constructor(config) {
@@ -66,6 +72,90 @@ export class DashboardRenderer {
                 });
 
                 blockDiv.appendChild(chartsContainer);
+            }
+            else if (block.type === 'customer-analytics') {
+                // Фильтр
+                const filterContainer = document.createElement('div');
+                filterContainer.className = 'customer-filter-container';
+                blockDiv.appendChild(filterContainer);
+                const filter = new CustomerFilter(filterContainer);
+                this.components.push(filter);
+
+                // Карточки
+                const metricsContainer = document.createElement('div');
+                metricsContainer.className = 'customer-metrics';
+                blockDiv.appendChild(metricsContainer);
+                const metrics = new CustomerCard(metricsContainer);
+                metrics.mount();
+                this.components.push(metrics);
+
+                // Ряд 1: структура ДЗ и блок-факторы (две колонки)
+                const row1 = document.createElement('div');
+                row1.className = 'stats-row';
+
+                // Левая колонка: структура ДЗ (полукруг) – 30%
+                const debtStructCol = document.createElement('div');
+                debtStructCol.className = 'stats-col debt-col';
+                const debtStructureContainer = document.createElement('div');
+                debtStructureContainer.className = 'debt-structure-container'; // добавлен класс
+                debtStructCol.appendChild(debtStructureContainer);
+                row1.appendChild(debtStructCol);
+
+                // Правая колонка: блок-факторы – 70%
+                const blockFactorsCol = document.createElement('div');
+                blockFactorsCol.className = 'stats-col factors-col';
+                const blockFactorsContainer = document.createElement('div');
+                blockFactorsContainer.className = 'block-factors-chart-container'; // добавлен класс
+                blockFactorsCol.appendChild(blockFactorsContainer);
+                row1.appendChild(blockFactorsCol);
+
+                blockDiv.appendChild(row1);
+
+                // Инициализация компонентов внутри колонок
+                const debtStructure = new DebtStructure(debtStructureContainer);
+                const blockFactorsChart = new BlockFactorsChart(blockFactorsContainer, 'Блок-факторы по количеству подрядчиков');
+                this.components.push(debtStructure, blockFactorsChart);
+
+                // Подписки на обновление
+                const debtUnsub = appState.subscribe(state => {
+                    debtStructure.render(state.customerSummary);
+                });
+                const blockUnsub = appState.subscribe(state => {
+                    blockFactorsChart.render(state.customerBlockFactors);
+                });
+                this.statsSubscriptions.push(debtUnsub, blockUnsub);
+
+                // Ряд 2: топ-10 подрядчиков (две колонки)
+                const row2 = document.createElement('div');
+                row2.className = 'stats-row';
+                const topDebtorsCol = document.createElement('div');
+                topDebtorsCol.className = 'stats-col';
+                const topDebtorsContainer = document.createElement('div');
+                topDebtorsContainer.className = 'chart-wrapper-full'; // ← добавлен класс
+                topDebtorsContainer.style.height = '400px';
+                topDebtorsCol.appendChild(topDebtorsContainer);
+                row2.appendChild(topDebtorsCol);
+
+                const topOverdueCol = document.createElement('div');
+                topOverdueCol.className = 'stats-col';
+                const topOverdueContainer = document.createElement('div');
+                topOverdueContainer.className = 'chart-wrapper-full'; // ← добавлен класс
+                topOverdueContainer.style.height = '400px';
+                topOverdueCol.appendChild(topOverdueContainer);
+                row2.appendChild(topOverdueCol);
+                blockDiv.appendChild(row2);
+
+                const topDebtorsChart = new HorizontalBarChart(topDebtorsContainer, 'Топ-10 подрядчиков по ДЗ');
+                const topOverdueChart = new HorizontalBarChart(topOverdueContainer, 'Топ-10 подрядчиков по ПДЗ');
+                this.components.push(topDebtorsChart, topOverdueChart);
+
+                const topDebtorsUnsub = appState.subscribe(state => {
+                    topDebtorsChart.render(state.customerTopDebtors);
+                });
+                const topOverdueUnsub = appState.subscribe(state => {
+                    topOverdueChart.render(state.customerTopOverdue);
+                });
+                this.statsSubscriptions.push(topDebtorsUnsub, topOverdueUnsub);
             }
             else if (block.type === 'stats') {
                 // Карточки статистики

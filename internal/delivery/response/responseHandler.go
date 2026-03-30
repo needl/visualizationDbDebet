@@ -6,15 +6,15 @@ import (
 	"visualizationBdDebet/internal/delivery/util"
 )
 
-type ResponseHandler struct {
+type Handler struct {
 	service *Service
 }
 
-func NewResponseHandler(service *Service) *ResponseHandler {
-	return &ResponseHandler{service: service}
+func NewResponseHandler(service *Service) *Handler {
+	return &Handler{service: service}
 }
 
-func (h *ResponseHandler) GetResponse(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetResponse(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	pageDto, err := h.service.GetResponse(ctx)
@@ -27,7 +27,7 @@ func (h *ResponseHandler) GetResponse(w http.ResponseWriter, r *http.Request) {
 	slog.Info("GetResponse: ", "pageDto", pageDto)
 }
 
-func (h *ResponseHandler) GetResponseWithMIP(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetResponseWithMIP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	pageDto, err := h.service.GetResponseWithMIP(ctx)

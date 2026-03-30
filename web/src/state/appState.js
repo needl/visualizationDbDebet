@@ -12,7 +12,29 @@ class AppState {
         this._loading = false;
         this._error = null;
         this._subscribers = [];
+        this._customers = [];                   // список заказчиков для фильтра
+        this._selectedCustomer = null;          // выбранный заказчик (name)
+        this._customerSummary = null;           // summary для выбранного
+        this._customerTopDebtors = [];          // топ‑10 по ДЗ
+        this._customerTopOverdue = [];          // топ‑10 по ПДЗ
+        this._customerBlockFactors = null;      // блок-факторы
+        this._customerLoading = false;           // флаг загрузки данных заказчика
+        this._customerError = null;
     }
+
+    setCustomers(list) { this._customers = list; this._notify(); }
+    setSelectedCustomer(customer) { this._selectedCustomer = customer; this._notify(); }
+    setCustomerSummary(data) {
+        console.log('setCustomerSummary called with', data);
+        this._customerSummary = data;
+        console.log('this._customerSummary after assignment:', this._customerSummary);
+        this._notify();
+    }
+    setCustomerTopDebtors(data) { this._customerTopDebtors = data; this._notify(); }
+    setCustomerTopOverdue(data) { this._customerTopOverdue = data; this._notify(); }
+    setCustomerBlockFactors(data) { this._customerBlockFactors = data; this._notify(); }
+    setCustomerLoading(loading) { this._customerLoading = loading; this._notify(); }
+    setCustomerError(error) { this._customerError = error; this._notify(); }
 
     subscribe(callback) {
         this._subscribers.push(callback);
@@ -24,6 +46,7 @@ class AppState {
     }
 
     _notify() {
+        console.log('_notify called, current state:', this._getState());
         const state = this._getState();
         this._subscribers.forEach(cb => cb(state));
     }
@@ -54,13 +77,22 @@ class AppState {
         this._notify();
     }
 
+
     _getState() {
         return {
             chartData: this._chartData,
             stats: this._stats,
             tableData: this._tableData,
             loading: this._loading,
-            error: this._error
+            error: this._error,
+            customers: this._customers,
+            selectedCustomer: this._selectedCustomer,
+            customerSummary: this._customerSummary,
+            customerTopDebtors: this._customerTopDebtors,
+            customerTopOverdue: this._customerTopOverdue,
+            customerBlockFactors: this._customerBlockFactors,
+            customerLoading: this._customerLoading,
+            customerError: this._customerError
         };
     }
 }

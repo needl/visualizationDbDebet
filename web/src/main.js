@@ -1,7 +1,8 @@
 // src/main.js
 import { dashboardConfig } from './dashboardConfig.js'
-import { loadData } from './state/actionForDebet.js'
-import { loadStats } from './state/actionForResponse.js'
+import { loadData } from './state/actions/actionForDebet.js'
+import { loadStats } from './state/actions/actionForResponse.js'
+import {loadCustomerData} from "./state/actions/actionForCustomers.js";
 import { DashboardRenderer } from './dashboardRender.js'
 
 const renderer = new DashboardRenderer(dashboardConfig);
@@ -13,3 +14,4 @@ if (app) {
 // Загружаем данные
 loadStats();
 loadData();
+loadCustomerData();

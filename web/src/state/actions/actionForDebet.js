@@ -1,10 +1,10 @@
 // src/state/actionForDebet.js
-import { appState } from './appState.js';
-import { fetchDebetData } from '../services/apiCaller.js';
-import { aggregateByOrg } from '../transformers/aggregatorByOrg.js';
-import { formatChartData } from '../transformers/formatter.js';
-import { aggregateByYear } from '../transformers/groupByYear.js';
-import { prepareTableData } from '../transformers/tableDate.js'; // новый импорт
+import { appState } from '../appState.js';
+import { fetchDebetData } from '../../services/apiCaller.js';
+import { aggregateByOrg } from '../../transformers/aggregatorByOrg.js';
+import { formatChartData } from '../../transformers/formatter.js';
+import { aggregateByYear } from '../../transformers/groupByYear.js';
+import { prepareTableData } from '../../transformers/tableDate.js'; // новый импорт
 
 /*export async function loadData() {
     appState.setLoading(true);

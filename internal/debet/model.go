@@ -53,7 +53,7 @@ type Debet struct {
 type View struct {
 	ID                 int        `db:"id" json:"id"`                                           //
 	OrgName            string     `db:"source_org_name" json:"source_org_name"`                 // Застройщик
-	ContractorName     *string    `db:"counterparty_name" json:"counterparty_name"`             // Подрядчикё
+	ContractorName     *string    `db:"counterparty_name" json:"counterparty_name"`             // Подрядчик
 	ContractNumber     *string    `db:"contract_number" json:"contract_number"`                 // Номер контракта
 	ContractDate       *time.Time `db:"contract_date" json:"contract_date"`                     // Дата контракта
 	ContractAmount     *float64   `db:"contract_amount" json:"contract_amount"`                 // Сумма контракта

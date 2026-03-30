@@ -23,6 +23,10 @@ export const dashboardConfig = [
             { metric: 'debetTotal', title: 'Дебиторская задолженность' },
             { metric: 'debetOverdose', title: 'Просроченная дебиторская задолженность' }
         ]
+    },
+    {
+        title: 'Подробная аналитика заказчика',
+        type: 'customer-analytics'
     }
 
     /*{

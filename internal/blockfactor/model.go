@@ -30,7 +30,7 @@ type View struct {
 	IsUnreliabilityEGRUL               boolInt `db:"nedostovernost_egryul" json:"is_unreliability_egrul"`
 	IsExcludedEGRUL                    boolInt `db:"isklyuchenie_egryul" json:"is_excluded_egrul"`
 	IsForeignAgent                     boolInt `db:"inostrannye_agenty" json:"is_foreign_agent"`
-	IsExtremTerr                       boolInt `db:"ekstremizm_terrorizm" json:"is_extrem_terr"`
+	IsExtremeTerr                      boolInt `db:"ekstremizm_terrorizm" json:"is_extrem_terr"`
 	IsRegistryOfUnscrupulous           boolInt `db:"reestr_nedobrosovestnyh_postavshchikov" json:"Is_registry_of_unscrupulous"`
 	IsAdministrativeResponsibility1928 boolInt `db:"administrativnaya_otvetstvennost_19_28" json:"is_administrative_responsibility_1928"`
 	IsIntentionBankrupt                boolInt `db:"namerenie_bankrotstvo" json:"is_intention_bankrupt"`

@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"visualizationBdDebet/internal/delivery/customer"
 	"visualizationBdDebet/internal/delivery/response"
 
 	"github.com/jmoiron/sqlx"
@@ -57,11 +58,16 @@ func main() {
 	responseService := response.NewService(responseRepo, debetService)
 	responseHandler := response.NewResponseHandler(responseService)
 
+	customerRepo := customer.NewRepository(db)
+	customerService := customer.NewService(customerRepo)
+	customerHandler := customer.NewHandler(customerService)
+
 	apiRouter := router.NewRouter(
 		debetHandler,
 		contractHandler,
 		blockfactorHandler,
 		responseHandler,
+		customerHandler,
 	)
 
 	staticFS, err := fs.Sub(staticFiles, "web")
