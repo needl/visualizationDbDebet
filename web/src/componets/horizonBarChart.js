@@ -51,13 +51,16 @@ export class HorizontalBarChart {
                 type: 'value',
                 name: 'Сумма (млрд ₽)',
                 nameLocation: 'middle',
-                nameGap: 30
+                nameGap: 28,
+                axisLabel: {
+                    formatter: (value) => (value / 1e9).toFixed(1) + ' млрд'
+                }
             },
             yAxis: {
                 type: 'category',
                 data: names,
                 axisLabel: {
-                    fontSize: 11,
+                    fontSize: 10,
                     rotate: 0,
                     interval: 0
                 }

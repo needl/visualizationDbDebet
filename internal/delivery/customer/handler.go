@@ -74,7 +74,7 @@ func (h *Handler) GetTopItemsByCustomerId(w http.ResponseWriter, r *http.Request
 	}*/
 
 	util.RespondJSON(w, topItems)
-	slog.Info("Get summary by customer id: ", "topItems", topItems)
+	slog.Info("Get top items by customer id: ", "customer", customerId, "topItems", topItems)
 }
 
 func (h *Handler) GetTopItemsOverdueByCustomerId(w http.ResponseWriter, r *http.Request) {
@@ -98,7 +98,7 @@ func (h *Handler) GetTopItemsOverdueByCustomerId(w http.ResponseWriter, r *http.
 	}*/
 
 	util.RespondJSON(w, topItems)
-	slog.Info("Get summary by customer id: ", "customer", customerId)
+	slog.Info("Get top items overdue by customer id: ", "customer", customerId, "topItems", topItems)
 }
 
 func (h *Handler) GetCountBlockFactorsByCustomerId(w http.ResponseWriter, r *http.Request) {
@@ -122,5 +122,5 @@ func (h *Handler) GetCountBlockFactorsByCustomerId(w http.ResponseWriter, r *htt
 	}
 
 	util.RespondJSON(w, factors)
-	slog.Info("Get summary by customer id: ", "customer", customerId)
+	slog.Info("Get blockFactors by customer id: ", "customer", customerId, "blockFactors", factors)
 }

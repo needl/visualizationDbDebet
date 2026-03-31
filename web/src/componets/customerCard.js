@@ -18,9 +18,9 @@ export class CustomerCard {
             <div class="stats-grid" style="margin-top:0">
                 <div class="metric-card-wrapper"><div class="metric-card"><div class="card-title">Кол-во контрагентов</div><div class="card-value">${summary.contractors_count}</div></div></div>
                 <div class="metric-card-wrapper"><div class="metric-card"><div class="card-title">Сумма контрактов</div><div class="card-value">${formatCurrency(summary.total_contract_amount)}</div></div></div>
-                <div class="metric-card-wrapper"><div class="metric-card"><div class="card-title">Перечислено</div><div class="card-value">${formatCurrency(summary.total_paid_amount)}</div></div></div>
+                <div class="metric-card-wrapper"><div class="metric-card"><div class="card-title">Перечисленно по контракту</div><div class="card-value">${formatCurrency(summary.total_paid_amount)}</div></div></div>
                 <div class="metric-card-wrapper"><div class="metric-card"><div class="card-title">Принято работ</div><div class="card-value">${formatCurrency(summary.total_accepted_amount)}</div></div></div>
-                <div class="metric-card-wrapper"><div class="metric-card"><div class="card-title">% принятых</div><div class="card-value">${formatPercent(summary.percentage)}</div></div></div>
+                <div class="metric-card-wrapper"><div class="metric-card"><div class="card-title">% принятых работ</div><div class="card-value">${formatPercent(summary.percentage)}</div></div></div>
             </div>
         `;
     }
