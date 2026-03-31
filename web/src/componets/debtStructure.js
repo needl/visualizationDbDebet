@@ -1,3 +1,5 @@
+import { appState } from '../state/appState.js';
+
 export class DebtStructure {
     constructor(container) {
         this.container = container;
@@ -5,7 +7,6 @@ export class DebtStructure {
     }
 
     render(summary) {
-        this.clear();
 
         if (!summary || summary.total_debet === undefined) {
             this.container.innerHTML = '<div class="empty-message">Нет данных по задолженности</div>';
@@ -14,15 +15,28 @@ export class DebtStructure {
 
         const totalDebt = summary.total_debet;
         const overdueDebt = summary.total_debet_overdue || 0;
-        const currentDebt = totalDebt - overdueDebt;
+        const longTermDebt = summary.total_debet_long || 0;
+        const currentDebt = totalDebt - overdueDebt - longTermDebt;
 
-        if (totalDebt === 0 && overdueDebt === 0) {
-            this.container.innerHTML = '<div class="empty-message">Нет информации по задолженности</div>';
+        if (totalDebt === 0 && overdueDebt === 0 && longTermDebt === 0) {
+            this.container.innerHTML = '<div class="empty-message">Задолженность отсутствует</div>';
             return;
         }
 
         if (!this.chart) {
             this.chart = echarts.init(this.container);
+        }
+
+        // Подготавливаем данные, исключая нулевые значения
+        const data = [
+            { name: 'Текущая задолженность', value: currentDebt, itemStyle: { color: '#10b981' } },
+            { name: 'Просроченная задолженность', value: overdueDebt, itemStyle: { color: '#ef4444' } },
+            { name: 'Долгосрочная задолженность', value: longTermDebt, itemStyle: { color: '#f59e0b' } }
+        ].filter(item => item.value > 0);
+
+        if (data.length === 0) {
+            this.container.innerHTML = '<div class="empty-message">Задолженность отсутствует</div>';
+            return;
         }
 
         const option = {
@@ -48,7 +62,7 @@ export class DebtStructure {
                 {
                     name: 'Дебиторская задолженность',
                     type: 'pie',
-                    radius: '60%',           // полноценный круг (без внутреннего кольца)
+                    radius: '75%',
                     avoidLabelOverlap: false,
                     label: {
                         show: true,
@@ -61,10 +75,7 @@ export class DebtStructure {
                     emphasis: {
                         scale: true
                     },
-                    data: [
-                        { name: 'Текущая задолженность', value: currentDebt, itemStyle: { color: '#d17e2d' } },
-                        { name: 'Просроченная задолженность', value: overdueDebt, itemStyle: { color: '#d11b1b' } }
-                    ]
+                    data: data
                 }
             ]
         };

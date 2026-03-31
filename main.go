@@ -11,8 +11,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"visualizationBdDebet/internal/delivery/customer"
-	"visualizationBdDebet/internal/delivery/response"
+	customer2 "visualizationBdDebet/internal/customer"
+	response2 "visualizationBdDebet/internal/response"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -54,13 +54,13 @@ func main() {
 	blockfactorService := blockfactor.NewService(blockfactorRepo)
 	blockfactorHandler := handler.NewBlockFactorHandler(blockfactorService)
 
-	responseRepo := response.NewRepository(db)
-	responseService := response.NewService(responseRepo, debetService)
-	responseHandler := response.NewResponseHandler(responseService)
+	responseRepo := response2.NewRepository(db)
+	responseService := response2.NewService(responseRepo, debetService)
+	responseHandler := response2.NewResponseHandler(responseService)
 
-	customerRepo := customer.NewRepository(db)
-	customerService := customer.NewService(customerRepo)
-	customerHandler := customer.NewHandler(customerService)
+	customerRepo := customer2.NewRepository(db)
+	customerService := customer2.NewService(customerRepo)
+	customerHandler := handler.NewHandler(customerService)
 
 	apiRouter := router.NewRouter(
 		debetHandler,

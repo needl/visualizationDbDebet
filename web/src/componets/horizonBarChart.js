@@ -42,8 +42,8 @@ export class HorizontalBarChart {
             },
             grid: {
                 containLabel: true,
-                left: '5%',
-                right: '5%',
+                left: '3%',
+                right: '7%',
                 top: '15%',              // достаточно места для заголовка
                 bottom: '5%'
             },

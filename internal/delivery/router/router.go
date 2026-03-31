@@ -2,9 +2,8 @@ package router
 
 import (
 	"github.com/gorilla/mux"
-	"visualizationBdDebet/internal/delivery/customer"
 	"visualizationBdDebet/internal/delivery/handler"
-	"visualizationBdDebet/internal/delivery/response"
+	"visualizationBdDebet/internal/response"
 )
 
 // NewRouter создаёт новый роутер и регистрирует все маршруты приложения.
@@ -13,7 +12,7 @@ func NewRouter(
 	contractHandler *handler.ContractHandler,
 	blockfactorHandler *handler.BlockFactorHandler,
 	responseHandler *response.Handler,
-	customerHandler *customer.Handler,
+	customerHandler *handler.Handler,
 ) *mux.Router {
 	r := mux.NewRouter()
 

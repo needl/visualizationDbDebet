@@ -25,9 +25,9 @@ class AppState {
     setCustomers(list) { this._customers = list; this._notify(); }
     setSelectedCustomer(customer) { this._selectedCustomer = customer; this._notify(); }
     setCustomerSummary(data) {
-        console.log('setCustomerSummary called with', data);
+        //console.log('setCustomerSummary called with', data);
         this._customerSummary = data;
-        console.log('this._customerSummary after assignment:', this._customerSummary);
+        //console.log('this._customerSummary after assignment:', this._customerSummary);
         this._notify();
     }
     setCustomerTopDebtors(data) { this._customerTopDebtors = data; this._notify(); }
@@ -46,7 +46,7 @@ class AppState {
     }
 
     _notify() {
-        console.log('_notify called, current state:', this._getState());
+        //console.log('_notify called, current state:', this._getState());
         const state = this._getState();
         this._subscribers.forEach(cb => cb(state));
     }

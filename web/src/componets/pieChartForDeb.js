@@ -7,6 +7,12 @@ export class PieChartComponent {
         this.metricKey = metricKey;
         this.title = title;
         this.chart = null;
+        this.resizeHandler = null;
+
+        this.resizeHandler = () => {
+            if (this.chart) this.chart.resize();
+        };
+        window.addEventListener('resize', this.resizeHandler);
 
         appState.subscribe((state) => {
             this.render(state);
@@ -33,56 +39,70 @@ export class PieChartComponent {
     drawPie(data) {
         if (!this.container) return;
         if (typeof echarts === 'undefined') {
-            console.error('ECharts не загружен');
             this.showError('ECharts не загружен');
             return;
         }
 
-        if (!this.chart) {
-            this.chart = echarts.init(this.container);
+        // Очищаем контейнер от всего (сообщение, предыдущий canvas)
+        if (this.chart) {
+            this.chart.dispose();
+            this.chart = null;
         }
+        this.container.innerHTML = '';
+
+        // Инициализируем новый экземпляр ECharts
+        this.chart = echarts.init(this.container);
 
         const option = {
             tooltip: {
                 trigger: 'item',
                 position: function(point, params, dom, rect, size) {
-                    return [size.viewSize[0] / 2, size.viewSize[1] / 2];
+                    // Показываем тултип рядом с курсором
+                    return [point[0] / 2, point[1] / 1];
                 },
                 formatter: function(params) {
                     const valueInBillions = (params.value / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
-                    return `${params.name}: ${valueInBillions} млрд ₽ (${params.percent}%)`;
+                    return `${valueInBillions} млрд ₽ (${params.percent}%)`;
                 }
             },
             legend: {
                 orient: 'vertical',
-                left: 'left',
+                left: 50,
                 top: 'middle',
-                itemWidth: 20,
-                itemHeight: 14,
-                textStyle: { fontSize: 11 }
+                itemWidth: 50,
+                itemHeight: 20,
+                textStyle: { fontSize: 14 }
             },
             series: [
                 {
                     name: this.title,
                     type: 'pie',
-                    radius: ['45%', '65%'],
-                    center: ['50%', '50%'],
+                    radius: ['5%', '90%'],
+                    center: ['63%', '45%'],
                     avoidLabelOverlap: false,
                     itemStyle: {
                         borderRadius: 8,
-                        borderColor: '#fff',
+                        borderColor: '#ffffff',
                         borderWidth: 2
                     },
                     label: { show: false },
                     emphasis: {
-                        label: { show: true, fontSize: 20, fontWeight: 'bold' }
+                        scale: false,
+                        label: {
+                            show: true,
+                            fontSize: 20,
+                            position: 'right',
+                            fontWeight: 'bold',
+                        }
                     },
                     labelLine: { show: false },
                     data: data
                 }
             ]
         };
-        this.chart.setOption(option);
+
+        this.chart.setOption(option, true);
+        this.chart.resize();
     }
 
     showLoading() {
@@ -119,5 +139,17 @@ export class PieChartComponent {
         emptyDiv.className = 'empty';
         emptyDiv.textContent = 'Нет данных';
         this.container.appendChild(emptyDiv);
+    }
+
+    dispose() {
+        if (this.resizeHandler) {
+            window.removeEventListener('resize', this.resizeHandler);
+            this.resizeHandler = null;
+        }
+        if (this.chart) {
+            this.chart.dispose();
+            this.chart = null;
+        }
+        this.container.innerHTML = '';
     }
 }

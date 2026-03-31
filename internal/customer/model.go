@@ -8,6 +8,7 @@ type Customer struct {
 type Summary struct {
 	ContractorsCount    int     `db:"contractors_count" json:"contractors_count"`
 	TotalDebet          float64 `db:"total_debet" json:"total_debet"`
+	TotalDebetLong      float64 `db:"total_debet_long" json:"total_debet_long"`
 	TotalDebetOverdue   float64 `db:"total_debet_overdue" json:"total_debet_overdue"`
 	TotalContractAmount float64 `db:"total_contract_amount" json:"total_contract_amount"`
 	TotalPaidAmount     float64 `db:"total_paid_amount" json:"total_paid_amount"`

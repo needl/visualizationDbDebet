@@ -31,12 +31,13 @@ export class CustomerFilter {
             this.container.innerHTML = '<div>Загрузка заказчиков...</div>';
             return;
         }
+        const filteredCustomers = customers.filter(c => c.name !== 'ГКУ УПТ');
         this.container.innerHTML = `
             <div class="customer-filter">
                 <label for="customer-select">Выберите заказчика:</label>
                 <select id="customer-select">
-                    <option value="">-- Выберите заказчика --</option>
-                    ${customers.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}
+                    <option value="">-- Заказчик --</option>
+                    ${filteredCustomers.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}
                 </select>
             </div>
         `;

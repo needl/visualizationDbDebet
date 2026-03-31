@@ -1,18 +1,19 @@
-package customer
+package handler
 
 import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"log/slog"
 	"net/http"
+	"visualizationBdDebet/internal/customer"
 	"visualizationBdDebet/internal/delivery/util"
 )
 
 type Handler struct {
-	service *Service
+	service *customer.Service
 }
 
-func NewHandler(service *Service) *Handler {
+func NewHandler(service *customer.Service) *Handler {
 	return &Handler{service: service}
 }
 

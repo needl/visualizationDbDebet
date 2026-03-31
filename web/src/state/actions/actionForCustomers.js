@@ -18,7 +18,6 @@ export async function loadCustomerData(orgName) {
             fetchCustomerTopOverdue(orgName),
             fetchCustomerBlockFactors(orgName)
         ]);
-        console.log('summary in loadCustomerData:', summary);
         appState.setCustomerSummary(summary);
         appState.setCustomerTopDebtors(topDebtors);
         appState.setCustomerTopOverdue(topOverdue);

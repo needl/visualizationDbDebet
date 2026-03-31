@@ -32,9 +32,9 @@ export class BlockFactorsChart {
         const option = {
             title: { text: this.title, left: 'center' },
             tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-            grid: { containLabel: true, left: '20%' },
-            xAxis: { type: 'value', name: 'Количество' },
-            yAxis: { type: 'category', data: names, axisLabel: { fontSize: 10 } },
+            grid: { containLabel: true, left: '3%' },
+            xAxis: { type: 'value', name: 'Количество', minInterval: 1 },
+            yAxis: { type: 'category', data: names, axisLabel: { fontSize: 14 } },
             series: [{
                 name: 'Количество',
                 type: 'bar',

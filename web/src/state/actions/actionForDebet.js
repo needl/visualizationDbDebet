@@ -6,32 +6,6 @@ import { formatChartData } from '../../transformers/formatter.js';
 import { aggregateByYear } from '../../transformers/groupByYear.js';
 import { prepareTableData } from '../../transformers/tableDate.js'; // новый импорт
 
-/*export async function loadData() {
-    appState.setLoading(true);
-    try {
-        const rawData = await fetchDebetData();
-        const aggregated = aggregateByOrg(rawData);
-        const contractData = formatChartData(aggregated, 'contractAmount');
-        const debetTotalData = formatChartData(aggregated, 'debetTotal');
-        const debetOverdoseData = formatChartData(aggregated, 'debetOverdose');
-
-        const groupedYearData = aggregateByYear(rawData);
-        const tableData = prepareTableData(aggregated); // новое
-
-        appState.setChartData('contractAmount', contractData);
-        appState.setChartData('debetTotal', debetTotalData);
-        appState.setChartData('debetOverdose', debetOverdoseData);
-        appState.setChartData('debetByYear', groupedYearData);
-        appState.setTableData(tableData); // сохраняем таблицу
-
-        appState.setError(null);
-        appState.setLoading(false);
-    } catch (err) {
-        appState.setError(err.message);
-        appState.setLoading(false);
-    }
-}*/
-
 export async function loadData() {
     appState.setLoading(true);
     try {
