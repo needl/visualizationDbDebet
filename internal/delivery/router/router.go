@@ -26,7 +26,7 @@ func NewRouter(
 	contract.HandleFunc("", contractHandler.GetAll).Methods("GET")
 	contract.HandleFunc("/{id}", contractHandler.GetById).Methods("GET")
 
-	blockfactor := r.PathPrefix("/blockfactor").Subrouter()
+	blockfactor := r.PathPrefix("/blockFactor").Subrouter()
 	blockfactor.HandleFunc("", blockfactorHandler.GetAll).Methods("GET")
 	blockfactor.HandleFunc("/{orgName}", blockfactorHandler.GetById).Methods("GET")
 
@@ -36,10 +36,10 @@ func NewRouter(
 
 	customer := r.PathPrefix("/customer").Subrouter()
 	customer.HandleFunc("", customerHandler.GetCustomers).Methods("GET")
-	customer.HandleFunc("/{org_name}/summary", customerHandler.GetSummaryByCustomerId).Methods("GET")
-	customer.HandleFunc("/{org_name}/top-debtors", customerHandler.GetTopItemsByCustomerId).Methods("GET")
-	customer.HandleFunc("/{org_name}/top-debtors-overdue", customerHandler.GetTopItemsOverdueByCustomerId).Methods("GET")
-	customer.HandleFunc("/{org_name}/blockFactors", customerHandler.GetCountBlockFactorsByCustomerId).Methods("GET")
+	customer.HandleFunc("/summary/{org_name}", customerHandler.GetSummaryByCustomerId).Methods("GET")
+	customer.HandleFunc("/top-debtors/{org_name}", customerHandler.GetTopItemsByCustomerId).Methods("GET")
+	customer.HandleFunc("/top-debtors-overdue/{org_name}", customerHandler.GetTopItemsOverdueByCustomerId).Methods("GET")
+	customer.HandleFunc("/blockFactors/{org_name}", customerHandler.GetCountBlockFactorsByCustomerId).Methods("GET")
 
 	// Middleware можно добавить глобально или на подроутер
 	// r.Use(middleware.Logger, middleware.Recoverer)
