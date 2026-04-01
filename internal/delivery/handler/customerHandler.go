@@ -9,15 +9,15 @@ import (
 	"visualizationBdDebet/internal/delivery/util"
 )
 
-type Handler struct {
+type CustomerHandler struct {
 	service *customer.Service
 }
 
-func NewHandler(service *customer.Service) *Handler {
-	return &Handler{service: service}
+func NewHandler(service *customer.Service) *CustomerHandler {
+	return &CustomerHandler{service: service}
 }
 
-func (h *Handler) GetCustomers(w http.ResponseWriter, r *http.Request) {
+func (h *CustomerHandler) GetCustomers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	customers, err := h.service.GetCustomers(ctx)
@@ -30,9 +30,9 @@ func (h *Handler) GetCustomers(w http.ResponseWriter, r *http.Request) {
 	slog.Info("Get all customer: ", "customer", customers)
 }
 
-func (h *Handler) GetSummaryByCustomerId(w http.ResponseWriter, r *http.Request) {
+func (h *CustomerHandler) GetSummaryByCustomerId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	customerId := vars["org_name"]
+	customerId := vars["orgName"]
 	if customerId == "" {
 		http.Error(w, "Customer name is null", http.StatusBadRequest)
 		return
@@ -54,9 +54,9 @@ func (h *Handler) GetSummaryByCustomerId(w http.ResponseWriter, r *http.Request)
 	slog.Info("Get summary by customer id: ", "customer", customerId)
 }
 
-func (h *Handler) GetTopItemsByCustomerId(w http.ResponseWriter, r *http.Request) {
+func (h *CustomerHandler) GetTopItemsByCustomerId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	customerId := vars["org_name"]
+	customerId := vars["orgName"]
 	if customerId == "" {
 		http.Error(w, "Customer id is null", http.StatusBadRequest)
 		return
@@ -78,9 +78,9 @@ func (h *Handler) GetTopItemsByCustomerId(w http.ResponseWriter, r *http.Request
 	slog.Info("Get top items by customer id: ", "customer", customerId, "topItems", topItems)
 }
 
-func (h *Handler) GetTopItemsOverdueByCustomerId(w http.ResponseWriter, r *http.Request) {
+func (h *CustomerHandler) GetTopItemsOverdueByCustomerId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	customerId := vars["org_name"]
+	customerId := vars["orgName"]
 	if customerId == "" {
 		http.Error(w, "Customer id is null", http.StatusBadRequest)
 		return
@@ -93,18 +93,13 @@ func (h *Handler) GetTopItemsOverdueByCustomerId(w http.ResponseWriter, r *http.
 		return
 	}
 
-	/*if topItems == nil {
-		http.Error(w, fmt.Sprintf("Customer with name '%s' not found in Overdue", customerId), http.StatusNotFound)
-		return
-	}*/
-
 	util.RespondJSON(w, topItems)
 	slog.Info("Get top items overdue by customer id: ", "customer", customerId, "topItems", topItems)
 }
 
-func (h *Handler) GetCountBlockFactorsByCustomerId(w http.ResponseWriter, r *http.Request) {
+func (h *CustomerHandler) GetCountBlockFactorsByCustomerId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	customerId := vars["org_name"]
+	customerId := vars["orgName"]
 	if customerId == "" {
 		http.Error(w, "Customer id is null", http.StatusBadRequest)
 		return

@@ -15,14 +15,14 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetAllCustomers(ctx context.Context) ([]Customer, error) {
+func (r *Repository) FindAllCustomers(ctx context.Context) ([]Customer, error) {
 	var customers []Customer
 
 	query := `
 				select distinct source_org_name as name
 				from debet
 				where source_org_name != 'АО Мосинжпроект'
-				order by source_org_name;
+				order by source_org_name
 `
 
 	if err := r.db.SelectContext(ctx, &customers, query); err != nil {
@@ -32,7 +32,7 @@ func (r *Repository) GetAllCustomers(ctx context.Context) ([]Customer, error) {
 	return customers, nil
 }
 
-func (r *Repository) GetSummaryByCustomerId(ctx context.Context, id string) (*Summary, error) {
+func (r *Repository) FindSummaryByCustomerId(ctx context.Context, id string) (*Summary, error) {
 	var summary Summary
 
 	query := `
@@ -45,7 +45,7 @@ func (r *Repository) GetSummaryByCustomerId(ctx context.Context, id string) (*Su
 					coalesce(sum(paid_amount), 0) as total_paid_amount,
 					coalesce(sum(accepted_amount), 0) as total_accepted_amount
 				from debet
-				where source_org_name = $1;
+				where source_org_name = $1
 `
 
 	if err := r.db.GetContext(ctx, &summary, query, id); err != nil {
@@ -58,7 +58,7 @@ func (r *Repository) GetSummaryByCustomerId(ctx context.Context, id string) (*Su
 	return &summary, nil
 }
 
-func (r *Repository) GetTopItemsByCustomerId(ctx context.Context, id string) ([]TopItem, error) {
+func (r *Repository) FindTopItemsByCustomerId(ctx context.Context, id string) ([]TopItem, error) {
 	items := make([]TopItem, 0)
 
 	query := `
@@ -70,7 +70,7 @@ func (r *Repository) GetTopItemsByCustomerId(ctx context.Context, id string) ([]
 				group by counterparty_name
 				having coalesce(sum(debt_2025_12_31_total), 0) > 0
 				order by value desc 
-				limit 10;
+				limit 10
 `
 
 	if err := r.db.SelectContext(ctx, &items, query, id); err != nil {
@@ -80,7 +80,7 @@ func (r *Repository) GetTopItemsByCustomerId(ctx context.Context, id string) ([]
 	return items, nil
 }
 
-func (r *Repository) GetTopItemsOverdueByCustomerId(ctx context.Context, id string) ([]TopItem, error) {
+func (r *Repository) FindTopItemsOverdueByCustomerId(ctx context.Context, id string) ([]TopItem, error) {
 	items := make([]TopItem, 0)
 
 	query := `
@@ -92,7 +92,7 @@ func (r *Repository) GetTopItemsOverdueByCustomerId(ctx context.Context, id stri
 				group by counterparty_name
 				having coalesce(sum(debt_2025_12_31_overdue), 0) > 0
 				order by value desc 
-				limit 10;
+				limit 10
 `
 
 	if err := r.db.SelectContext(ctx, &items, query, id); err != nil {
@@ -102,7 +102,7 @@ func (r *Repository) GetTopItemsOverdueByCustomerId(ctx context.Context, id stri
 	return items, nil
 }
 
-func (r *Repository) GetCountBlockFactorsByCustomerId(ctx context.Context, id string) (*BlockFactors, error) {
+func (r *Repository) FindCountBlockFactorsByCustomerId(ctx context.Context, id string) (*BlockFactors, error) {
 	var factor BlockFactors
 
 	query := `
@@ -123,7 +123,7 @@ func (r *Repository) GetCountBlockFactorsByCustomerId(ctx context.Context, id st
 					    from debet
 					    where source_org_name = $1
 					) as d
-					inner join blockfactor b on b.kod_nalogoplatelshchika = d.counterparty_inn;
+					inner join blockfactor b on b.kod_nalogoplatelshchika = d.counterparty_inn
 	`
 
 	if err := r.db.GetContext(ctx, &factor, query, id); err != nil {

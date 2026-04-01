@@ -24,22 +24,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 	var contracts []View
 
-	/*query := `
-		select c.id,
-			c.unrepaid_advance,
-			c.contract_cost,
-			c.object_name,
-			c.status,
-			c.tdc_amount,
-			c.object_state,
-			c.object_readiness
-		from contracts c
-		inner join debet d
-		on c.titul = d.construction_title
-		and c.contract_number = d.contract_number
-		order by id
-	`*/
-
 	query := `
 				select c.id,
 					c.unrepaid_advance,

@@ -14,16 +14,11 @@ func NewService(repo *Repository) *Service {
 }
 
 func (s *Service) GetCustomers(ctx context.Context) ([]Customer, error) {
-	customers, err := s.repo.GetAllCustomers(ctx)
+	customers, err := s.repo.FindAllCustomers(ctx)
 	if err != nil {
 		slog.Error("Failed to get customer", "error", err)
 		return nil, err
 	}
-
-	/*if len(customers) == 0 {
-		slog.Warn("No customer")
-		return []Customer{}, nil
-	}*/
 
 	return customers, nil
 }
@@ -34,7 +29,7 @@ func (s *Service) GetSummaryByCustomerId(ctx context.Context, id string) (*Summa
 		return nil, nil
 	}
 
-	summary, err := s.repo.GetSummaryByCustomerId(ctx, id)
+	summary, err := s.repo.FindSummaryByCustomerId(ctx, id)
 	if err != nil {
 		slog.Error("Failed to get customer summary", "error", err)
 		return nil, err
@@ -46,15 +41,6 @@ func (s *Service) GetSummaryByCustomerId(ctx context.Context, id string) (*Summa
 		summary.Percentage = 0
 	}
 	return summary, nil
-
-	/*if summary == nil {
-		slog.Warn("Customer summary is null")
-		return nil, nil
-	}
-
-	summary.Percentage = summary.TotalAcceptedAmount / summary.TotalContractAmount * 100
-
-	return summary, nil*/
 }
 
 func (s *Service) GetTopItemsByCustomerId(ctx context.Context, customerId string) ([]TopItem, error) {
@@ -63,7 +49,7 @@ func (s *Service) GetTopItemsByCustomerId(ctx context.Context, customerId string
 		return nil, nil
 	}
 
-	items, err := s.repo.GetTopItemsByCustomerId(ctx, customerId)
+	items, err := s.repo.FindTopItemsByCustomerId(ctx, customerId)
 	if err != nil {
 		slog.Warn("Failed to get customer items", "error", err)
 		return []TopItem{}, err
@@ -78,7 +64,7 @@ func (s *Service) GetTopItemsOverdueByCustomerId(ctx context.Context, customerId
 		return nil, nil
 	}
 
-	items, err := s.repo.GetTopItemsOverdueByCustomerId(ctx, customerId)
+	items, err := s.repo.FindTopItemsOverdueByCustomerId(ctx, customerId)
 	if err != nil {
 		slog.Error("Failed to get customer items", "error", err)
 		return []TopItem{}, err
@@ -93,7 +79,7 @@ func (s *Service) GetCountBlockFactorsByCustomerId(ctx context.Context, customer
 		return nil, nil
 	}
 
-	factors, err := s.repo.GetCountBlockFactorsByCustomerId(ctx, customerId)
+	factors, err := s.repo.FindCountBlockFactorsByCustomerId(ctx, customerId)
 	if err != nil {
 		slog.Error("Failed to get customer items", "error", err)
 		return nil, err

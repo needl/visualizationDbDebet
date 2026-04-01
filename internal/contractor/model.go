@@ -1,0 +1,17 @@
+// Package contractor отвечает за вывод информации в графике "блок факторы"
+// Выводит информацию по контрактам с подрядчиками контрагента, которые имеют блок-факторы
+package contractor
+
+import "time"
+
+type Contractor struct {
+	Name         *string    `db:"name" json:"name"`                   //Наименование подрядчика
+	Object       *string    `db:"object" json:"object"`               // Наименование объекта
+	ContractDate *time.Time `db:"contract_date" json:"contract_date"` // Дата заключения контракта
+	WorkEndDate  *time.Time `db:"work_end_date" json:"work_end_date"` // Дата окончания работ
+	Number       *string    `db:"number" json:"number"`               // Номер контракта
+	Amount       *float64   `db:"amount" json:"amount"`               // Сумма контракта
+	DebetTotal   *float64   `db:"debet_total" json:"debet_total"`     // Сумма задолженности
+	DebetOverdue *float64   `db:"debet_overdue" json:"debet_overdue"` // Сумма просроченной задолженности
+	Status       *string    `db:"status" json:"status"`               // Статус договора
+}

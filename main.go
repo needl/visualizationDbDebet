@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"visualizationBdDebet/internal/contractor"
 	customer2 "visualizationBdDebet/internal/customer"
 	response2 "visualizationBdDebet/internal/response"
 
@@ -56,11 +57,15 @@ func main() {
 
 	responseRepo := response2.NewRepository(db)
 	responseService := response2.NewService(responseRepo, debetService)
-	responseHandler := response2.NewResponseHandler(responseService)
+	responseHandler := handler.NewResponseHandler(responseService)
 
 	customerRepo := customer2.NewRepository(db)
 	customerService := customer2.NewService(customerRepo)
 	customerHandler := handler.NewHandler(customerService)
+
+	contractorRepo := contractor.NewRepository(db)
+	contractorService := contractor.NewService(contractorRepo)
+	contractorHandler := handler.NewContractorHandler(contractorService)
 
 	apiRouter := router.NewRouter(
 		debetHandler,
@@ -68,6 +73,7 @@ func main() {
 		blockfactorHandler,
 		responseHandler,
 		customerHandler,
+		contractorHandler,
 	)
 
 	staticFS, err := fs.Sub(staticFiles, "web")
@@ -77,20 +83,6 @@ func main() {
 	}
 
 	apiRouter.PathPrefix("/").Handler(http.FileServer(http.FS(staticFS)))
-
-	/*gateway := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		path := r.URL.Path
-		// Проверяем, относится ли путь к API
-		if strings.HasPrefix(path, "/debet") ||
-			strings.HasPrefix(path, "/contract") ||
-			strings.HasPrefix(path, "/blockfactor") ||
-			strings.HasPrefix(path, "/response") {
-			apiRouter.ServeHTTP(w, r)
-			return
-		}
-		// Иначе отдаём статику
-		http.FileServer(http.FS(staticFS)).ServeHTTP(w, r)
-	})*/
 
 	srv := http.Server{
 		Handler:      apiRouter,

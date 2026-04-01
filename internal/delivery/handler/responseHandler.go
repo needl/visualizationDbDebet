@@ -1,20 +1,21 @@
-package response
+package handler
 
 import (
 	"log/slog"
 	"net/http"
 	"visualizationBdDebet/internal/delivery/util"
+	"visualizationBdDebet/internal/response"
 )
 
-type Handler struct {
-	service *Service
+type ResponseHandler struct {
+	service *response.Service
 }
 
-func NewResponseHandler(service *Service) *Handler {
-	return &Handler{service: service}
+func NewResponseHandler(service *response.Service) *ResponseHandler {
+	return &ResponseHandler{service: service}
 }
 
-func (h *Handler) GetResponse(w http.ResponseWriter, r *http.Request) {
+func (h *ResponseHandler) GetResponse(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	pageDto, err := h.service.GetResponse(ctx)
@@ -27,7 +28,7 @@ func (h *Handler) GetResponse(w http.ResponseWriter, r *http.Request) {
 	slog.Info("GetResponse: ", "pageDto", pageDto)
 }
 
-func (h *Handler) GetResponseWithMIP(w http.ResponseWriter, r *http.Request) {
+func (h *ResponseHandler) GetResponseWithMIP(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	pageDto, err := h.service.GetResponseWithMIP(ctx)
