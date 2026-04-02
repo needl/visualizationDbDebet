@@ -42,6 +42,8 @@ func NewRouter(
 
 	contractor := r.PathPrefix("/contractor").Subrouter()
 	contractor.HandleFunc("/{orgName}", contractorHandler.GetContractorsWithBlockFactors).Methods("GET")
+	contractor.HandleFunc("/debet/curr", contractorHandler.GetContractorsWithCurrDebet).Methods("GET")
+	contractor.HandleFunc("/debet/overdue", contractorHandler.GetContractorsWithOverdueDebet).Methods("GET")
 
 	// Middleware можно добавить глобально или на подроутер
 	// r.Use(middleware.Logger, middleware.Recoverer)

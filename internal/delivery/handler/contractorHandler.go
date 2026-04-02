@@ -47,5 +47,29 @@ func (h *ContractorHandler) GetContractorsWithBlockFactors(w http.ResponseWriter
 	}
 
 	util.RespondJSON(w, contractors)
+	slog.Info("Get Contractors With Curr debet: ", "contractors", contractors)
+}
+
+func (h *ContractorHandler) GetContractorsWithCurrDebet(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	contractors, err := h.service.GetContractorsWithCurrDeb(ctx)
+	if err != nil {
+		http.Error(w, "Contractors with Curr debet not found", http.StatusNotFound)
+		return
+	}
+
+	util.RespondJSON(w, contractors)
+	slog.Info("Get Contractors With Overdue debet: ", "contractors", contractors)
+}
+
+func (h *ContractorHandler) GetContractorsWithOverdueDebet(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	contractors, err := h.service.GetContractorsWithOverdueDeb(ctx)
+	if err != nil {
+		http.Error(w, "Contractors with Overdue debet not found", http.StatusNotFound)
+		return
+	}
+
+	util.RespondJSON(w, contractors)
 	slog.Info("Get Contractors With BlockFactors: ", "contractors", contractors)
 }

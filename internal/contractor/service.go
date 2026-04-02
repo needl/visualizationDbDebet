@@ -2,6 +2,7 @@ package contractor
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"sort"
 )
@@ -37,8 +38,8 @@ func (s *Service) GetContractorsWithBlockFactors(
 	}
 
 	sort.Slice(contractors, func(i, j int) bool {
-		di := contractors[i].ContractDate
-		dj := contractors[j].ContractDate
+		di := contractors[i].WorkEndDate
+		dj := contractors[j].WorkEndDate
 
 		if di == nil && dj == nil {
 			return false
@@ -51,6 +52,32 @@ func (s *Service) GetContractorsWithBlockFactors(
 		}
 		return di.Before(*dj)
 	})
+
+	return contractors, nil
+}
+
+func (s *Service) GetContractorsWithCurrDeb(ctx context.Context) ([]DebetContractor, error) {
+	contractors, err := s.repo.FindContractorsWithCurrDebet(ctx)
+	if err != nil {
+		slog.Error("FindContractorsWithCurrDebet err:", "err", err)
+	}
+
+	if contractors == nil {
+		return nil, errors.New("contractors is nil")
+	}
+
+	return contractors, nil
+}
+
+func (s *Service) GetContractorsWithOverdueDeb(ctx context.Context) ([]DebetContractor, error) {
+	contractors, err := s.repo.FindContractorsWithOverdueDebet(ctx)
+	if err != nil {
+		slog.Error("FindContractorsWithOverdueDebet err:", "err", err)
+	}
+
+	if contractors == nil {
+		return nil, errors.New("contractors is nil")
+	}
 
 	return contractors, nil
 }

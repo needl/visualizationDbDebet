@@ -71,3 +71,54 @@ func (r *Repository) FindContractorsWithBlockFactors(
 
 	return contractors, nil
 }
+
+func (r *Repository) FindContractorsWithCurrDebet(ctx context.Context) ([]DebetContractor, error) {
+	var contractors []DebetContractor
+
+	query := `
+select
+counterparty_name as name,
+coalesce(sum(contract_amount), 0.00) as contract_sum,
+coalesce(sum(paid_amount), 0.00) as paid_sum,
+coalesce(sum(accepted_amount), 0.00) as accepted_sum,
+coalesce(sum(debt_2025_12_31_total), 0.00)
+    - coalesce (sum(debt_2025_12_31_overdue), 0.00)
+    as debet_sum
+from debet
+where source_org_name != 'АО Мосинжпроект'
+group by counterparty_name
+having coalesce(sum(debt_2025_12_31_total), 0) 
+           - coalesce (sum(debt_2025_12_31_overdue), 0.00) != 0.00
+order by debet_sum desc
+`
+
+	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
+		return nil, err
+	}
+
+	return contractors, nil
+}
+
+func (r *Repository) FindContractorsWithOverdueDebet(ctx context.Context) ([]DebetContractor, error) {
+	var contractors []DebetContractor
+
+	query := `
+select
+counterparty_name as name,
+coalesce(sum(contract_amount), 0.00) as contract_sum,
+coalesce(sum(paid_amount), 0.00) as paid_sum,
+coalesce(sum(accepted_amount), 0.00) as accepted_sum,
+coalesce(sum(debt_2025_12_31_overdue), 0.00) as debet_sum
+from debet
+where source_org_name != 'АО Мосинжпроект'
+group by counterparty_name
+having coalesce(sum(debt_2025_12_31_overdue), 0) != 0.00
+order by debet_sum desc
+`
+
+	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
+		return nil, err
+	}
+
+	return contractors, nil
+}

@@ -5,7 +5,7 @@ package contractor
 import "time"
 
 type Contractor struct {
-	Name         *string    `db:"name" json:"name"`                   //Наименование подрядчика
+	Name         *string    `db:"name" json:"name"`                   // Наименование подрядчика
 	Object       *string    `db:"object" json:"object"`               // Наименование объекта
 	ContractDate *time.Time `db:"contract_date" json:"contract_date"` // Дата заключения контракта
 	WorkEndDate  *time.Time `db:"work_end_date" json:"work_end_date"` // Дата окончания работ
@@ -14,4 +14,12 @@ type Contractor struct {
 	DebetTotal   *float64   `db:"debet_total" json:"debet_total"`     // Сумма задолженности
 	DebetOverdue *float64   `db:"debet_overdue" json:"debet_overdue"` // Сумма просроченной задолженности
 	Status       *string    `db:"status" json:"status"`               // Статус договора
+}
+
+type DebetContractor struct {
+	Name        *string  `db:"name" json:"name"`                 // Наименование подрядчика
+	ContractSum *float64 `db:"contract_sum" json:"contract_sum"` // Сумма контракта
+	PaidSum     *float64 `db:"paid_sum" json:"paid_sum"`         // Перечислено
+	AcceptedSum *float64 `db:"accepted_sum" json:"accepted_sum"` // Сумма принятых работ
+	DebetSum    *float64 `db:"debet_sum" json:"debet_sum"`       // Сумма текущей задолженности
 }
