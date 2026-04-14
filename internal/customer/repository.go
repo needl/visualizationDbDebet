@@ -35,12 +35,24 @@ func (r *Repository) FindAllCustomers(ctx context.Context) ([]Customer, error) {
 func (r *Repository) FindSummaryByCustomerId(ctx context.Context, id string) (*Summary, error) {
 	var summary Summary
 
+	/*query := `
+					select
+	    				count(distinct counterparty_inn) as contractors_count,
+	    				coalesce(sum(debt_2025_12_31_total), 0) as total_debet,
+	    				coalesce(sum(debt_2025_12_31_overdue), 0) as total_debet_overdue,
+	    				coalesce(sum(debt_2025_12_31_long_term), 0) as total_debet_long,
+						coalesce(sum(contract_amount), 0) as total_contract_amount,
+						coalesce(sum(paid_amount), 0) as total_paid_amount,
+						coalesce(sum(accepted_amount), 0) as total_accepted_amount
+					from debet
+					where source_org_name = $1
+	`*/
+
 	query := `
 				select
     				count(distinct counterparty_inn) as contractors_count,
     				coalesce(sum(debt_2025_12_31_total), 0) as total_debet,
     				coalesce(sum(debt_2025_12_31_overdue), 0) as total_debet_overdue,
-    				coalesce(sum(debt_2025_12_31_long_term), 0) as total_debet_long,
 					coalesce(sum(contract_amount), 0) as total_contract_amount,
 					coalesce(sum(paid_amount), 0) as total_paid_amount,
 					coalesce(sum(accepted_amount), 0) as total_accepted_amount

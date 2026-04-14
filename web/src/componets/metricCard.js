@@ -13,12 +13,18 @@ export class MetricCard {
         if (!stats) return;
         const value = stats[this.valueKey];
         let formattedValue = '—';
+
         if (value !== undefined && value !== null) {
             if (this.format === 'number') {
                 formattedValue = value.toLocaleString();
             } else if (this.format === 'currency') {
-                formattedValue = value.toLocaleString() + ' ₽';
-            } else {
+                // Преобразуем в миллиарды с одним знаком после запятой
+                const inBillions = value / 1_000_000_000;
+                // Округляем до 1 десятичного знака
+                let rounded = Math.round(inBillions * 10) / 10;
+                formattedValue = rounded.toLocaleString() + ' млрд ₽';
+            }
+            else {
                 formattedValue = value;
             }
         }

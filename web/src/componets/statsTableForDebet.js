@@ -35,12 +35,12 @@ export class StatsTable {
 
             // Сумма контрактов (млн ₽)
             const tdContract = document.createElement('td');
-            tdContract.textContent = (row.contractAmount / 1_000_000_000).toLocaleString('ru-RU') + ' млрд ₽';
+            tdContract.textContent = (row.contractAmount / 1_000_000_000).toFixed(1).toLocaleString('ru-RU').replace('.', ',') + ' млрд ₽';
             tr.appendChild(tdContract);
 
             // Задолженность (млн ₽)
             const tdDebet = document.createElement('td');
-            tdDebet.textContent = (row.debetTotal / 1_000_000_000).toLocaleString('ru-RU') + ' млрд ₽';
+            tdDebet.textContent = (row.debetTotal / 1_000_000_000).toFixed(1).toLocaleString('ru-RU').replace('.', ',') + ' млрд ₽';
             tr.appendChild(tdDebet);
 
             // Коэффициент с прогресс-баром и текстом внутри
@@ -51,7 +51,7 @@ export class StatsTable {
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${percent}%;"></div>
                     </div>
-                    <span class="coeff-value">${row.coefficient.toFixed(2)}</span>
+                    <span class="coeff-value">${row.coefficient.toFixed(1)}</span>
                 </div>
             `;
             tr.appendChild(tdCoeff);

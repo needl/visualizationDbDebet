@@ -35,9 +35,12 @@ export class HorizontalBarChart {
             tooltip: {
                 trigger: 'axis',
                 axisPointer: { type: 'shadow' },
+                confine: true,
+                position: 'centre',
                 formatter: (params) => {
                     const val = params[0].value;
-                    return `${params[0].name}<br/>${this.valueFormatter(val)}`;
+                    //return `${params[0].name}<br/>${this.valueFormatter(val)}`;
+                    return `${params[0].name}`;
                 }
             },
             grid: {
@@ -60,6 +63,8 @@ export class HorizontalBarChart {
                 type: 'category',
                 data: names,
                 axisLabel: {
+                    width: 300,               // максимальная ширина метки в px
+                    overflow: 'break',
                     fontSize: 10,
                     rotate: 0,
                     interval: 0

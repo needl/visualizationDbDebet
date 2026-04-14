@@ -104,7 +104,7 @@ export class ChartComponent {
                 type: 'bar',
                 data: values,
                 itemStyle: {
-                    color: '#cd1111'
+                    color: '#111ecd'
                 }
             }]
         };
@@ -168,7 +168,7 @@ export class ChartComponent {
                 name: 'Сумма (млрд ₽)',
                 axisLabel: {
                     formatter: function(value) {
-                        return (value / 1_000_000_000).toFixed(0);
+                        return (value / 1_000_000_000).toFixed(1);
                     }
                 }
             },

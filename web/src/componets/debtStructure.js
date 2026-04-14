@@ -15,8 +15,8 @@ export class DebtStructure {
 
         const totalDebt = summary.total_debet;
         const overdueDebt = summary.total_debet_overdue || 0;
-        const longTermDebt = summary.total_debet_long || 0;
-        const currentDebt = totalDebt - overdueDebt - longTermDebt;
+        //const longTermDebt = summary.total_debet_long || 0;
+        const currentDebt = totalDebt - overdueDebt;
 
         if (totalDebt === 0 && overdueDebt === 0 && longTermDebt === 0) {
             this.container.innerHTML = '<div class="empty-message">Задолженность отсутствует</div>';
@@ -31,7 +31,7 @@ export class DebtStructure {
         const data = [
             { name: 'Текущая задолженность', value: currentDebt, itemStyle: { color: '#10b981' } },
             { name: 'Просроченная задолженность', value: overdueDebt, itemStyle: { color: '#ef4444' } },
-            { name: 'Долгосрочная задолженность', value: longTermDebt, itemStyle: { color: '#f59e0b' } }
+           // { name: 'Долгосрочная задолженность', value: longTermDebt, itemStyle: { color: '#f59e0b' } }
         ].filter(item => item.value > 0);
 
         if (data.length === 0) {

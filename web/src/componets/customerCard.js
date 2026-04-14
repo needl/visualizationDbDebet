@@ -12,7 +12,7 @@ export class CustomerCard {
             this.container.innerHTML = '<div class="loading">Загрузка статистики...</div>';
             return;
         }
-        const formatCurrency = (val) => (val / 1e9).toFixed(2) + ' млрд ₽';
+        const formatCurrency = (val) => (val / 1e9).toFixed(1).replace('.', ',') + ' млрд ₽';
         const formatPercent = (val) => val.toFixed(2) + '%';
         this.container.innerHTML = `
             <div class="stats-grid" style="margin-top:0">

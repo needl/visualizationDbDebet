@@ -29,41 +29,4 @@ export const dashboardConfig = [
         type: 'customer-analytics'
     }
 
-    /*{
-        title: 'Общая статистика',
-        type: 'stats',
-        metrics: [
-            { key: 'count_source_org', label: 'Количество заказчиков', format: 'number' },
-            { key: 'count_contracts', label: 'Количество контрактов', format: 'number' },
-            { key: 'sum_contract_amount', label: 'Сумма контрактов', format: 'currency' },
-            { key: 'sum_debet_total', label: 'Сумма дебиторской задолженности', format: 'currency' },
-            { key: 'sum_debet_overdue', label: 'Сумма просроченной задолженности', format: 'currency' }
-        ]
-    },
-
-    {
-        title: 'Дебиторка по заказчикам',
-        type: 'charts',
-        charts: [
-            { metric: 'contractAmount', title: 'Сумма контрактов' },
-            { metric: 'debetTotal', title: 'Дебиторская задолженность' },
-            { metric: 'debetOverdose', title: 'Просроченная дебиторская задолженность' }
-        ]
-    },*/
-
-
-
-    /*{
-        title: 'Тест',
-        charts: [
-            { metric: 'contractAmount', title: 'Сумма контрактов по застройщикам' },
-            { metric: 'debetTotal', title: 'Дебеторская задолженность (всего)' },
-        ]
-    }*/
-
-    // В будущем можно добавить новый блок:
-    // {
-    //     title: 'Другая аналитика',
-    //     charts: [...]
-    // }
 ];

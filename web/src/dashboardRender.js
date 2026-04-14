@@ -44,13 +44,13 @@ export class DashboardRenderer {
                     wrapperDiv.className = 'chart-wrapper';
 
                     // Контейнер для столбчатого графика
-                    const barContainer = document.createElement('div');
+                    /*const barContainer = document.createElement('div');
                     barContainer.style.width = '100%';
                     barContainer.style.height = '600px';
                     wrapperDiv.appendChild(barContainer);
 
                     const barChart = new ChartComponent(barContainer, chartConfig.metric, chartConfig.title);
-                    this.components.push(barChart);
+                    this.components.push(barChart);*/
 
                     // Контейнер для круговой диаграммы с фоном
                     const pieWrapper = document.createElement('div');

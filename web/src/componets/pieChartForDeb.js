@@ -54,12 +54,22 @@ export class PieChartComponent {
         this.chart = echarts.init(this.container);
 
         const option = {
-            tooltip: {
+            /*tooltip: {
                 trigger: 'item',
-                position: function(point, params, dom, rect, size) {
+                position: function(point, param33s, dom, rect, size) {
                     // Показываем тултип рядом с курсором
                     return [point[0] / 2, point[1] / 1];
                 },
+                formatter: function(params) {
+                    const valueInBillions = (params.value / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+                    return `${valueInBillions} млрд ₽ (${params.percent}%)`;
+                }
+            },*/
+            tooltip: {
+                trigger: 'item',
+                confine: true,                // ← ключевая опция
+                appendTo: document.body,
+                // position можно не указывать, ECharts сам подберёт
                 formatter: function(params) {
                     const valueInBillions = (params.value / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
                     return `${valueInBillions} млрд ₽ (${params.percent}%)`;
@@ -69,16 +79,36 @@ export class PieChartComponent {
                 orient: 'vertical',
                 left: 50,
                 top: 'middle',
+                itemWidth: 20,
+                itemHeight: 12,
+                itemGap: 12,
+                textStyle: {
+                    fontSize: 12,
+                    width: 200,            // максимальная ширина текста в пикселях
+                    overflow: 'break'      // или 'truncate' с многоточием
+                },
+                formatter: function (name) {
+                    // Опционально: ручной перенос длинных слов
+                    if (name.length > 20) {
+                        return name.slice(0, 20) + '…';
+                    }
+                    return name;
+                }
+            },
+            /*legend: {
+                orient: 'vertical',
+                left: 50,
+                top: 'middle',
                 itemWidth: 50,
                 itemHeight: 20,
                 textStyle: { fontSize: 14 }
-            },
+            },*/
             series: [
                 {
                     name: this.title,
                     type: 'pie',
                     radius: ['5%', '90%'],
-                    center: ['63%', '45%'],
+                    center: ['63%', '50%'],
                     avoidLabelOverlap: false,
                     itemStyle: {
                         borderRadius: 8,
