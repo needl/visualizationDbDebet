@@ -19,10 +19,9 @@ export class MetricCard {
                 formattedValue = value.toLocaleString();
             } else if (this.format === 'currency') {
                 // Преобразуем в миллиарды с одним знаком после запятой
-                const inBillions = value / 1_000_000_000;
-                // Округляем до 1 десятичного знака
+                const inBillions = (value / 1_000_000_000);
                 let rounded = Math.round(inBillions * 10) / 10;
-                formattedValue = rounded.toLocaleString() + ' млрд ₽';
+                formattedValue = rounded.toLocaleString('ru-Ru').replace('.', ',') + ' млрд ₽';
             }
             else {
                 formattedValue = value;

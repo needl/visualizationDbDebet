@@ -18,8 +18,8 @@ export class StatsTable {
             <tr>
                 <th>Заказчик</th>
                 <th>Сумма контрактов</th>
-                <th>Задолженность</th>
-                <th>Коэффициент</th>
+                <th>Дебиторская задолженность</th>
+                <th>Соотношение дебиторской задолженности к сумме контрактов</th>
             </tr>
         `;
         table.appendChild(thead);
@@ -45,13 +45,13 @@ export class StatsTable {
 
             // Коэффициент с прогресс-баром и текстом внутри
             const tdCoeff = document.createElement('td');
-            const percent = Math.min(row.coefficient * 100, 100);
+            const percent = Math.min(row.coefficient, 100);
             tdCoeff.innerHTML = `
                 <div class="progress-container">
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${percent}%;"></div>
                     </div>
-                    <span class="coeff-value">${row.coefficient.toFixed(1)}</span>
+                    <span class="coeff-value">${row.coefficient.toFixed(1) + '%'}</span>
                 </div>
             `;
             tr.appendChild(tdCoeff);

@@ -67,7 +67,7 @@ export class PieChartComponent {
             },*/
             tooltip: {
                 trigger: 'item',
-                confine: true,                // ← ключевая опция
+                confine: true,
                 appendTo: document.body,
                 // position можно не указывать, ECharts сам подберёт
                 formatter: function(params) {
@@ -83,7 +83,7 @@ export class PieChartComponent {
                 itemHeight: 12,
                 itemGap: 12,
                 textStyle: {
-                    fontSize: 12,
+                    fontSize: 14,
                     width: 200,            // максимальная ширина текста в пикселях
                     overflow: 'break'      // или 'truncate' с многоточием
                 },
@@ -121,7 +121,7 @@ export class PieChartComponent {
                         label: {
                             show: true,
                             fontSize: 20,
-                            position: 'right',
+                            position: 'top',
                             fontWeight: 'bold',
                         }
                     },
