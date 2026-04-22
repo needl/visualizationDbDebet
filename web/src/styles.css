@@ -471,3 +471,12 @@ body {
 .modal-content h3 {
     text-align: center;
 }
+
+.pie-chart-title {
+    text-align: center;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 18px;
+    margin: 0.75rem 0 0 0;
+    color: #000000;
+}

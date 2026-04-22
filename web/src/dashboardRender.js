@@ -52,6 +52,13 @@ export class DashboardRenderer {
                     const barChart = new ChartComponent(barContainer, chartConfig.metric, chartConfig.title);
                     this.components.push(barChart);*/
 
+                    //const pieHeaderText = chartConfig.pieTitle || `${chartConfig.title}`;
+
+                    const pieHeader = document.createElement('h3');
+                    pieHeader.textContent = chartConfig.title;
+                    pieHeader.className = 'pie-chart-title';
+                    wrapperDiv.appendChild(pieHeader);
+
                     // Контейнер для круговой диаграммы с фоном
                     const pieWrapper = document.createElement('div');
                     pieWrapper.className = 'pie-wrapper';
@@ -64,8 +71,8 @@ export class DashboardRenderer {
                     wrapperDiv.appendChild(pieWrapper);
 
                     const pieMetricKey = chartConfig.metric + 'Pie';
-                    const pieTitle = `Распределение ${chartConfig.title.toLowerCase()}`;
-                    const pieChart = new PieChartComponent(pieContainer, pieMetricKey, pieTitle);
+                    //const pieTitle = `Распределение ${chartConfig.title.toLowerCase()}`;
+                    const pieChart = new PieChartComponent(pieContainer, pieMetricKey, chartConfig.title);
                     this.components.push(pieChart);
 
                     chartsContainer.appendChild(wrapperDiv);
