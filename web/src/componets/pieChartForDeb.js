@@ -36,7 +36,7 @@ export class PieChartComponent {
         this.drawPie(chartData.data);
     }
 
-    drawPie(data) {
+    /*drawPie(data) {
         if (!this.container) return;
         if (typeof echarts === 'undefined') {
             this.showError('ECharts не загружен');
@@ -54,7 +54,7 @@ export class PieChartComponent {
         this.chart = echarts.init(this.container);
 
         const option = {
-            /*tooltip: {
+            /!*tooltip: {
                 trigger: 'item',
                 position: function(point, param33s, dom, rect, size) {
                     // Показываем тултип рядом с курсором
@@ -64,7 +64,7 @@ export class PieChartComponent {
                     const valueInBillions = (params.value / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
                     return `${valueInBillions} млрд ₽ (${params.percent}%)`;
                 }
-            },*/
+            },*!/
             tooltip: {
                 trigger: 'item',
                 confine: true,
@@ -95,14 +95,14 @@ export class PieChartComponent {
                     return name;
                 }
             },
-            /*legend: {
+            /!*legend: {
                 orient: 'vertical',
                 left: 50,
                 top: 'middle',
                 itemWidth: 50,
                 itemHeight: 20,
                 textStyle: { fontSize: 14 }
-            },*/
+            },*!/
             series: [
                 {
                     name: this.title,
@@ -122,6 +122,105 @@ export class PieChartComponent {
                             show: true,
                             fontSize: 20,
                             position: 'top',
+                            fontWeight: 'bold',
+                        }
+                    },
+                    labelLine: { show: false },
+                    data: data
+                }
+            ]
+        };
+
+        this.chart.setOption(option, true);
+        this.chart.resize();
+    }*/
+
+    drawPie(data) {
+        if (!this.container) return;
+        if (typeof echarts === 'undefined') {
+            this.showError('ECharts не загружен');
+            return;
+        }
+
+        if (this.chart) {
+            this.chart.dispose();
+            this.chart = null;
+        }
+        this.container.innerHTML = '';
+        this.chart = echarts.init(this.container);
+
+        // Функция форматирования значения и процента
+        const formatValue = (value, percent) => {
+            const valueInBillions = (value / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+            return `${valueInBillions} млрд ₽ (${percent}%)`;
+        };
+
+        // Форматтер для тултипа при наведении на сектор
+        const tooltipFormatter = (params) => {
+            return formatValue(params.value, params.percent);
+        };
+
+        // Форматтер для тултипа при наведении на легенду
+        const legendTooltipFormatter = (params) => {
+            const item = data.find(d => d.name === params.name);
+            if (item) {
+                const total = data.reduce((sum, d) => sum + d.value, 0);
+                const percent = ((item.value / total) * 100).toFixed(2);
+                return formatValue(item.value, percent); // ← только сумма и процент
+            }
+            return params.name;
+        };
+
+        const option = {
+            tooltip: {
+                trigger: 'item',
+                confine: true,
+                appendTo: document.body,
+                formatter: tooltipFormatter
+            },
+            legend: {
+                orient: 'vertical',
+                left: 50,
+                top: 'middle',
+                itemWidth: 20,
+                itemHeight: 12,
+                itemGap: 12,
+                textStyle: {
+                    fontSize: 14,
+                    width: 200,
+                    overflow: 'break'
+                },
+                formatter: function (name) {
+                    if (name.length > 20) {
+                        return name.slice(0, 20) + '…';
+                    }
+                    return name;
+                },
+                // Включаем тултип для легенды
+                tooltip: {
+                    show: true,
+                    formatter: legendTooltipFormatter
+                }
+            },
+            series: [
+                {
+                    name: this.title,
+                    type: 'pie',
+                    radius: ['5%', '85%'],
+                    center: ['63%', '50%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 8,
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    },
+                    label: { show: false },
+                    emphasis: {
+                        scale: false,
+                        label: {
+                            show: true,
+                            fontSize: 12,
+                            position: 'outer',
                             fontWeight: 'bold',
                         }
                     },

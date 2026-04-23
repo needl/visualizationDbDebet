@@ -204,13 +204,13 @@ export class DashboardRenderer {
                     chartContainer = document.createElement('div');
                     chartContainer.className = 'chart-wrapper-full';
                     chartContainer.style.width = '100%';
-                    chartContainer.style.height = '470px';
+                    chartContainer.style.height = '700px';
                     const chart = new ChartComponent(chartContainer, block.chart.metric, block.chart.title);
                     this.components.push(chart);
                 }
 
                 // Если есть и таблица, и график — помещаем их в общий ряд
-                if (tableContainer && chartContainer) {
+                /*if (tableContainer && chartContainer) {
                     rowContainer = document.createElement('div');
                     rowContainer.className = 'stats-row';
                     tableContainer.classList.add('stats-col');
@@ -218,9 +218,11 @@ export class DashboardRenderer {
                     rowContainer.appendChild(tableContainer);
                     rowContainer.appendChild(chartContainer);
                     blockDiv.appendChild(rowContainer);
-                } else if (tableContainer) {
+                } else if */
+                if (tableContainer) {
                     blockDiv.appendChild(tableContainer);
-                } else if (chartContainer) {
+                }
+                if (chartContainer) {
                     blockDiv.appendChild(chartContainer);
                 }
 
