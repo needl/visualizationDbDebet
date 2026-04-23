@@ -16,11 +16,11 @@ export const dashboardConfig = [
         }
     },
     {
-        title: 'Дебиторка по заказчикам',
+        title: 'Дебиторская задолженность по заказчикам',
         type: 'charts',
         charts: [
-            { metric: 'contractAmount', title: 'Сумма контрактов' },
-            { metric: 'debetTotal', title: 'Дебиторская задолженность' },
+            { metric: 'contractAmount', title: 'Сумма контрактов'},
+            { metric: 'debetTotal', title: 'Дебиторская задолженность'},
             { metric: 'debetOverdose', title: 'Просроченная дебиторская задолженность' }
         ]
     },
