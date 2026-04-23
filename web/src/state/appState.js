@@ -8,7 +8,7 @@ class AppState {
             debetByYear: null
         };
         this._stats = null;
-        this._tableData = null;   // новое поле
+        this._tableData = null;
         this._loading = false;
         this._error = null;
         this._subscribers = [];
@@ -46,7 +46,6 @@ class AppState {
     }
 
     _notify() {
-        //console.log('_notify called, current state:', this._getState());
         const state = this._getState();
         this._subscribers.forEach(cb => cb(state));
     }

@@ -12,7 +12,7 @@ export const dashboardConfig = [
         table: true,
         chart: {
             metric: 'debetByYear',
-            title: 'Динамика задолженности по годам (2024 vs 2025)'
+            title: 'Динамика дебиторской задолженности'
         }
     },
     {

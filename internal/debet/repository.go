@@ -35,6 +35,7 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 						debt_2025_12_31_total,
 						debt_2024_12_31_total,
 						debt_2025_12_31_overdue,
+						debt_2024_12_31_overdue,
 						construction_title
 				from debet
 				where source_org_name != 'АО Мосинжпроект'
