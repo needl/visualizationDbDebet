@@ -39,15 +39,176 @@ export class ChartComponent {
         if (chartData.series && Array.isArray(chartData.series)) {
             // Групповой график
             this.drawGroupedChart(chartData.names, chartData.series);
-        } else if (chartData.values) {
+        } /*else if (chartData.values) {
             // Обычный график
             this.drawChart(chartData.names, chartData.values);
-        } else {
+        }*/ else {
             this.showEmpty();
         }
     }
 
-    drawChart(names, values) {
+    drawGroupedChart(names, series) {
+        if (!this.container) return;
+        if (typeof echarts === 'undefined') {
+            this.showError('ECharts не загружен');
+            return;
+        }
+
+        if (!this.chart) {
+            this.chart = echarts.init(this.container);
+        }
+
+        // Цвета для четырёх серий
+        const colorMap = {
+            '31.12.2024 Текущая дебиторская задолженность': '#4caf50',
+            '31.12.2024 Просроченная дебиторская задолженность': '#f44336',
+            '31.12.2025 Текущая дебиторская задолженность': '#81c784',
+            '31.12.2025 Просроченная дебиторская задолженность': '#e57373'
+        };
+
+        const option = {
+            /*legend: {
+                bottom: 40,
+                left: 'center',
+                orient: 'horizontal',
+                itemGap: 10
+            },*/
+            title: {
+                text: this.title,
+                left: 'center'
+            },
+            grid: {
+                containLabel: true,
+                left: '2%',
+                right: '2%',
+                top: '10%',
+                bottom: '2%'
+            },
+            /*tooltip: {
+                trigger: 'axis',
+                axisPointer: { type: 'shadow' },
+                formatter: function(params) {
+                    let res = params[0].axisValue + '<br/>';
+                    params.forEach(p => {
+                        const val = p.value;
+                        const inMillions = (val / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+                        res += `${p.seriesName}: ${inMillions} млрд ₽<br/>`;
+                    });
+                    return res;
+                }
+            },*/
+            tooltip: {
+                trigger: 'item',   // было 'axis'
+                formatter: function(params) {
+                    const val = params.value;
+                    const inMillions = (val / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+                    return `${params.seriesName}: ${inMillions} млрд ₽`;
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: names,
+                axisLabel: {
+                    rotate: 45,
+                    interval: 0
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Сумма (млрд ₽)',
+                axisLabel: {
+                    formatter: function(value) {
+                        return (value / 1_000_000_000).toFixed(1);
+                    }
+                }
+            },
+            series: series.map(s => ({
+                name: s.name,
+                type: 'bar',
+                stack: s.stack,               // <-- главное изменение
+                data: s.data,
+                itemStyle: {
+                    color: colorMap[s.name] || undefined
+                }
+            }))
+        };
+
+        this.chart.setOption(option);
+        this.chart.resize();
+    }
+
+    /*drawGroupedChart(names, series) {
+        if (!this.container) return;
+        if (typeof echarts === 'undefined') {
+            this.showError('ECharts не загружен');
+            return;
+        }
+
+        if (!this.chart) {
+            this.chart = echarts.init(this.container);
+        }
+
+        const option = {
+            legend: {
+                bottom: 40,
+                left: 'center',
+                orient: 'horizontal',
+                itemGap: 10
+            },
+            title: {
+                text: this.title,
+                left: 'center'
+            },
+            grid: {
+                containLabel: true,
+                left: '2%',
+                right: '2%',
+                top: '10%',
+                bottom: '10%'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: { type: 'shadow' },
+                position: 'auto', // автоматическое позиционирование
+                formatter: function(params) {
+                    let res = params[0].axisValue + '<br/>';
+                    params.forEach(p => {
+                        const val = p.value;
+                        const inMillions = (val / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+                        res += `${p.seriesName}: ${inMillions} млрд ₽<br/>`;
+                    });
+                    return res;
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: names,
+                axisLabel: {
+                    rotate: 45,
+                    interval: 0
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Сумма (млрд ₽)',
+                axisLabel: {
+                    formatter: function(value) {
+                        return (value / 1_000_000_000).toFixed(1);
+                    }
+                }
+            },
+            series: series.map(s => ({
+                name: s.name,
+                type: 'bar',
+                data: s.data,
+                itemStyle: { color: s.name === '2024' ? '#da8608' : '#cd1111' }
+            }))
+        };
+        this.chart.setOption(option);
+        this.chart.resize(); // обновляем размеры
+    }*/
+
+    /*drawChart(names, values) {
         if (!this.container) return;
         if (typeof echarts === 'undefined') {
             this.showError('ECharts не загружен');
@@ -110,78 +271,7 @@ export class ChartComponent {
         };
         this.chart.setOption(option);
         this.chart.resize(); // принудительно обновляем размер
-    }
-
-    drawGroupedChart(names, series) {
-        if (!this.container) return;
-        if (typeof echarts === 'undefined') {
-            this.showError('ECharts не загружен');
-            return;
-        }
-
-        if (!this.chart) {
-            this.chart = echarts.init(this.container);
-        }
-
-        const option = {
-            legend: {
-                bottom: 5,      // уменьшаем отступ снизу, чтобы легенда была ближе к диаграмме
-                left: 'center',
-                orient: 'horizontal',
-                itemGap: 10
-            },
-            title: {
-                text: this.title,
-                left: 'center'
-            },
-            grid: {
-                containLabel: true,
-                left: '8%',
-                right: '5%',
-                top: '15%',
-                bottom: '12%'    // чуть больше места для легенды
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
-                position: 'auto', // автоматическое позиционирование
-                formatter: function(params) {
-                    let res = params[0].axisValue + '<br/>';
-                    params.forEach(p => {
-                        const val = p.value;
-                        const inMillions = (val / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
-                        res += `${p.seriesName}: ${inMillions} млрд ₽<br/>`;
-                    });
-                    return res;
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: names,
-                axisLabel: {
-                    rotate: 45,
-                    interval: 0
-                }
-            },
-            yAxis: {
-                type: 'value',
-                name: 'Сумма (млрд ₽)',
-                axisLabel: {
-                    formatter: function(value) {
-                        return (value / 1_000_000_000).toFixed(1);
-                    }
-                }
-            },
-            series: series.map(s => ({
-                name: s.name,
-                type: 'bar',
-                data: s.data,
-                itemStyle: { color: s.name === '2024' ? '#da8608' : '#cd1111' }
-            }))
-        };
-        this.chart.setOption(option);
-        this.chart.resize(); // обновляем размеры
-    }
+    }*/
 
     showLoading() {
         if (this.chart) {

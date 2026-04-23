@@ -61,5 +61,6 @@ type View struct {
 	DebetTotal         *float64   `db:"debt_2025_12_31_total" json:"debt_2025_12_31_total"`     // Дебеторская задолженность (письмо)
 	DebetTotal2024     *float64   `db:"debt_2024_12_31_total" json:"debt_2024_12_31_total"`     // Дебеторская задолженность (письмо)
 	DebetOverdose      *float64   `db:"debt_2025_12_31_overdue" json:"debt_2025_12_31_overdue"` // Дебеторская задолженность(просроченная)
+	DebetOverdose2024  *float64   `db:"debt_2024_12_31_overdue" json:"debt_2024_12_31_overdue"` // Дебеторская задолженность(просроченная)
 	ConstructionTitle  *string    `db:"construction_title" json:"construction_title"`           // Титул
 }

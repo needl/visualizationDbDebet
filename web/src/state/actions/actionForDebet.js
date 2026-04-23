@@ -3,8 +3,9 @@ import { appState } from '../appState.js';
 import { fetchDebetData } from '../../services/apiCaller.js';
 import { aggregateByOrg } from '../../transformers/aggregatorByOrg.js';
 import { formatChartData } from '../../transformers/formatter.js';
-import { aggregateByYear } from '../../transformers/groupByYear.js';
-import { prepareTableData } from '../../transformers/tableDate.js'; // новый импорт
+//import { aggregateByYear } from '../../transformers/groupByYear.js';
+import { prepareTableData } from '../../transformers/tableDate.js';
+import {aggregateByYearStacked} from "../../transformers/groupByYear.js";
 
 export async function loadData() {
     appState.setLoading(true);
@@ -15,7 +16,8 @@ export async function loadData() {
         const debetTotalData = formatChartData(aggregated, 'debetTotal');
         const debetOverdoseData = formatChartData(aggregated, 'debetOverdose');
 
-        const groupedYearData = aggregateByYear(rawData);
+        //const groupedYearData = aggregateByYear(rawData);
+        const groupedYearData = aggregateByYearStacked(rawData);
         const tableData = prepareTableData(aggregated);
 
         // Данные для круговых диаграмм по трём метрикам
