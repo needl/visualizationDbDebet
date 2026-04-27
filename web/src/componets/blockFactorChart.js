@@ -102,6 +102,7 @@ export class BlockFactorsChart {
             yAxis: {
                 type: 'category',
                 data: names,
+                inverse: true,
                 axisLabel: {
                     fontSize: 10,
                     width: 150,
