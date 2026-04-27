@@ -26,7 +26,8 @@ export class HorizontalBarChart {
         const option = {
             title: {
                 text: this.title,
-                left: 'center',          // ← изменено с 'left' на 'center'
+                show: false,
+                left: 'center',
                 textStyle: {
                     fontSize: 14,
                     fontWeight: 'bold'
@@ -47,7 +48,7 @@ export class HorizontalBarChart {
                 containLabel: true,
                 left: '3%',
                 right: '7%',
-                top: '15%',              // достаточно места для заголовка
+                top: '5%',
                 bottom: '5%'
             },
             xAxis: {
