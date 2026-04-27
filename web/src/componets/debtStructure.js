@@ -171,7 +171,6 @@ export class DebtStructure {
             barChart.render(data || []);
         };
 
-        // Первый рендер – используем сохранённое состояние
         updateChart(this.lastState);
 
         const unsub = appState.subscribe(updateChart);

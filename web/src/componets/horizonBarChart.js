@@ -63,6 +63,7 @@ export class HorizontalBarChart {
             yAxis: {
                 type: 'category',
                 data: names,
+                inverse: true,
                 axisLabel: {
                     width: 300,               // максимальная ширина метки в px
                     overflow: 'break',

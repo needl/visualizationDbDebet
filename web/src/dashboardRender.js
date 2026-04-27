@@ -6,7 +6,6 @@ import {StatsTable} from "./componets/statsTableForDebet.js";
 import {appState} from "./state/appState.js";
 import {CustomerFilter} from "./componets/customerFilter.js";
 import {CustomerCard} from "./componets/customerCard.js";
-import {HorizontalBarChart} from "./componets/horizonBarChart.js";
 import {BlockFactorsChart} from "./componets/blockFactorChart.js";
 import {DebtStructure} from "./componets/debtStructure.js";
 
@@ -118,10 +117,6 @@ export class DashboardRenderer {
                     blockFactorsChart.render(state.customerBlockFactors);
                 });
                 this.statsSubscriptions.push(debtUnsub, blockUnsub);
-
-                // Ряд 2: топ-10 подрядчиков ПОЛНОСТЬЮ УДАЛЁН.
-                // Теперь топ-10 открывается в модальном окне при клике
-                // на сектор диаграммы DebtStructure (см. debtStructure.js).
             }
             else if (block.type === 'stats') {
                 // Карточки статистики
