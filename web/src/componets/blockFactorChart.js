@@ -83,10 +83,10 @@ export class BlockFactorsChart {
             },
             grid: {
                 containLabel: true,
-                left: '18%',
+                left: '5%',
                 right: '5%',
-                top: '15%',
-                bottom: '5%'
+                top: '10%',
+                bottom: '10%'
             },
             xAxis: {
                 type: 'value',

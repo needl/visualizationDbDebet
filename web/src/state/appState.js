@@ -20,21 +20,28 @@ class AppState {
         this._customerBlockFactors = null;      // блок-факторы
         this._customerLoading = false;           // флаг загрузки данных заказчика
         this._customerError = null;
+
+        this._objectList = [];             // массив строк – имена объектов
+        this._selectedObject = null;      // выбранный объект (имя)
+        this._objectData = null;          // { metrics: {...}, chartData: {...} }
+        this._objectLoading = false;
+        this._objectError = null;
     }
 
     setCustomers(list) { this._customers = list; this._notify(); }
     setSelectedCustomer(customer) { this._selectedCustomer = customer; this._notify(); }
-    setCustomerSummary(data) {
-        //console.log('setCustomerSummary called with', data);
-        this._customerSummary = data;
-        //console.log('this._customerSummary after assignment:', this._customerSummary);
-        this._notify();
-    }
+    setCustomerSummary(data) {this._customerSummary = data; this._notify(); }
     setCustomerTopDebtors(data) { this._customerTopDebtors = data; this._notify(); }
     setCustomerTopOverdue(data) { this._customerTopOverdue = data; this._notify(); }
     setCustomerBlockFactors(data) { this._customerBlockFactors = data; this._notify(); }
     setCustomerLoading(loading) { this._customerLoading = loading; this._notify(); }
     setCustomerError(error) { this._customerError = error; this._notify(); }
+
+    setObjectList(list) { this._objectList = list; this._notify(); }
+    setSelectedObject(name) { this._selectedObject = name; this._notify(); }
+    setObjectData(data) { this._objectData = data; this._notify(); }
+    setObjectLoading(loading) { this._objectLoading = loading; this._notify(); }
+    setObjectError(error) { this._objectError = error; this._notify(); }
 
     subscribe(callback) {
         this._subscribers.push(callback);
@@ -91,7 +98,13 @@ class AppState {
             customerTopOverdue: this._customerTopOverdue,
             customerBlockFactors: this._customerBlockFactors,
             customerLoading: this._customerLoading,
-            customerError: this._customerError
+            customerError: this._customerError,
+
+            objectList: this._objectList,
+            selectedObject: this._selectedObject,
+            objectData: this._objectData,
+            objectLoading: this._objectLoading,
+            objectError: this._objectError
         };
     }
 }

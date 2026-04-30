@@ -13,6 +13,7 @@ func NewRouter(
 	responseHandler *handler.ResponseHandler,
 	customerHandler *handler.CustomerHandler,
 	contractorHandler *handler.ContractorHandler,
+	objectsHandler *handler.ObjectHandler,
 ) *mux.Router {
 	r := mux.NewRouter()
 
@@ -44,6 +45,11 @@ func NewRouter(
 	contractor.HandleFunc("/{orgName}", contractorHandler.GetContractorsWithBlockFactors).Methods("GET")
 	contractor.HandleFunc("/debet/curr", contractorHandler.GetContractorsWithCurrDebet).Methods("GET")
 	contractor.HandleFunc("/debet/overdue", contractorHandler.GetContractorsWithOverdueDebet).Methods("GET")
+
+	objects := r.PathPrefix("/objects").Subrouter()
+	objects.HandleFunc("/search", objectsHandler.GetAllObjectsByOrgNameAndObjectNameQuery).Methods("GET")
+	objects.HandleFunc("/{sourceOrgName}", objectsHandler.GetAllObjectsNamesByOrgName).Methods("GET")
+	objects.HandleFunc("/{sourceOrgName}/{objectName}", objectsHandler.GetAllObjectsByOrgNameAndObjectName).Methods("GET")
 
 	// Middleware можно добавить глобально или на подроутер
 	// r.Use(middleware.Logger, middleware.Recoverer)

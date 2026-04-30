@@ -20,7 +20,12 @@ export class DebtStructure {
     }
 
     render(summary) {
+        // Если данных нет — уничтожаем график (если есть) и показываем сообщение
         if (!summary || summary.total_debet === undefined) {
+            if (this.chart) {
+                this.chart.dispose();
+                this.chart = null;
+            }
             this.container.innerHTML = '<div class="empty-message">Нет данных по задолженности</div>';
             return;
         }
@@ -29,21 +34,33 @@ export class DebtStructure {
         const overdueDebt = summary.total_debet_overdue || 0;
         const currentDebt = totalDebt - overdueDebt;
 
+        // Если задолженность полностью отсутствует
         if (totalDebt === 0 && overdueDebt === 0) {
+            if (this.chart) {
+                this.chart.dispose();
+                this.chart = null;
+            }
             this.container.innerHTML = '<div class="empty-message">Задолженность отсутствует</div>';
             return;
         }
 
+        // Инициализируем график, если его нет
         if (!this.chart) {
             this.chart = echarts.init(this.container);
         }
 
+        // Формируем данные для пирога, исключая нулевые сектора
         const data = [
             { name: 'Текущая', value: currentDebt, itemStyle: { color: '#10b981' } },
             { name: 'Просроченная', value: overdueDebt, itemStyle: { color: '#ef4444' } },
         ].filter(item => item.value > 0);
 
+        // Если после фильтрации нет данных (например, всё нулевое) — уничтожаем график
         if (data.length === 0) {
+            if (this.chart) {
+                this.chart.dispose();
+                this.chart = null;
+            }
             this.container.innerHTML = '<div class="empty-message">Задолженность отсутствует</div>';
             return;
         }

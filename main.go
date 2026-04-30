@@ -13,6 +13,7 @@ import (
 	"time"
 	"visualizationBdDebet/internal/contractor"
 	"visualizationBdDebet/internal/customer"
+	"visualizationBdDebet/internal/object"
 	"visualizationBdDebet/internal/response"
 
 	"github.com/jmoiron/sqlx"
@@ -67,6 +68,10 @@ func main() {
 	contractorService := contractor.NewService(contractorRepo)
 	contractorHandler := handler.NewContractorHandler(contractorService)
 
+	objectsRepo := object.NewRepository(db)
+	objectsService := object.NewService(objectsRepo)
+	objectHandler := handler.NewObjectHandler(objectsService)
+
 	apiRouter := router.NewRouter(
 		debetHandler,
 		contractHandler,
@@ -74,6 +79,7 @@ func main() {
 		responseHandler,
 		customerHandler,
 		contractorHandler,
+		objectHandler,
 	)
 
 	staticFS, err := fs.Sub(staticFiles, "web")

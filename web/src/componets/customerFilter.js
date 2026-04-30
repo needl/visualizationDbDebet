@@ -57,6 +57,11 @@ export class CustomerFilter {
                 appState.setCustomerBlockFactors(null);
                 appState.setCustomerLoading(false); // важно: сбрасываем флаг загрузки
                 appState.setCustomerError(null);
+
+                appState.setSelectedObject(null);
+                appState.setObjectData(null);
+                appState.setObjectList([]);
+
                 return;
             }
             // appState._notify()
