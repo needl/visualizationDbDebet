@@ -152,9 +152,13 @@ body {
     transition: 0.2s;
     display: flex;
     flex-direction: column;
-    /*height: 100%;*/
+    height: 100%;
 }
-
+.metric-card-wrapper > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
 .metric-card {
     display: flex;
     flex-direction: column;
@@ -219,7 +223,7 @@ body {
     background-color: white;
     border-radius: 0.5rem;
     overflow: visible;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 0 0 rgba(0,0,0,0.05);
 }
 .stats-table th,
 .stats-table td {
@@ -463,8 +467,11 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 .close {
+    position: absolute;
+    top: 2px;
+    right: 20px;
+    z-index: 10;
     color: #aaa;
-    float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
@@ -477,6 +484,8 @@ body {
 .modal-body {
     max-height: 500px;
     overflow-y: auto;
+    padding-top: 0;
+    margin-top: 0;
 }
 .contractor-table {
     width: 100%;
@@ -522,6 +531,7 @@ body {
 
 .modal-content {
     background: #fff;
+    position: relative;
     border-radius: 8px;
     width: 95%;
     max-width: 2000px;
@@ -550,8 +560,8 @@ body {
 
 .modal-close {
     position: absolute;
-    right: 0;                    /* прижимаем к правому краю */
-    top: 50%;
+    right: 10px;                    /* прижимаем к правому краю */
+    top: 10px;
     transform: translateY(-50%); /* вертикальное центрирование */
     background: none;
     border: none;
@@ -559,6 +569,7 @@ body {
     line-height: 1;
     cursor: pointer;
     color: #666;
+    z-index: 10;
 }
 .modal-chart-container {
     flex: 1;
