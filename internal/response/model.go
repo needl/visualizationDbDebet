@@ -1,6 +1,6 @@
 package response
 
-type PageDto struct {
+type Response struct {
 	ID                *int    `json:"id"`
 	CountSourceOrg    int     `db:"count_source_org" json:"count_source_org"`       // Количество заказчиков из дебет // Уникальные
 	CountContracts    int     `db:"count_contracts" json:"count_contracts"`         // Количество контрактов //Уникальные

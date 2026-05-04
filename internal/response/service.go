@@ -16,13 +16,13 @@ func NewService(repo *Repository, debetService *debet.Service) *Service {
 }
 
 // GetResponse получает сводную статистику по дебиторке без МИП
-func (s *Service) GetResponse(ctx context.Context) (*PageDto, error) {
+func (s *Service) GetResponse(ctx context.Context) (*Response, error) {
 	stats, err := s.repo.GetPageDto(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get response stats from repo in response service: %w", err)
 	}
 
-	return &PageDto{
+	return &Response{
 		CountSourceOrg:    stats.CountSourceOrg,
 		CountContracts:    stats.CountContracts,
 		SumContractAmount: stats.SumContractAmount,
@@ -32,13 +32,13 @@ func (s *Service) GetResponse(ctx context.Context) (*PageDto, error) {
 }
 
 // GetResponseWithMIP получает сводную статистику по дебиторке с МИП
-func (s *Service) GetResponseWithMIP(ctx context.Context) (*PageDto, error) {
+func (s *Service) GetResponseWithMIP(ctx context.Context) (*Response, error) {
 	stats, err := s.repo.GetPageDtoWithMIP(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get response stats from repo in response service: %w", err)
 	}
 
-	return &PageDto{
+	return &Response{
 		CountSourceOrg:    stats.CountSourceOrg,
 		CountContracts:    stats.CountContracts,
 		SumContractAmount: stats.SumContractAmount,
