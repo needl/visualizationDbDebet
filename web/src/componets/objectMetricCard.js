@@ -1,5 +1,5 @@
-// src/componets/metricCard.js
-export class MetricCard {
+// src/components/objectMetricCard.js
+export class ObjectMetricCard {
     constructor(container, title, valueKey, format = 'number') {
         this.container = container;
         this.title = title;
@@ -11,20 +11,31 @@ export class MetricCard {
 
     update(stats) {
         if (!stats) return;
-        const value = stats[this.valueKey];
+        let value = stats[this.valueKey];
         let formattedValue = '—';
 
         if (value !== undefined && value !== null) {
-            if (this.format === 'number') {
-                formattedValue = value.toLocaleString();
-            } else if (this.format === 'currency') {
-                // Преобразуем в миллиарды с одним знаком после запятой
-                const inBillions = (value / 1_000_000_000);
-                let rounded = Math.round(inBillions * 10) / 10;
-                formattedValue = rounded.toLocaleString('ru-Ru').replace('.', ',') + ' млрд ₽';
-            }
-            else {
-                formattedValue = value;
+            switch (this.format) {
+                case 'number':
+                    formattedValue = value.toLocaleString();
+                    break;
+                case 'money':
+                    const inMillions = value / 1_000_000;
+                    const rounded = Math.round(inMillions * 10) / 10;
+                    formattedValue = rounded.toLocaleString('ru-RU').replace('.', ',') + ' млн ₽';
+                    break;
+                case 'percent':
+                    formattedValue = value.toFixed(2).replace('.', ',') + '%';
+                    break;
+                case 'date':
+                    formattedValue = value;
+                    break;
+                case 'boolean':
+                    formattedValue = value ? 'Да' : 'Нет';
+                    break;
+                case 'string':
+                default:
+                    formattedValue = String(value);
             }
         }
 
@@ -43,7 +54,7 @@ export class MetricCard {
         cardDiv.appendChild(titleDiv);
         const valueDiv = document.createElement('div');
         valueDiv.className = 'card-value';
-        valueDiv.textContent = 'Загрузка...';
+        valueDiv.textContent = '—';
         cardDiv.appendChild(valueDiv);
         this.container.appendChild(cardDiv);
         this.valueElement = valueDiv;

@@ -154,13 +154,21 @@ body {
     flex-direction: column;
     height: 100%;
 }
-
+.metric-card-wrapper > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
 .metric-card {
     display: flex;
     flex-direction: column;
     padding: 1.25rem;
     text-align: center;
-    height: 100%;
+    /*min-height: 100%;*/
+    flex: 1;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    justify-content: center;
 }
 
 .card-title {
@@ -175,6 +183,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
 .card-value {
@@ -214,7 +223,7 @@ body {
     background-color: white;
     border-radius: 0.5rem;
     overflow: visible;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 0 0 rgba(0,0,0,0.05);
 }
 .stats-table th,
 .stats-table td {
@@ -374,9 +383,29 @@ body {
     margin-bottom: 1.5rem;
 }
 .customer-metrics-grid {
-    display: flex;
-    flex-wrap: wrap;
+    /*display: flex;*/
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+    /*flex-wrap: wrap;*/
     gap: 1rem;
+}
+.customer-metrics-grid .metric-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    transition: box-shadow 0.2s;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    /* min-height больше не нужен, грид растянет карточку */
 }
 .metric-card {
     flex: 1;
@@ -438,8 +467,11 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 .close {
+    position: absolute;
+    top: 2px;
+    right: 20px;
+    z-index: 10;
     color: #aaa;
-    float: right;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
@@ -452,6 +484,8 @@ body {
 .modal-body {
     max-height: 500px;
     overflow-y: auto;
+    padding-top: 0;
+    margin-top: 0;
 }
 .contractor-table {
     width: 100%;
@@ -497,6 +531,7 @@ body {
 
 .modal-content {
     background: #fff;
+    position: relative;
     border-radius: 8px;
     width: 95%;
     max-width: 2000px;
@@ -525,8 +560,8 @@ body {
 
 .modal-close {
     position: absolute;
-    right: 0;                    /* прижимаем к правому краю */
-    top: 50%;
+    right: 10px;                    /* прижимаем к правому краю */
+    top: 10px;
     transform: translateY(-50%); /* вертикальное центрирование */
     background: none;
     border: none;
@@ -534,8 +569,120 @@ body {
     line-height: 1;
     cursor: pointer;
     color: #666;
+    z-index: 10;
 }
 .modal-chart-container {
     flex: 1;
     min-height: 0;
+}
+
+.object-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Адаптив для планшетов (2-3 колонки) */
+@media (max-width: 1024px) {
+    .object-metrics-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Адаптив для телефонов (1 колонка) */
+@media (max-width: 640px) {
+    .object-metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Контейнер графика объекта */
+.analytics-chart {
+    background: #ffffff;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.analytics-chart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.2);
+}
+
+.object-filter-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Сам фильтр – 20% ширины */
+.object-filter {
+    width: 35%;
+    min-width: 200px; /* чтобы на узких экранах не исчезал */
+    text-align: center;
+}
+
+.object-filter label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+    text-align: center;
+}
+
+/* Кастомный селект */
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+/* Выбранное значение – показываем только первое слово, обрезаем многоточием */
+.selected-value {
+    padding: 0.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: #fff;
+}
+
+/* Выпадающий список */
+.options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    max-height: 300px;
+    overflow: auto; /* вертикальная и горизонтальная прокрутка */
+    z-index: 1000;
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0 0;
+    display: none;
+}
+.options.open {
+    display: block;
+}
+
+/* Элемент списка */
+.option-item {
+    padding: 0.5rem;
+    cursor: pointer;
+    white-space: nowrap; /* чтобы длинные названия не переносились, а давали горизонтальный скролл */
+}
+.option-item:hover {
+    background-color: #f1f5f9;
+}
+
+/* Сообщения о загрузке/пустоте */
+.object-filter-loading,
+.object-filter-empty {
+    text-align: center;
+    padding: 0.5rem;
+    color: #64748b;
 }

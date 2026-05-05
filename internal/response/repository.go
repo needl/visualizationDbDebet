@@ -15,8 +15,8 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetPageDto(ctx context.Context) (*PageDto, error) {
-	var pageDto PageDto
+func (r *Repository) GetPageDto(ctx context.Context) (*Response, error) {
+	var pageDto Response
 
 	query := `
 				select
@@ -35,8 +35,8 @@ func (r *Repository) GetPageDto(ctx context.Context) (*PageDto, error) {
 	return &pageDto, nil
 }
 
-func (r *Repository) GetPageDtoWithMIP(ctx context.Context) (*PageDto, error) {
-	var pageDto PageDto
+func (r *Repository) GetPageDtoWithMIP(ctx context.Context) (*Response, error) {
+	var pageDto Response
 	query := `
 				select
 					count(distinct source_org_name) as count_source_org,
