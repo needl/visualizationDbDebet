@@ -1,14 +1,15 @@
 // src/dashboardRenderer.js
-import {ChartComponent} from "./componets/chartForDeb.js";
+import {ChartComponent} from "./componets/chart/debetChart.js";
 import {PieChartComponent} from "./componets/pieChartForDeb.js";
-import {MetricCard} from "./componets/metricCard.js";
+import {MetricCard} from "./componets/card/metricCard.js";
 import {StatsTable} from "./componets/statsTableForDebet.js";
 import {appState} from "./state/appState.js";
-import {CustomerFilter} from "./componets/customerFilter.js";
-import {CustomerCard} from "./componets/customerCard.js";
-import {BlockFactorsChart} from "./componets/blockFactorChart.js";
+import {CustomerFilter} from "./componets/filter/customerFilter.js";
+import {CustomerCard} from "./componets/card/customerCard.js";
+// import {BlockFactorsChart} from "./componets/blockFactorChart.js";
+import {BlockFactorFilter} from "./componets/filter/blockFactorFilter.js";
 import {DebtStructure} from "./componets/debtStructure.js";
-import {ObjectFilter} from "./componets/objectFilter.js";
+import {ObjectFilter} from "./componets/filter/objectFilter.js";
 import {ObjectAnalytics} from "./componets/objectAnalytics.js";
 
 export class DashboardRenderer {
@@ -108,17 +109,21 @@ export class DashboardRenderer {
 
                 // Инициализация компонентов внутри колонок
                 const debtStructure = new DebtStructure(debtStructureContainer);
-                const blockFactorsChart = new BlockFactorsChart(blockFactorsContainer, 'Блок-факторы по количеству подрядчиков');
-                this.components.push(debtStructure, blockFactorsChart);
+                /*const blockFactorsChart = new BlockFactorsChart(blockFactorsContainer, 'Блок-факторы по количеству подрядчиков');
+                this.components.push(debtStructure, blockFactorsChart);*/
+
+                const blockFactorFilter = new BlockFactorFilter(blockFactorsContainer);
+                this.components.push(debtStructure, blockFactorFilter);
 
                 // Подписки на обновление
                 const debtUnsub = appState.subscribe(state => {
                     debtStructure.render(state.customerSummary);
                 });
-                const blockUnsub = appState.subscribe(state => {
+                /*const blockUnsub = appState.subscribe(state => {
                     blockFactorsChart.render(state.customerBlockFactors);
-                });
-                this.statsSubscriptions.push(debtUnsub, blockUnsub);
+                });*/
+                // this.statsSubscriptions.push(debtUnsub, blockUnsub);
+                this.statsSubscriptions.push(debtUnsub);
 
 
 

@@ -1,6 +1,6 @@
 /* global echarts */
 
-import { appState } from '../state/appState.js';
+import { appState } from '../../state/appState.js';
 
 export class ChartComponent {
     constructor(container, metricKey, title) {

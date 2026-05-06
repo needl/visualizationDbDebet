@@ -1,6 +1,6 @@
 // src/components/blockFactorChart.js
-import { appState } from '../state/appState.js';
-import {loadContractorsByFactor} from '../state/actions/actionForContractor.js'
+import { appState } from '../../state/appState.js';
+import {loadContractorsByFactor} from '../../state/actions/actionForContractor.js'
 
 export class BlockFactorsChart {
     constructor(container, title = 'Блок-факторы по количеству подрядчиков') {

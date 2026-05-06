@@ -1,6 +1,6 @@
 // src/components/debtStructure.js
 import { appState } from '../state/appState.js';
-import { HorizontalBarChart } from './horizonBarChart.js';
+import { HorizontalBarChart } from './chart/horizonBarChart.js';
 
 export class DebtStructure {
     constructor(container) {

@@ -23,3 +23,10 @@ type DebetContractor struct {
 	AcceptedSum *float64 `db:"accepted_sum" json:"accepted_sum"` // Сумма принятых работ
 	DebetSum    *float64 `db:"debet_sum" json:"debet_sum"`       // Сумма текущей задолженности
 }
+
+type ContractorView struct {
+	Name         *string  `db:"name" json:"name"`                   // Наименование подрядчика
+	Amount       *float64 `db:"amount" json:"amount"`               // Сумма контракта
+	DebetTotal   *float64 `db:"debet_total" json:"debet_total"`     // Сумма задолженности
+	DebetOverdue *float64 `db:"debet_overdue" json:"debet_overdue"` // Сумма просроченной задолженности
+}

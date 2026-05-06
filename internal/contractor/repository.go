@@ -76,21 +76,21 @@ func (r *Repository) FindContractorsWithCurrDebet(ctx context.Context) ([]DebetC
 	var contractors []DebetContractor
 
 	query := `
-select
-counterparty_name as name,
-coalesce(sum(contract_amount), 0.00) as contract_sum,
-coalesce(sum(paid_amount), 0.00) as paid_sum,
-coalesce(sum(accepted_amount), 0.00) as accepted_sum,
-coalesce(sum(debt_2025_12_31_total), 0.00)
-    - coalesce (sum(debt_2025_12_31_overdue), 0.00)
-    as debet_sum
-from debet
-where source_org_name != 'АО Мосинжпроект'
-group by counterparty_name
-having coalesce(sum(debt_2025_12_31_total), 0) 
-           - coalesce (sum(debt_2025_12_31_overdue), 0.00) != 0.00
-order by debet_sum desc
-`
+				select
+				counterparty_name as name,
+				coalesce(sum(contract_amount), 0.00) as contract_sum,
+				coalesce(sum(paid_amount), 0.00) as paid_sum,
+				coalesce(sum(accepted_amount), 0.00) as accepted_sum,
+				coalesce(sum(debt_2025_12_31_total), 0.00)
+					- coalesce (sum(debt_2025_12_31_overdue), 0.00)
+					as debet_sum
+				from debet
+				where source_org_name != 'АО Мосинжпроект'
+				group by counterparty_name
+				having coalesce(sum(debt_2025_12_31_total), 0) 
+						   - coalesce (sum(debt_2025_12_31_overdue), 0.00) != 0.00
+				order by debet_sum desc
+			`
 
 	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
 		return nil, err
@@ -117,6 +117,52 @@ order by debet_sum desc
 `
 
 	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
+		return nil, err
+	}
+
+	return contractors, nil
+}
+
+func (r *Repository) FindContractorsWithBlockFactorsForAnalytics(
+	ctx context.Context,
+	sourceOrgName string,
+	columnName string,
+) ([]ContractorView, error) {
+	var contractors []ContractorView
+
+	allowedColumns := map[string]bool{
+		"priznanie_bankrotom":                    true,
+		"likvidatsiya":                           true,
+		"nedostovernost_egryul":                  true,
+		"isklyuchenie_egryul":                    true,
+		"inostrannye_agenty":                     true,
+		"ekstremizm_terrorizm":                   true,
+		"reestr_nedobrosovestnyh_postavshchikov": true,
+		"administrativnaya_otvetstvennost_19_28": true,
+		"namerenie_bankrotstvo":                  true,
+		"blokirovka_schetov":                     true,
+		"srednespisochnaya_chislennost_le_1":     true,
+	}
+
+	if !allowedColumns[columnName] {
+		slog.Warn("ColumnName not allowed")
+		return nil, errors.New("column " + columnName + " is not allowed")
+	}
+
+	query := fmt.Sprintf(`
+				select	
+				min(d.counterparty_name) as name,
+				sum(d.contract_amount) as amount,
+				sum(d.debt_2025_12_31_total) as debet_total,
+				sum(d.debt_2025_12_31_overdue) as debet_overdue
+			from debet d
+			inner join blockfactor b on d.counterparty_inn = b.kod_nalogoplatelshchika
+			where d.source_org_name = $1
+			  and b.%s = 1
+			  group by d.counterparty_inn;
+		`, columnName)
+
+	if err := r.db.SelectContext(ctx, &contractors, query, sourceOrgName); err != nil {
 		return nil, err
 	}
 

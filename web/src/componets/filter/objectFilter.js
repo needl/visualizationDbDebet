@@ -1,7 +1,7 @@
 // src/components/ObjectFilter.js
-import { appState } from '../state/appState.js';
-import { loadObjectList } from '../state/actions/actionForObjects.js';
-import { loadObjectData } from '../state/actions/actionForObjects.js';
+import { appState } from '../../state/appState.js';
+import { loadObjectList } from '../../state/actions/actionForObjects.js';
+import { loadObjectData } from '../../state/actions/actionForObjects.js';
 
 export class ObjectFilter {
     constructor(container) {

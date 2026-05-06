@@ -1,5 +1,5 @@
 // src/components/CustomerCard.js
-import {appState} from "../state/appState.js";
+import {appState} from "../../state/appState.js";
 
 export class CustomerCard {
     constructor(container) {
