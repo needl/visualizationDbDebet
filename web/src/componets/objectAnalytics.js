@@ -1,6 +1,6 @@
 // src/components/ObjectAnalytics.js
 import { appState } from '../state/appState.js';
-import { ObjectMetricCard } from './objectMetricCard.js';
+import { ObjectMetricCard } from './card/objectMetricCard.js';
 
 export class ObjectAnalytics {
     constructor(container) {

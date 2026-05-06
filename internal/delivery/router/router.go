@@ -42,7 +42,7 @@ func NewRouter(
 	customer.HandleFunc("/blockFactors/{orgName}", customerHandler.GetCountBlockFactorsByCustomerId).Methods("GET")
 
 	contractor := r.PathPrefix("/contractor").Subrouter()
-	contractor.HandleFunc("/{orgName}", contractorHandler.GetContractorsWithBlockFactors).Methods("GET")
+	contractor.HandleFunc("/{orgName}", contractorHandler.GetContractorsWithBlockFactorsForAnalytic).Methods("GET")
 	contractor.HandleFunc("/debet/curr", contractorHandler.GetContractorsWithCurrDebet).Methods("GET")
 	contractor.HandleFunc("/debet/overdue", contractorHandler.GetContractorsWithOverdueDebet).Methods("GET")
 

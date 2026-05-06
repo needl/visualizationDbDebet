@@ -81,3 +81,28 @@ func (s *Service) GetContractorsWithOverdueDeb(ctx context.Context) ([]DebetCont
 
 	return contractors, nil
 }
+
+func (s *Service) GetContractorsWithBlockFactorsForAnalytic(
+	ctx context.Context,
+	sourceOrgName string,
+	columnName string,
+) ([]ContractorView, error) {
+
+	if sourceOrgName == "" {
+		slog.Warn("sourceOrgName is empty")
+		return nil, nil
+	}
+
+	if columnName == "" {
+		slog.Warn("columnName is empty")
+		return nil, nil
+	}
+
+	contractors, err := s.repo.FindContractorsWithBlockFactorsForAnalytics(ctx, sourceOrgName, columnName)
+	if err != nil {
+		slog.Error("FindContractorsWithBlockFactors err:", "err", err)
+		return nil, err
+	}
+
+	return contractors, nil
+}

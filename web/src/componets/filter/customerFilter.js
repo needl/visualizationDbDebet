@@ -1,7 +1,7 @@
 // src/components/CustomerFilter.js
-import { appState } from '../state/appState.js';
-import {fetchCustomers} from "../services/customerApiCaller.js";
-import {loadCustomerData} from "../state/actions/actionForCustomers.js";
+import { appState } from '../../state/appState.js';
+import {fetchCustomers} from "../../services/customerApiCaller.js";
+import {loadCustomerData} from "../../state/actions/actionForCustomers.js";
 
 export class CustomerFilter {
     constructor(container) {
@@ -64,10 +64,9 @@ export class CustomerFilter {
 
                 return;
             }
-            // appState._notify()
+
             appState.setSelectedCustomer(orgName);
             loadCustomerData(orgName);
         });
-        // Не загружаем данные автоматически
     }
 }
