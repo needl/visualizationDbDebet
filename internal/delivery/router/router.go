@@ -1,8 +1,9 @@
 package router
 
 import (
-	"github.com/gorilla/mux"
 	"visualizationBdDebet/internal/delivery/handler"
+
+	"github.com/gorilla/mux"
 )
 
 // NewRouter создаёт новый роутер и регистрирует все маршруты приложения.
@@ -42,7 +43,9 @@ func NewRouter(
 	customer.HandleFunc("/blockFactors/{orgName}", customerHandler.GetCountBlockFactorsByCustomerId).Methods("GET")
 
 	contractor := r.PathPrefix("/contractor").Subrouter()
-	contractor.HandleFunc("/{orgName}", contractorHandler.GetContractorsWithBlockFactorsForAnalytic).Methods("GET")
+	contractor.HandleFunc("/{orgName}/debt", contractorHandler.GetContractorsWithDebt).Methods("GET")
+	contractor.HandleFunc("/{orgName}/overdue", contractorHandler.GetContractorsWithOverdue).Methods("GET")
+	contractor.HandleFunc("/{orgName}", contractorHandler.GetContractorsWithBlockFactors).Methods("GET")
 	contractor.HandleFunc("/debet/curr", contractorHandler.GetContractorsWithCurrDebet).Methods("GET")
 	contractor.HandleFunc("/debet/overdue", contractorHandler.GetContractorsWithOverdueDebet).Methods("GET")
 
