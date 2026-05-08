@@ -1,18 +1,18 @@
 // src/components/debtStructure.js
 import { appState } from '../state/appState.js';
 import { HorizontalBarChart } from './chart/horizonBarChart.js';
+import { fetchContractorDebt, fetchContractorOverdue } from '../services/customerApiCaller.js';
 
 export class DebtStructure {
     constructor(container) {
         this.container = container;
         this.chart = null;
 
-        // Модальное окно
         this.activeModal = null;
         this.modalChart = null;
         this.modalUnsub = null;
+        this.contractorModal = null; // для нового окна
 
-        // Сохраняем последнее состояние, чтобы избежать вызова несуществующего getState()
         this.lastState = null;
         this.stateUnsub = appState.subscribe((state) => {
             this.lastState = state;
@@ -20,7 +20,6 @@ export class DebtStructure {
     }
 
     render(summary) {
-        // Если данных нет — уничтожаем график (если есть) и показываем сообщение
         if (!summary || summary.total_debet === undefined) {
             if (this.chart) {
                 this.chart.dispose();
@@ -34,7 +33,6 @@ export class DebtStructure {
         const overdueDebt = summary.total_debet_overdue || 0;
         const currentDebt = totalDebt - overdueDebt;
 
-        // Если задолженность полностью отсутствует
         if (totalDebt === 0 && overdueDebt === 0) {
             if (this.chart) {
                 this.chart.dispose();
@@ -44,18 +42,15 @@ export class DebtStructure {
             return;
         }
 
-        // Инициализируем график, если его нет
         if (!this.chart) {
             this.chart = echarts.init(this.container);
         }
 
-        // Формируем данные для пирога, исключая нулевые сектора
         const data = [
             { name: 'Текущая', value: currentDebt, itemStyle: { color: '#10b981' } },
             { name: 'Просроченная', value: overdueDebt, itemStyle: { color: '#ef4444' } },
         ].filter(item => item.value > 0);
 
-        // Если после фильтрации нет данных (например, всё нулевое) — уничтожаем график
         if (data.length === 0) {
             if (this.chart) {
                 this.chart.dispose();
@@ -142,6 +137,10 @@ export class DebtStructure {
     }
 
     showTopModal(type) {
+        console.log('lastState.customerTopDebtors:', this.lastState.customerTopDebtors);
+        console.log('lastState.customerTopOverdue:', this.lastState.customerTopOverdue);
+
+
         if (!this.lastState) {
             console.warn('Нет данных для открытия топа подрядчиков');
             return;
@@ -179,7 +178,19 @@ export class DebtStructure {
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
 
-        const barChart = new HorizontalBarChart(chartContainer, title.textContent);
+        // Коллбэк, вызываемый при клике на столбец
+        const onBarClick = (contractorName, value) => {
+            const orgName = this.lastState.selectedCustomer;
+            if (!orgName) return;
+            this.showContractorModal(contractorName, type, orgName);
+        };
+
+        const barChart = new HorizontalBarChart(
+            chartContainer,
+            title.textContent,
+            (v) => (v / 1e9).toFixed(2) + ' млрд ₽',
+            onBarClick
+        );
 
         const updateChart = (state) => {
             const data = type === 'overdue'
@@ -189,7 +200,6 @@ export class DebtStructure {
         };
 
         updateChart(this.lastState);
-
         const unsub = appState.subscribe(updateChart);
 
         this.activeModal = overlay;
@@ -211,8 +221,103 @@ export class DebtStructure {
         }
     }
 
+    showContractorModal(contractorName, type, orgName) {
+        console.log('showContractorModal called with:', contractorName, type, orgName);
+        this.closeContractorModal();
+
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) this.closeContractorModal();
+        });
+
+        const modal = document.createElement('div');
+        modal.className = 'modal-content';
+        modal.innerHTML = `
+            <span class="close">&times;</span>
+            <h3>Контракты подрядчика: ${contractorName}</h3>
+            <div class="modal-body">Загрузка...</div>
+        `;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        this.contractorModal = overlay;
+
+        const closeBtn = modal.querySelector('.close');
+        closeBtn.addEventListener('click', () => this.closeContractorModal());
+
+        const fetchFn = type === 'overdue' ? fetchContractorOverdue : fetchContractorDebt;
+        fetchFn(orgName, contractorName)
+            .then(data => this.renderContractorTable(data, modal.querySelector('.modal-body')))
+            .catch(err => {
+                modal.querySelector('.modal-body').innerHTML = `<div class="error">Ошибка: ${err.message}</div>`;
+            });
+    }
+
+    closeContractorModal() {
+        if (this.contractorModal) {
+            document.body.removeChild(this.contractorModal);
+            this.contractorModal = null;
+        }
+    }
+
+    renderContractorTable(data, container) {
+        if (!data || data.length === 0) {
+            container.innerHTML = 'Нет данных';
+            return;
+        }
+
+        const formatDate = (dateStr) => {
+            if (!dateStr) return '—';
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const formatMoney = (value) => {
+            if (value === null || value === undefined) return '—';
+            const num = Number(value);
+            if (isNaN(num)) return '—';
+            const mln = num / 1_000_000;
+            return mln.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        };
+
+        const headers = {
+            object: 'Объект',
+            contract_date: 'Дата заключения контракта',
+            work_end_date: 'Дата окончания работ',
+            number: 'Номер контракта',
+            amount: 'Сумма контракта, млн ₽',
+            debet_total: 'Общая задолженность, млн ₽',
+            debet_overdue: 'Просроченная задолженность, млн ₽'
+        };
+
+        let html = '<table class="contractor-table"><thead><tr>';
+        Object.values(headers).forEach(h => html += `<th>${h}</th>`);
+        html += '</tr></thead><tbody>';
+
+        data.forEach(item => {
+            html += '<tr>';
+            html += `<td>${item.object || '—'}</td>`;
+            html += `<td>${formatDate(item.contract_date)}</td>`;
+            html += `<td>${formatDate(item.work_end_date)}</td>`;
+            html += `<td>${item.number || '—'}</td>`;
+            html += `<td>${formatMoney(item.amount)}</td>`;
+            html += `<td>${formatMoney(item.debet_total)}</td>`;
+            html += `<td>${formatMoney(item.debet_overdue)}</td>`;
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
     clear() {
         this.closeTopModal();
+        this.closeContractorModal();
         if (this.stateUnsub) {
             this.stateUnsub();
             this.stateUnsub = null;

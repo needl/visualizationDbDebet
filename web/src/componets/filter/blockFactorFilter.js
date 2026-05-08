@@ -140,17 +140,19 @@ export class BlockFactorFilter {
             if (value === null || value === undefined) return '—';
             let num = typeof value === 'number' ? value : parseFloat(value);
             if (isNaN(num)) return value;
-            return num.toLocaleString('ru-RU');
+            // return num.toLocaleString('ru-RU');
+            const mln = num / 1_000_000;
+            return mln.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         };
         const headerMap = {
             name: 'Наименование подрядчика',
             object: 'Объект',
-            contract_date: 'Дата заключения контракта',
+            contract_date: 'Дата заключения контрактов',
             work_end_date: 'Дата окончания работ',
             number: 'Номер контракта',
-            amount: 'Сумма контракта',
-            debet_total: 'Общая задолженность',
-            debet_overdue: 'Просроченная задолженность',
+            amount: 'Сумма контракта, млн ₽',
+            debet_total: 'Общая задолженность, млн ₽',
+            debet_overdue: 'Просроченная задолженность, млн ₽',
             status: 'Статус'
         };
 

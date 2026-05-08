@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-	"sort"
 )
 
 type Service struct {
@@ -15,7 +14,7 @@ func NewService(repo *Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) GetContractorsWithBlockFactors(
+/*func (s *Service) GetContractorsWithBlockFactors(
 	ctx context.Context,
 	sourceOrgName string,
 	columnName string,
@@ -54,7 +53,7 @@ func (s *Service) GetContractorsWithBlockFactors(
 	})
 
 	return contractors, nil
-}
+}*/
 
 func (s *Service) GetContractorsWithCurrDeb(ctx context.Context) ([]DebetContractor, error) {
 	contractors, err := s.repo.FindContractorsWithCurrDebet(ctx)
@@ -82,7 +81,7 @@ func (s *Service) GetContractorsWithOverdueDeb(ctx context.Context) ([]DebetCont
 	return contractors, nil
 }
 
-func (s *Service) GetContractorsWithBlockFactorsForAnalytic(
+func (s *Service) GetContractorsWithBlockFactors(
 	ctx context.Context,
 	sourceOrgName string,
 	columnName string,
@@ -98,9 +97,59 @@ func (s *Service) GetContractorsWithBlockFactorsForAnalytic(
 		return nil, nil
 	}
 
-	contractors, err := s.repo.FindContractorsWithBlockFactorsForAnalytics(ctx, sourceOrgName, columnName)
+	contractors, err := s.repo.FindContractorsWithBlockFactors(ctx, sourceOrgName, columnName)
 	if err != nil {
 		slog.Error("FindContractorsWithBlockFactors err:", "err", err)
+		return nil, err
+	}
+
+	return contractors, nil
+}
+
+func (s *Service) GetContractorsWithDebt(
+	ctx context.Context,
+	sourceOrgName string,
+	counterpartyName string,
+) ([]Contractor, error) {
+
+	if sourceOrgName == "" {
+		slog.Warn("sourceOrgName is empty")
+		return nil, nil
+	}
+
+	if counterpartyName == "" {
+		slog.Warn("counterpartyName is empty")
+		return nil, nil
+	}
+
+	contractors, err := s.repo.FindContractorWithDebt(ctx, sourceOrgName, counterpartyName)
+	if err != nil {
+		slog.Error("FindContractorWithDebt err:", "err", err)
+		return nil, err
+	}
+
+	return contractors, nil
+}
+
+func (s *Service) GetContractorsWithOverdue(
+	ctx context.Context,
+	sourceOrgName string,
+	counterpartyName string,
+) ([]Contractor, error) {
+
+	if sourceOrgName == "" {
+		slog.Warn("sourceOrgName is empty")
+		return nil, nil
+	}
+
+	if counterpartyName == "" {
+		slog.Warn("counterpartyName is empty")
+		return nil, nil
+	}
+
+	contractors, err := s.repo.FindContractorWithOverdue(ctx, sourceOrgName, counterpartyName)
+	if err != nil {
+		slog.Error("FindContractorWithOverdue err:", "err", err)
 		return nil, err
 	}
 

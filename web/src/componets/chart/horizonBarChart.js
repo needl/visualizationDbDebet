@@ -1,8 +1,10 @@
+// src/components/horizonBarChart.js
 export class HorizontalBarChart {
-    constructor(container, title, valueFormatter = (v) => (v / 1e9).toFixed(2) + ' млрд ₽') {
+    constructor(container, title, valueFormatter, onBarClick) {
         this.container = container;
         this.title = title;
-        this.valueFormatter = valueFormatter;
+        this.valueFormatter = valueFormatter || ((v) => (v / 1e9).toFixed(2) + ' млрд ₽');
+        this.onBarClick = onBarClick || null;   // <-- сохраняем
         this.chart = null;
     }
 
@@ -28,21 +30,13 @@ export class HorizontalBarChart {
                 text: this.title,
                 show: false,
                 left: 'center',
-                textStyle: {
-                    fontSize: 14,
-                    fontWeight: 'bold'
-                }
+                textStyle: { fontSize: 14, fontWeight: 'bold' }
             },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: { type: 'shadow' },
                 confine: true,
-                position: 'centre',
-                formatter: (params) => {
-                    const val = params[0].value;
-                    //return `${params[0].name}<br/>${this.valueFormatter(val)}`;
-                    return `${params[0].name}`;
-                }
+                formatter: (params) => `${params[0].name}`
             },
             grid: {
                 containLabel: true,
@@ -65,7 +59,7 @@ export class HorizontalBarChart {
                 data: names,
                 inverse: true,
                 axisLabel: {
-                    width: 300,               // максимальная ширина метки в px
+                    width: 300,
                     overflow: 'break',
                     fontSize: 10,
                     rotate: 0,
@@ -76,6 +70,7 @@ export class HorizontalBarChart {
                 name: this.title,
                 type: 'bar',
                 data: values,
+                cursor: 'pointer',                // визуально указываем, что можно кликать
                 itemStyle: { color: '#d11b1b' },
                 label: {
                     show: true,
@@ -85,7 +80,20 @@ export class HorizontalBarChart {
             }]
         };
 
+        // Снимаем старый обработчик и задаём новый
+        this.chart.off('click');
         this.chart.setOption(option, true);
+
+        if (this.onBarClick) {
+            this.chart.on('click', (params) => {
+                if (params.componentType === 'series' && params.dataIndex !== undefined) {
+                    const name = names[params.dataIndex];
+                    const value = values[params.dataIndex];
+                    this.onBarClick(name, value);
+                }
+            });
+        }
+
         this.chart.resize();
     }
 
