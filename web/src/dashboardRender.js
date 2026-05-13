@@ -9,8 +9,6 @@ import {CustomerCard} from "./componets/card/customerCard.js";
 // import {BlockFactorsChart} from "./componets/blockFactorChart.js";
 import {BlockFactorFilter} from "./componets/filter/blockFactorFilter.js";
 import {DebtStructure} from "./componets/debtStructure.js";
-import {ObjectFilter} from "./componets/filter/objectFilter.js";
-import {ObjectAnalytics} from "./componets/objectAnalytics.js";
 
 export class DashboardRenderer {
     constructor(config) {
@@ -126,19 +124,6 @@ export class DashboardRenderer {
                 this.statsSubscriptions.push(debtUnsub);
 
 
-
-                const objectFilterContainer = document.createElement('div');
-                objectFilterContainer.className = 'object-filter-container';
-                blockDiv.appendChild(objectFilterContainer);
-                const objectFilter = new ObjectFilter(objectFilterContainer);
-                this.components.push(objectFilter);
-
-                // Аналитика объекта (карточки + график)
-                const objectAnalyticsContainer = document.createElement('div');
-                objectAnalyticsContainer.className = 'object-analytics-container';
-                blockDiv.appendChild(objectAnalyticsContainer);
-                const objectAnalytics = new ObjectAnalytics(objectAnalyticsContainer);
-                this.components.push(objectAnalytics);
 
             }
             else if (block.type === 'stats') {

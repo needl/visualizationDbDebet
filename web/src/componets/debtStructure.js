@@ -2,6 +2,8 @@
 import { appState } from '../state/appState.js';
 import { HorizontalBarChart } from './chart/horizonBarChart.js';
 import { fetchContractorDebt, fetchContractorOverdue } from '../services/customerApiCaller.js';
+import { fetchObjectData } from '../services/objectApiCaller.js';
+import { aggregateObjectMetrics, prepareChartData } from '../transformers/objectAggregator.js';
 
 export class DebtStructure {
     constructor(container) {
@@ -12,6 +14,8 @@ export class DebtStructure {
         this.modalChart = null;
         this.modalUnsub = null;
         this.contractorModal = null; // для нового окна
+        this.objectModal = null;
+        this.objectModalChart = null;
 
         this.lastState = null;
         this.stateUnsub = appState.subscribe((state) => {
@@ -255,10 +259,31 @@ export class DebtStructure {
     }
 
     closeContractorModal() {
+        this.closeObjectModal();
         if (this.contractorModal) {
             document.body.removeChild(this.contractorModal);
             this.contractorModal = null;
         }
+    }
+
+    closeObjectModal() {
+        if (this.objectModalChart) {
+            this.objectModalChart.dispose();
+            this.objectModalChart = null;
+        }
+        if (this.objectModal) {
+            document.body.removeChild(this.objectModal);
+            this.objectModal = null;
+        }
+    }
+
+    escapeHtml(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
     }
 
     renderContractorTable(data, container) {
@@ -301,7 +326,12 @@ export class DebtStructure {
 
         data.forEach(item => {
             html += '<tr>';
-            html += `<td>${item.object || '—'}</td>`;
+            if (item.object) {
+                const safeObject = this.escapeHtml(item.object);
+                html += `<td><button type="button" class="object-link-btn" data-object="${safeObject}">${safeObject}</button></td>`;
+            } else {
+                html += '<td>—</td>';
+            }
             html += `<td>${formatDate(item.contract_date)}</td>`;
             html += `<td>${formatDate(item.work_end_date)}</td>`;
             html += `<td>${item.number || '—'}</td>`;
@@ -313,11 +343,165 @@ export class DebtStructure {
 
         html += '</tbody></table>';
         container.innerHTML = html;
+
+        const objectButtons = container.querySelectorAll('.object-link-btn');
+        objectButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const objectName = button.dataset.object;
+                if (!objectName) return;
+                this.showObjectModal(objectName);
+            });
+        });
+    }
+
+    async showObjectModal(objectName) {
+        const orgName = this.lastState?.selectedCustomer;
+        if (!orgName) {
+            return;
+        }
+
+        this.closeObjectModal();
+
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) this.closeObjectModal();
+        });
+
+        const modal = document.createElement('div');
+        modal.className = 'modal-content';
+
+        const header = document.createElement('div');
+        header.className = 'modal-header';
+        const title = document.createElement('h3');
+        title.textContent = `Аналитика объекта: ${objectName}`;
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'modal-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', () => this.closeObjectModal());
+
+        header.appendChild(title);
+        header.appendChild(closeBtn);
+
+        const body = document.createElement('div');
+        body.className = 'modal-body object-modal-body';
+        body.textContent = 'Загрузка...';
+
+        modal.appendChild(header);
+        modal.appendChild(body);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        this.objectModal = overlay;
+
+        try {
+            const rawData = await fetchObjectData(orgName, objectName);
+            this.renderObjectAnalytics(body, rawData || []);
+        } catch (err) {
+            body.innerHTML = `<div class="error">Ошибка: ${this.escapeHtml(err.message)}</div>`;
+        }
+    }
+
+    renderObjectAnalytics(container, rawData) {
+        const metrics = aggregateObjectMetrics(rawData);
+        const chartData = prepareChartData(rawData);
+
+        if (!metrics) {
+            container.innerHTML = '<div class="empty-message">Нет данных по объекту</div>';
+            return;
+        }
+
+        container.innerHTML = '';
+
+        const root = document.createElement('div');
+        root.className = 'object-analytics';
+
+        const cardsGrid = document.createElement('div');
+        cardsGrid.className = 'object-metrics-grid';
+        root.appendChild(cardsGrid);
+
+        const chartContainer = document.createElement('div');
+        chartContainer.className = 'analytics-chart object-modal-chart';
+        root.appendChild(chartContainer);
+
+        container.appendChild(root);
+
+        const metricDefs = [
+            { label: 'Подрядчик', key: 'contractorName', format: 'string' },
+            { label: 'Дата начала работ', key: 'workStartDate', format: 'date' },
+            { label: 'Дата окончания работ', key: 'workEndDate', format: 'date' },
+            { label: 'Строительная готовность', key: 'buildReadyPercent', format: 'boolean' },
+            { label: 'Разрешение на ввод', key: 'permissionToEnter', format: 'boolean' },
+            { label: 'Заключение МКЭ', key: 'conclusionMke', format: 'boolean' },
+            { label: 'Твёрдая договорная цена', key: 'hardContractPrice', format: 'money' },
+            { label: 'Сумма договора', key: 'contractAmount', format: 'money' },
+            { label: 'Перечислено', key: 'paidAmount', format: 'money' },
+            { label: 'Принято', key: 'acceptedAmount', format: 'money' },
+        ];
+
+        metricDefs.forEach((def) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'metric-card-wrapper';
+
+            const card = document.createElement('div');
+            card.className = 'metric-card';
+
+            const cardTitle = document.createElement('div');
+            cardTitle.className = 'card-title';
+            cardTitle.textContent = def.label;
+
+            const cardValue = document.createElement('div');
+            cardValue.className = 'card-value';
+            cardValue.textContent = this.formatObjectMetric(metrics[def.key], def.format);
+
+            card.appendChild(cardTitle);
+            card.appendChild(cardValue);
+            wrapper.appendChild(card);
+            cardsGrid.appendChild(wrapper);
+        });
+
+        if (this.objectModalChart) {
+            this.objectModalChart.dispose();
+        }
+        this.objectModalChart = echarts.init(chartContainer);
+
+        const option = {
+            title: { text: 'График задолженности по годам', left: 'center' },
+            tooltip: { trigger: 'axis' },
+            legend: { data: chartData.series.map((series) => series.name), bottom: 0 },
+            xAxis: { type: 'category', data: chartData.categories },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: (value) => (value / 1_000_000).toFixed(1) + ' млн'
+                }
+            },
+            series: chartData.series
+        };
+
+        this.objectModalChart.setOption(option, true);
+        this.objectModalChart.resize();
+    }
+
+    formatObjectMetric(value, format) {
+        if (value === null || value === undefined) return '—';
+
+        if (format === 'money') {
+            const number = Number(value);
+            if (Number.isNaN(number)) return '—';
+            const inMillions = number / 1_000_000;
+            const rounded = Math.round(inMillions * 10) / 10;
+            return `${rounded.toLocaleString('ru-RU').replace('.', ',')} млн ₽`;
+        }
+
+        if (format === 'boolean') return value ? 'Да' : 'Нет';
+        return String(value);
     }
 
     clear() {
         this.closeTopModal();
         this.closeContractorModal();
+        this.closeObjectModal();
         if (this.stateUnsub) {
             this.stateUnsub();
             this.stateUnsub = null;
