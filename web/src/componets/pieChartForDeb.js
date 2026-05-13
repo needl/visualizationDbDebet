@@ -1,4 +1,3 @@
-// src/components/PieChartComponent.js
 import { appState } from '../state/appState.js';
 
 export class PieChartComponent {
@@ -50,24 +49,21 @@ export class PieChartComponent {
         this.container.innerHTML = '';
         this.chart = echarts.init(this.container);
 
-        // Функция форматирования значения и процента
         const formatValue = (value, percent) => {
             const valueInBillions = (value / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
             return `${valueInBillions} млрд ₽ (${percent}%)`;
         };
 
-        // Форматтер для тултипа при наведении на сектор
         const tooltipFormatter = (params) => {
             return formatValue(params.value, params.percent);
         };
 
-        // Форматтер для тултипа при наведении на легенду
         const legendTooltipFormatter = (params) => {
             const item = data.find(d => d.name === params.name);
             if (item) {
                 const total = data.reduce((sum, d) => sum + d.value, 0);
                 const percent = ((item.value / total) * 100).toFixed(2);
-                return formatValue(item.value, percent); // ← только сумма и процент
+                return formatValue(item.value, percent);
             }
             return params.name;
         };
@@ -97,7 +93,6 @@ export class PieChartComponent {
                     }
                     return name;
                 },
-                // Включаем тултип для легенды
                 tooltip: {
                     show: true,
                     formatter: legendTooltipFormatter
@@ -183,103 +178,6 @@ export class PieChartComponent {
         this.container.innerHTML = '';
     }
 
-    /*drawPie(data) {
-    if (!this.container) return;
-    if (typeof echarts === 'undefined') {
-        this.showError('ECharts не загружен');
-        return;
-    }
-
-    // Очищаем контейнер от всего (сообщение, предыдущий canvas)
-    if (this.chart) {
-        this.chart.dispose();
-        this.chart = null;
-    }
-    this.container.innerHTML = '';
-
-    // Инициализируем новый экземпляр ECharts
-    this.chart = echarts.init(this.container);
-
-    const option = {
-        /!*tooltip: {
-            trigger: 'item',
-            position: function(point, param33s, dom, rect, size) {
-                // Показываем тултип рядом с курсором
-                return [point[0] / 2, point[1] / 1];
-            },
-            formatter: function(params) {
-                const valueInBillions = (params.value / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
-                return `${valueInBillions} млрд ₽ (${params.percent}%)`;
-            }
-        },*!/
-        tooltip: {
-            trigger: 'item',
-            confine: true,
-            appendTo: document.body,
-            // position можно не указывать, ECharts сам подберёт
-            formatter: function(params) {
-                const valueInBillions = (params.value / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
-                return `${valueInBillions} млрд ₽ (${params.percent}%)`;
-            }
-        },
-        legend: {
-            orient: 'vertical',
-            left: 50,
-            top: 'middle',
-            itemWidth: 20,
-            itemHeight: 12,
-            itemGap: 12,
-            textStyle: {
-                fontSize: 14,
-                width: 200,            // максимальная ширина текста в пикселях
-                overflow: 'break'      // или 'truncate' с многоточием
-            },
-            formatter: function (name) {
-                // Опционально: ручной перенос длинных слов
-                if (name.length > 20) {
-                    return name.slice(0, 20) + '…';
-                }
-                return name;
-            }
-        },
-        /!*legend: {
-            orient: 'vertical',
-            left: 50,
-            top: 'middle',
-            itemWidth: 50,
-            itemHeight: 20,
-            textStyle: { fontSize: 14 }
-        },*!/
-        series: [
-            {
-                name: this.title,
-                type: 'pie',
-                radius: ['5%', '90%'],
-                center: ['63%', '50%'],
-                avoidLabelOverlap: false,
-                itemStyle: {
-                    borderRadius: 8,
-                    borderColor: '#ffffff',
-                    borderWidth: 2
-                },
-                label: { show: false },
-                emphasis: {
-                    scale: false,
-                    label: {
-                        show: true,
-                        fontSize: 20,
-                        position: 'top',
-                        fontWeight: 'bold',
-                    }
-                },
-                labelLine: { show: false },
-                data: data
-            }
-        ]
-    };
-
-    this.chart.setOption(option, true);
-    this.chart.resize();
-}*/
+    
 
 }

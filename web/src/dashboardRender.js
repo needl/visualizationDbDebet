@@ -1,14 +1,12 @@
-// src/dashboardRenderer.js
-import {ChartComponent} from "./componets/chart/debetChart.js";
-import {PieChartComponent} from "./componets/pieChartForDeb.js";
-import {MetricCard} from "./componets/card/metricCard.js";
-import {StatsTable} from "./componets/statsTableForDebet.js";
-import {appState} from "./state/appState.js";
-import {CustomerFilter} from "./componets/filter/customerFilter.js";
-import {CustomerCard} from "./componets/card/customerCard.js";
-// import {BlockFactorsChart} from "./componets/blockFactorChart.js";
-import {BlockFactorFilter} from "./componets/filter/blockFactorFilter.js";
-import {DebtStructure} from "./componets/debtStructure.js";
+﻿import { ChartComponent } from './componets/chart/debetChart.js';
+import { PieChartComponent } from './componets/pieChartForDeb.js';
+import { MetricCard } from './componets/card/metricCard.js';
+import { StatsTable } from './componets/statsTableForDebet.js';
+import { appState } from './state/appState.js';
+import { CustomerFilter } from './componets/filter/customerFilter.js';
+import { CustomerCard } from './componets/card/customerCard.js';
+import { BlockFactorFilter } from './componets/filter/blockFactorFilter.js';
+import { DebtStructure } from './componets/debtStructure.js';
 
 export class DashboardRenderer {
     constructor(config) {
@@ -21,12 +19,11 @@ export class DashboardRenderer {
         if (!container) return;
         container.innerHTML = '';
 
-        // Очищаем старые подписки (если пересобираем)
-        this.statsSubscriptions.forEach(unsub => unsub());
+        this.statsSubscriptions.forEach((unsub) => unsub());
         this.statsSubscriptions = [];
         this.components = [];
 
-        this.config.forEach(block => {
+        this.config.forEach((block) => {
             const blockDiv = document.createElement('div');
             blockDiv.className = 'dashboard-block';
 
@@ -38,7 +35,7 @@ export class DashboardRenderer {
                 const chartsContainer = document.createElement('div');
                 chartsContainer.className = 'charts-grid';
 
-                block.charts.forEach(chartConfig => {
+                block.charts.forEach((chartConfig) => {
                     const wrapperDiv = document.createElement('div');
                     wrapperDiv.className = 'chart-wrapper';
 
@@ -47,7 +44,6 @@ export class DashboardRenderer {
                     pieHeader.className = 'pie-chart-title';
                     wrapperDiv.appendChild(pieHeader);
 
-                    // Контейнер для круговой диаграммы с фоном
                     const pieWrapper = document.createElement('div');
                     pieWrapper.className = 'pie-wrapper';
 
@@ -55,7 +51,6 @@ export class DashboardRenderer {
                     pieContainer.style.width = '100%';
                     pieContainer.style.height = '350px';
                     pieWrapper.appendChild(pieContainer);
-
                     wrapperDiv.appendChild(pieWrapper);
 
                     const pieMetricKey = chartConfig.metric + 'Pie';
@@ -66,16 +61,13 @@ export class DashboardRenderer {
                 });
 
                 blockDiv.appendChild(chartsContainer);
-            }
-            else if (block.type === 'customer-analytics') {
-                // Фильтр
+            } else if (block.type === 'customer-analytics') {
                 const filterContainer = document.createElement('div');
                 filterContainer.className = 'customer-filter-container';
                 blockDiv.appendChild(filterContainer);
                 const filter = new CustomerFilter(filterContainer);
                 this.components.push(filter);
 
-                // Карточки
                 const metricsContainer = document.createElement('div');
                 metricsContainer.className = 'customer-metrics';
                 blockDiv.appendChild(metricsContainer);
@@ -83,11 +75,9 @@ export class DashboardRenderer {
                 metrics.mount();
                 this.components.push(metrics);
 
-                // Ряд 1: структура ДЗ и блок-факторы (две колонки)
                 const row1 = document.createElement('div');
                 row1.className = 'stats-row';
 
-                // Левая колонка: структура ДЗ (полукруг) – 30%
                 const debtStructCol = document.createElement('div');
                 debtStructCol.className = 'stats-col debt-col';
                 const debtStructureContainer = document.createElement('div');
@@ -95,44 +85,28 @@ export class DashboardRenderer {
                 debtStructCol.appendChild(debtStructureContainer);
                 row1.appendChild(debtStructCol);
 
-                // Правая колонка: блок-факторы – 70%
                 const blockFactorsCol = document.createElement('div');
                 blockFactorsCol.className = 'stats-col factors-col';
                 const blockFactorsContainer = document.createElement('div');
                 blockFactorsContainer.className = 'block-factors-chart-container';
                 blockFactorsCol.appendChild(blockFactorsContainer);
                 row1.appendChild(blockFactorsCol);
-
                 blockDiv.appendChild(row1);
 
-                // Инициализация компонентов внутри колонок
                 const debtStructure = new DebtStructure(debtStructureContainer);
-                /*const blockFactorsChart = new BlockFactorsChart(blockFactorsContainer, 'Блок-факторы по количеству подрядчиков');
-                this.components.push(debtStructure, blockFactorsChart);*/
-
                 const blockFactorFilter = new BlockFactorFilter(blockFactorsContainer);
                 this.components.push(debtStructure, blockFactorFilter);
 
-                // Подписки на обновление
-                const debtUnsub = appState.subscribe(state => {
+                const debtUnsub = appState.subscribe((state) => {
                     debtStructure.render(state.customerSummary);
                 });
-                /*const blockUnsub = appState.subscribe(state => {
-                    blockFactorsChart.render(state.customerBlockFactors);
-                });*/
-                // this.statsSubscriptions.push(debtUnsub, blockUnsub);
                 this.statsSubscriptions.push(debtUnsub);
-
-
-
-            }
-            else if (block.type === 'stats') {
-                // Карточки статистики
+            } else if (block.type === 'stats') {
                 const statsContainer = document.createElement('div');
                 statsContainer.className = 'stats-grid';
                 const cards = [];
 
-                block.metrics.forEach(metric => {
+                block.metrics.forEach((metric) => {
                     const cardContainer = document.createElement('div');
                     cardContainer.className = 'metric-card-wrapper';
                     statsContainer.appendChild(cardContainer);
@@ -142,11 +116,9 @@ export class DashboardRenderer {
                 });
                 blockDiv.appendChild(statsContainer);
 
-                // Контейнер для таблицы и графика (если оба есть)
                 let tableContainer = null;
                 let chartContainer = null;
 
-                // Создаём таблицу, если нужно
                 if (block.table) {
                     tableContainer = document.createElement('div');
                     tableContainer.className = 'stats-table-container';
@@ -160,7 +132,6 @@ export class DashboardRenderer {
                     this.statsSubscriptions.push(unsubscribe);
                 }
 
-                // Создаём график, если нужно
                 if (block.chart) {
                     chartContainer = document.createElement('div');
                     chartContainer.className = 'chart-wrapper-full';
@@ -170,17 +141,12 @@ export class DashboardRenderer {
                     this.components.push(chart);
                 }
 
-                if (tableContainer) {
-                    blockDiv.appendChild(tableContainer);
-                }
-                if (chartContainer) {
-                    blockDiv.appendChild(chartContainer);
-                }
+                if (tableContainer) blockDiv.appendChild(tableContainer);
+                if (chartContainer) blockDiv.appendChild(chartContainer);
 
-                // Подписка на обновление карточек
                 const unsubscribeStats = appState.subscribe((state) => {
                     if (state.stats) {
-                        cards.forEach(card => card.update(state.stats));
+                        cards.forEach((card) => card.update(state.stats));
                     }
                 });
                 this.statsSubscriptions.push(unsubscribeStats);
@@ -190,3 +156,4 @@ export class DashboardRenderer {
         });
     }
 }
+

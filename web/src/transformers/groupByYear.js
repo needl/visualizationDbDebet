@@ -38,7 +38,6 @@ export function aggregateByYearStacked(items) {
 
     for (const [org, data] of map.entries()) {
         names.push(org);
-        // Текущая = Общая − Просроченная (если данные корректны)
         const cur24 = Math.max(0, data.total2024 - data.overdue2024);
         const cur25 = Math.max(0, data.total2025 - data.overdue2025);
         current2024.push(cur24);
@@ -59,7 +58,7 @@ export function aggregateByYearStacked(items) {
 }
 
 export function aggregateByYear(items) {
-    const map = new Map(); // key: source_org_name, value: { year2024, year2025 }
+    const map = new Map();
 
     items.forEach(item => {
         const orgName = item.source_org_name;

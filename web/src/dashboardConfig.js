@@ -19,8 +19,8 @@ export const dashboardConfig = [
         title: 'Дебиторская задолженность по заказчикам',
         type: 'charts',
         charts: [
-            { metric: 'contractAmount', title: 'Сумма контрактов'},
-            { metric: 'debetTotal', title: 'Дебиторская задолженность'},
+            { metric: 'contractAmount', title: 'Сумма контрактов' },
+            { metric: 'debetTotal', title: 'Дебиторская задолженность' },
             { metric: 'debetOverdose', title: 'Просроченная дебиторская задолженность' }
         ]
     },
@@ -28,5 +28,4 @@ export const dashboardConfig = [
         title: 'Подробная аналитика заказчика',
         type: 'customer-analytics'
     }
-
 ];

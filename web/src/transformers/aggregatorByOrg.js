@@ -1,4 +1,4 @@
-export function aggregateByOrg(items) {
+﻿export function aggregateByOrg(items) {
     const aggregated = {};
 
     items.forEach(item => {

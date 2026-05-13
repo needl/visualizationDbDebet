@@ -1,4 +1,4 @@
-import { appState } from '../appState.js';
+﻿import { appState } from '../appState.js';
 import {fetchResponseData} from "../../services/apiCaller.js";
 
 export async function loadStats() {

@@ -1,4 +1,3 @@
-// src/components/BlockFactorFilter.js
 import { appState } from '../../state/appState.js';
 import { loadContractorsByFactor } from '../../state/actions/actionForContractor.js';
 
@@ -45,7 +44,6 @@ export class BlockFactorFilter {
             const selectWrapper = this.container.querySelector('.select-wrapper');
             const emptyMessage = this.container.querySelector('.empty-message');
 
-            // Если заказчик изменился – сбрасываем таблицу
             if (state.selectedCustomer !== this._lastCustomer) {
                 this._lastCustomer = state.selectedCustomer;
                 const resultTable = this.container.querySelector('#block-factor-result-table');
@@ -65,8 +63,6 @@ export class BlockFactorFilter {
         });
     }
     render() {
-        // Обёртка с фиксированной высотой и flex‑колонкой,
-        // чтобы таблица занимала всё оставшееся место и прокручивалась.
         this.container.innerHTML = `
             <div class="block-factor-filter">
                 <div class="select-wrapper">
@@ -140,7 +136,6 @@ export class BlockFactorFilter {
             if (value === null || value === undefined) return '—';
             let num = typeof value === 'number' ? value : parseFloat(value);
             if (isNaN(num)) return value;
-            // return num.toLocaleString('ru-RU');
             const mln = num / 1_000_000;
             return mln.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         };

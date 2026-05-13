@@ -1,4 +1,3 @@
-// src/components/StatsTable.js
 export class StatsTable {
     constructor(container) {
         this.container = container;
@@ -28,22 +27,18 @@ export class StatsTable {
         data.forEach(row => {
             const tr = document.createElement('tr');
 
-            // Название организации
             const tdName = document.createElement('td');
             tdName.textContent = row.name;
             tr.appendChild(tdName);
 
-            // Сумма контрактов (млн ₽)
             const tdContract = document.createElement('td');
             tdContract.textContent = (row.contractAmount / 1_000_000_000).toFixed(1).toLocaleString('ru-RU').replace('.', ',') + ' млрд ₽';
             tr.appendChild(tdContract);
 
-            // Задолженность (млн ₽)
             const tdDebet = document.createElement('td');
             tdDebet.textContent = (row.debetTotal / 1_000_000_000).toFixed(1).toLocaleString('ru-RU').replace('.', ',') + ' млрд ₽';
             tr.appendChild(tdDebet);
 
-            // Коэффициент с прогресс-баром и текстом внутри
             const tdCoeff = document.createElement('td');
             const percent = Math.min(row.coefficient, 100);
             tdCoeff.innerHTML = `

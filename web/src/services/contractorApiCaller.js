@@ -1,4 +1,4 @@
-export async function fetchContractorsByFactor(orgName, columnName) {
+﻿export async function fetchContractorsByFactor(orgName, columnName) {
     const url = `/contractor/${encodeURIComponent(orgName)}?columnName=${encodeURIComponent(columnName)}`;
     const response = await fetch(url);
     if (!response.ok) {

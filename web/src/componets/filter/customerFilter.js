@@ -1,7 +1,6 @@
-// src/components/CustomerFilter.js
 import { appState } from '../../state/appState.js';
-import {fetchCustomers} from "../../services/customerApiCaller.js";
-import {loadCustomerData} from "../../state/actions/actionForCustomers.js";
+import { fetchCustomers } from '../../services/customerApiCaller.js';
+import { loadCustomerData } from '../../state/actions/actionForCustomers.js';
 
 export class CustomerFilter {
     constructor(container) {
@@ -31,13 +30,14 @@ export class CustomerFilter {
             this.container.innerHTML = '<div>Загрузка заказчиков...</div>';
             return;
         }
-        const filteredCustomers = customers.filter(c => c.name !== 'ГКУ УПТ');
+
+        const filteredCustomers = customers.filter((c) => c.name !== 'ГКУ УПТ');
         this.container.innerHTML = `
             <div class="customer-filter">
                 <label for="customer-select">Выберите заказчика:</label>
                 <select id="customer-select">
                     <option value="">-- Заказчик --</option>
-                    ${filteredCustomers.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}
+                    ${filteredCustomers.map((c) => `<option value="${c.name}">${c.name}</option>`).join('')}
                 </select>
             </div>
         `;
@@ -46,22 +46,17 @@ export class CustomerFilter {
 
     setupListeners() {
         if (!this.select) return;
+
         this.select.addEventListener('change', (e) => {
             const orgName = e.target.value;
             if (!orgName) {
-                // Сброс данных при выборе пустой опции
                 appState.setSelectedCustomer(null);
                 appState.setCustomerSummary(null);
                 appState.setCustomerTopDebtors([]);
                 appState.setCustomerTopOverdue([]);
                 appState.setCustomerBlockFactors(null);
-                appState.setCustomerLoading(false); // важно: сбрасываем флаг загрузки
+                appState.setCustomerLoading(false);
                 appState.setCustomerError(null);
-
-                appState.setSelectedObject(null);
-                appState.setObjectData(null);
-                appState.setObjectList([]);
-
                 return;
             }
 
@@ -70,3 +65,4 @@ export class CustomerFilter {
         });
     }
 }
+

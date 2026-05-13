@@ -1,4 +1,3 @@
-// src/components/debtStructure.js
 import { appState } from '../state/appState.js';
 import { HorizontalBarChart } from './chart/horizonBarChart.js';
 import { fetchContractorDebt, fetchContractorOverdue } from '../services/customerApiCaller.js';
@@ -13,7 +12,7 @@ export class DebtStructure {
         this.activeModal = null;
         this.modalChart = null;
         this.modalUnsub = null;
-        this.contractorModal = null; // для нового окна
+        this.contractorModal = null;
         this.objectModal = null;
         this.objectModalChart = null;
 
@@ -182,7 +181,6 @@ export class DebtStructure {
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
 
-        // Коллбэк, вызываемый при клике на столбец
         const onBarClick = (contractorName, value) => {
             const orgName = this.lastState.selectedCustomer;
             if (!orgName) return;
@@ -513,3 +511,4 @@ export class DebtStructure {
         this.container.innerHTML = '';
     }
 }
+

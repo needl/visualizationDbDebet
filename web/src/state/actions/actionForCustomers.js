@@ -1,5 +1,4 @@
-// src/state/actionForCustomer.js
-import { appState } from '../appState.js';
+﻿import { appState } from '../appState.js';
 import {
     fetchCustomerSummary,
     fetchCustomerTopDebtors,
@@ -29,4 +28,5 @@ export async function loadCustomerData(orgName) {
         appState.setCustomerLoading(false);
     }
 }
+
 

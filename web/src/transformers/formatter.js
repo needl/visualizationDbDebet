@@ -1,4 +1,4 @@
-export function formatChartData(aggregated, metric) {
+﻿export function formatChartData(aggregated, metric) {
     const names = [];
     const values = [];
 

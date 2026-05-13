@@ -1,4 +1,3 @@
-// src/components/CustomerCard.js
 import {appState} from "../../state/appState.js";
 
 export class CustomerCard {
@@ -13,7 +12,6 @@ export class CustomerCard {
             return;
         }
         const formatCurrency = (val) => (Math.round(val / 1e9 * 10) / 10).toLocaleString('ru-RU').replace('.', ',') + ' млрд ₽';
-        //const formatCurrency = (val) => (val / 1e9).toFixed(1).replace('.', ',') + ' млрд ₽';
         const formatPercent = (val) => val.toFixed(2).toLocaleString('ru-RU').replace('.', ',') + '%';
         this.container.innerHTML = `
             <div class="stats-grid" style="margin-top:0">

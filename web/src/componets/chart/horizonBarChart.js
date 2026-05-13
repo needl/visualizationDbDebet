@@ -1,16 +1,15 @@
-// src/components/horizonBarChart.js
-export class HorizontalBarChart {
+﻿export class HorizontalBarChart {
     constructor(container, title, valueFormatter, onBarClick) {
         this.container = container;
         this.title = title;
-        this.valueFormatter = valueFormatter || ((v) => (v / 1e9).toFixed(2) + ' млрд ₽');
-        this.onBarClick = onBarClick || null;   // <-- сохраняем
+        this.valueFormatter = valueFormatter || ((v) => (v / 1e9).toFixed(2) + ' РјР»СЂРґ в‚Ѕ');
+        this.onBarClick = onBarClick || null;
         this.chart = null;
     }
 
     render(data) {
         if (!data || data.length === 0) {
-            this.container.innerHTML = '<div class="empty-message">Нет данных по топ-10</div>';
+            this.container.innerHTML = '<div class="empty-message">РќРµС‚ РґР°РЅРЅС‹С… РїРѕ С‚РѕРї-10</div>';
             if (this.chart) {
                 this.chart.dispose();
                 this.chart = null;
@@ -47,11 +46,11 @@ export class HorizontalBarChart {
             },
             xAxis: {
                 type: 'value',
-                name: 'Сумма (млрд ₽)',
+                name: 'РЎСѓРјРјР° (РјР»СЂРґ в‚Ѕ)',
                 nameLocation: 'middle',
                 nameGap: 28,
                 axisLabel: {
-                    formatter: (value) => (value / 1e9).toFixed(1) + ' млрд'
+                    formatter: (value) => (value / 1e9).toFixed(1) + ' РјР»СЂРґ'
                 }
             },
             yAxis: {
@@ -70,7 +69,7 @@ export class HorizontalBarChart {
                 name: this.title,
                 type: 'bar',
                 data: values,
-                cursor: 'pointer',                // визуально указываем, что можно кликать
+                cursor: 'pointer',
                 itemStyle: { color: '#d11b1b' },
                 label: {
                     show: true,
@@ -80,7 +79,6 @@ export class HorizontalBarChart {
             }]
         };
 
-        // Снимаем старый обработчик и задаём новый
         this.chart.off('click');
         this.chart.setOption(option, true);
 

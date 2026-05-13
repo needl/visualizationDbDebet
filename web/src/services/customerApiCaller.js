@@ -1,4 +1,4 @@
-export async function fetchCustomers() {
+﻿export async function fetchCustomers() {
     const res = await fetch('/customer');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();

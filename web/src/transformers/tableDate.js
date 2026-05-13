@@ -1,5 +1,4 @@
-// src/transformers/tableData.js
-export function prepareTableData(aggregated) {
+﻿export function prepareTableData(aggregated) {
     const rows = [];
     for (const [name, data] of Object.entries(aggregated)) {
         const contractAmount = data.contractAmount || 0;

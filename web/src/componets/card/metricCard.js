@@ -1,4 +1,3 @@
-// src/componets/metricCard.js
 export class MetricCard {
     constructor(container, title, valueKey, format = 'number') {
         this.container = container;
@@ -18,12 +17,10 @@ export class MetricCard {
             if (this.format === 'number') {
                 formattedValue = value.toLocaleString();
             } else if (this.format === 'currency') {
-                // Преобразуем в миллиарды с одним знаком после запятой
-                const inBillions = (value / 1_000_000_000);
-                let rounded = Math.round(inBillions * 10) / 10;
-                formattedValue = rounded.toLocaleString('ru-Ru').replace('.', ',') + ' млрд ₽';
-            }
-            else {
+                const inBillions = value / 1_000_000_000;
+                const rounded = Math.round(inBillions * 10) / 10;
+                formattedValue = rounded.toLocaleString('ru-RU').replace('.', ',') + ' млрд ₽';
+            } else {
                 formattedValue = value;
             }
         }
@@ -37,14 +34,17 @@ export class MetricCard {
         this.container.innerHTML = '';
         const cardDiv = document.createElement('div');
         cardDiv.className = 'metric-card';
+
         const titleDiv = document.createElement('div');
         titleDiv.className = 'card-title';
         titleDiv.textContent = this.title;
         cardDiv.appendChild(titleDiv);
+
         const valueDiv = document.createElement('div');
         valueDiv.className = 'card-value';
         valueDiv.textContent = 'Загрузка...';
         cardDiv.appendChild(valueDiv);
+
         this.container.appendChild(cardDiv);
         this.valueElement = valueDiv;
 
