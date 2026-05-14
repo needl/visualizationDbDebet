@@ -3,6 +3,7 @@ package debet
 import (
 	"context"
 	"log/slog"
+	"visualizationBdDebet/internal/common"
 )
 
 // Service предоставляет бизнес-логику для работы с таблицей debet
@@ -39,7 +40,7 @@ func (s *Service) GetAllWithMIP(ctx context.Context) ([]View, error) {
 	}
 
 	if len(debets) == 0 {
-		slog.Error("No debets found")
+		slog.Warn("No debets found")
 		return []View{}, nil
 	}
 
@@ -50,7 +51,7 @@ func (s *Service) GetAllWithMIP(ctx context.Context) ([]View, error) {
 func (s *Service) GetByOrgName(ctx context.Context, orgName string) (*View, error) {
 	if orgName == "" {
 		slog.Warn("OrgName is empty")
-		return nil, nil
+		return nil, common.NewInvalidArgument("orgName is required")
 	}
 
 	debet, err := s.repo.GetViewByOrgName(ctx, orgName)
@@ -61,7 +62,7 @@ func (s *Service) GetByOrgName(ctx context.Context, orgName string) (*View, erro
 
 	if debet == nil {
 		slog.Warn("View not found", "orgName", orgName)
-		return nil, nil
+		return nil, common.NewNotFound("debet not found")
 	}
 
 	return debet, nil

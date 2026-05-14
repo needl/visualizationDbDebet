@@ -3,6 +3,7 @@ package util
 import (
 	"errors"
 	"net/http"
+	"visualizationBdDebet/internal/common"
 )
 
 type ErrorMapping struct {
@@ -13,6 +14,16 @@ type ErrorMapping struct {
 
 func RespondError(w http.ResponseWriter, err error, fallbackMessage string, mappings ...ErrorMapping) {
 	if err == nil {
+		return
+	}
+
+	if errors.Is(err, common.ErrInvalidArgument) {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if errors.Is(err, common.ErrNotFound) {
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 

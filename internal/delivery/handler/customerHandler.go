@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"visualizationBdDebet/internal/customer"
@@ -23,7 +22,7 @@ func (h *CustomerHandler) GetCustomers(w http.ResponseWriter, r *http.Request) {
 
 	customers, err := h.service.GetCustomers(ctx)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -34,15 +33,11 @@ func (h *CustomerHandler) GetCustomers(w http.ResponseWriter, r *http.Request) {
 func (h *CustomerHandler) GetSummaryByCustomerId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	customerID := vars["orgName"]
-	if customerID == "" {
-		http.Error(w, "Customer name is null", http.StatusBadRequest)
-		return
-	}
 
 	ctx := r.Context()
 	summary, err := h.service.GetSummaryByCustomerId(ctx, customerID)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -53,15 +48,11 @@ func (h *CustomerHandler) GetSummaryByCustomerId(w http.ResponseWriter, r *http.
 func (h *CustomerHandler) GetTopItemsByCustomerId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	customerID := vars["orgName"]
-	if customerID == "" {
-		http.Error(w, "Customer id is null", http.StatusBadRequest)
-		return
-	}
 
 	ctx := r.Context()
 	topItems, err := h.service.GetTopItemsByCustomerId(ctx, customerID)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -72,15 +63,11 @@ func (h *CustomerHandler) GetTopItemsByCustomerId(w http.ResponseWriter, r *http
 func (h *CustomerHandler) GetTopItemsOverdueByCustomerId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	customerID := vars["orgName"]
-	if customerID == "" {
-		http.Error(w, "Customer id is null", http.StatusBadRequest)
-		return
-	}
 
 	ctx := r.Context()
 	topItems, err := h.service.GetTopItemsOverdueByCustomerId(ctx, customerID)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -91,20 +78,11 @@ func (h *CustomerHandler) GetTopItemsOverdueByCustomerId(w http.ResponseWriter, 
 func (h *CustomerHandler) GetCountBlockFactorsByCustomerId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	customerID := vars["orgName"]
-	if customerID == "" {
-		http.Error(w, "Customer id is null", http.StatusBadRequest)
-		return
-	}
 
 	ctx := r.Context()
 	factors, err := h.service.GetCountBlockFactorsByCustomerId(ctx, customerID)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
-		return
-	}
-
-	if factors == nil {
-		http.Error(w, fmt.Sprintf("Customer with name '%s' not found", customerID), http.StatusNotFound)
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 

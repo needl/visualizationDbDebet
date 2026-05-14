@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"visualizationBdDebet/internal/contractor"
@@ -47,28 +46,10 @@ func (h *ContractorHandler) GetContractorsWithBlockFactors(w http.ResponseWriter
 	sourceOrgName := vars["orgName"]
 	columnName := r.URL.Query().Get("columnName")
 
-	if sourceOrgName == "" {
-		http.Error(w, "Source organization name is null", http.StatusBadRequest)
-		return
-	}
-	if columnName == "" {
-		http.Error(w, "Column name is null", http.StatusBadRequest)
-		return
-	}
-
 	ctx := r.Context()
 	contractors, err := h.service.GetContractorsWithBlockFactors(ctx, sourceOrgName, columnName)
 	if err != nil {
-		util.RespondError(
-			w,
-			err,
-			"internal server error",
-			util.ErrorMapping{
-				Err:     contractor.ErrColumnNotAllowed,
-				Status:  http.StatusBadRequest,
-				Message: fmt.Sprintf("columnName '%s' is not allowed", columnName),
-			},
-		)
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -80,15 +61,6 @@ func (h *ContractorHandler) GetContractorsWithDebt(w http.ResponseWriter, r *htt
 	vars := mux.Vars(r)
 	sourceOrgName := vars["orgName"]
 	counterpartyName := r.URL.Query().Get("counterpartyName")
-
-	if sourceOrgName == "" {
-		http.Error(w, "Source organization name is null", http.StatusBadRequest)
-		return
-	}
-	if counterpartyName == "" {
-		http.Error(w, "counterparty name is null", http.StatusBadRequest)
-		return
-	}
 
 	ctx := r.Context()
 	contractors, err := h.service.GetContractorsWithDebt(ctx, sourceOrgName, counterpartyName)
@@ -106,15 +78,6 @@ func (h *ContractorHandler) GetContractorsWithOverdue(w http.ResponseWriter, r *
 	sourceOrgName := vars["orgName"]
 	counterpartyName := r.URL.Query().Get("counterpartyName")
 
-	if sourceOrgName == "" {
-		http.Error(w, "Source organization name is null", http.StatusBadRequest)
-		return
-	}
-	if counterpartyName == "" {
-		http.Error(w, "counterparty name is null", http.StatusBadRequest)
-		return
-	}
-
 	ctx := r.Context()
 	contractors, err := h.service.GetContractorsWithOverdue(ctx, sourceOrgName, counterpartyName)
 	if err != nil {
@@ -124,4 +87,18 @@ func (h *ContractorHandler) GetContractorsWithOverdue(w http.ResponseWriter, r *
 
 	util.RespondJSON(w, contractors)
 	slog.Info("Get contractors for overdue", "contractors", contractors)
+}
+
+func (h *ContractorHandler) GetContractorForTable(w http.ResponseWriter, r *http.Request) {
+	counterpartyName := r.URL.Query().Get("counterpartyName")
+
+	ctx := r.Context()
+	contractors, err := h.service.GetContractorForTable(ctx, counterpartyName)
+	if err != nil {
+		util.RespondError(w, err, "internal server error")
+		return
+	}
+
+	util.RespondJSON(w, contractors)
+	slog.Info("Get contractors for table", "contractors", contractors)
 }

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"visualizationBdDebet/internal/contract"
@@ -23,7 +22,7 @@ func (h *ContractHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 
 	contracts, err := h.service.GetAll(ctx)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -34,20 +33,11 @@ func (h *ContractHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 func (h *ContractHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	if id == "" {
-		http.Error(w, "Invalid value", http.StatusBadRequest)
-		return
-	}
 
 	ctx := r.Context()
 	view, err := h.service.GetById(ctx, id)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
-		return
-	}
-
-	if view == nil {
-		http.Error(w, fmt.Sprintf("Contract with id '%s' not found", id), http.StatusNotFound)
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 

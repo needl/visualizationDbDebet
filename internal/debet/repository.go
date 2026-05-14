@@ -4,8 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/jmoiron/sqlx"
 	"visualizationBdDebet/internal/common"
+
+	"github.com/jmoiron/sqlx"
 )
 
 // Repository отвечает за подключение к бд и работу с ней
@@ -26,22 +27,23 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 	var debets []View
 
 	query := `
-				select  id, 
-						source_org_name,
-						counterparty_name,
-						contract_number,
-						contract_date,
-						contract_amount,
-						construction_object,
-						debt_2025_12_31_total,
-						debt_2024_12_31_total,
-						debt_2025_12_31_overdue,
-						debt_2024_12_31_overdue,
-						construction_title
-				from debet
-				where source_org_name != $1
-				order by id
-			`
+		select
+			id,
+			source_org_name,
+			counterparty_name,
+			contract_number,
+			contract_date,
+			contract_amount,
+			construction_object,
+			debt_2025_12_31_total,
+			debt_2024_12_31_total,
+			debt_2025_12_31_overdue,
+			debt_2024_12_31_overdue,
+			construction_title
+		from debet
+		where source_org_name != $1
+		order by id
+	`
 
 	if err := r.db.SelectContext(ctx, &debets, query, common.ExcludedSourceOrgName); err != nil {
 		// Непредвиденная ошибка при обращении к базе
@@ -56,19 +58,20 @@ func (r *Repository) GetAllViewWithMIP(ctx context.Context) ([]View, error) {
 	var debets []View
 
 	query := `
-				select  id, 
-						source_org_name,
-						counterparty_name,
-						contract_number,
-						contract_date,
-						contract_amount,
-						construction_object,
-						debt_2025_12_31_total,
-						debt_2025_12_31_overdue,
-						construction_title
-					from debet
-				order by id
-			`
+		select
+			id,
+			source_org_name,
+			counterparty_name,
+			contract_number,
+			contract_date,
+			contract_amount,
+			construction_object,
+			debt_2025_12_31_total,
+			debt_2025_12_31_overdue,
+			construction_title
+		from debet
+		order by id
+	`
 
 	if err := r.db.SelectContext(ctx, &debets, query); err != nil {
 		// Непредвиденная ошибка при обращении к базе
@@ -86,18 +89,19 @@ func (r *Repository) GetViewByOrgName(ctx context.Context, orgName string) (*Vie
 	var debet View
 
 	query := `
-				select  source_org_name,
-			       		counterparty_name,
-						contract_number,
-						contract_date,
-						contract_amount,
-						construction_object,
-						debt_2025_12_31_total,
-						debt_2025_12_31_overdue,
-						construction_title
-					from debet
-				where source_org_name = $1
-			`
+		select
+			source_org_name,
+			counterparty_name,
+			contract_number,
+			contract_date,
+			contract_amount,
+			construction_object,
+			debt_2025_12_31_total,
+			debt_2025_12_31_overdue,
+			construction_title
+		from debet
+		where source_org_name = $1
+	`
 
 	if err := r.db.GetContext(ctx, &debet, query, orgName); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

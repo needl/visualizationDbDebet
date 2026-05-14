@@ -3,6 +3,7 @@ package customer
 import (
 	"context"
 	"log/slog"
+	"visualizationBdDebet/internal/common"
 )
 
 type Service struct {
@@ -25,8 +26,8 @@ func (s *Service) GetCustomers(ctx context.Context) ([]Customer, error) {
 
 func (s *Service) GetSummaryByCustomerId(ctx context.Context, id string) (*Summary, error) {
 	if id == "" {
-		slog.Warn("Customer id is null")
-		return nil, nil
+		slog.Warn("Customer id is empty")
+		return nil, common.NewInvalidArgument("orgName is required")
 	}
 
 	summary, err := s.repo.FindSummaryByCustomerId(ctx, id)
@@ -45,8 +46,8 @@ func (s *Service) GetSummaryByCustomerId(ctx context.Context, id string) (*Summa
 
 func (s *Service) GetTopItemsByCustomerId(ctx context.Context, customerId string) ([]TopItem, error) {
 	if customerId == "" {
-		slog.Warn("Customer id is null")
-		return nil, nil
+		slog.Warn("Customer id is empty")
+		return nil, common.NewInvalidArgument("orgName is required")
 	}
 
 	items, err := s.repo.FindTopItemsByCustomerId(ctx, customerId)
@@ -60,8 +61,8 @@ func (s *Service) GetTopItemsByCustomerId(ctx context.Context, customerId string
 
 func (s *Service) GetTopItemsOverdueByCustomerId(ctx context.Context, customerId string) ([]TopItem, error) {
 	if customerId == "" {
-		slog.Warn("Customer id is null")
-		return nil, nil
+		slog.Warn("Customer id is empty")
+		return nil, common.NewInvalidArgument("orgName is required")
 	}
 
 	items, err := s.repo.FindTopItemsOverdueByCustomerId(ctx, customerId)
@@ -75,8 +76,8 @@ func (s *Service) GetTopItemsOverdueByCustomerId(ctx context.Context, customerId
 
 func (s *Service) GetCountBlockFactorsByCustomerId(ctx context.Context, customerId string) (*BlockFactors, error) {
 	if customerId == "" {
-		slog.Warn("Customer id is null")
-		return nil, nil
+		slog.Warn("Customer id is empty")
+		return nil, common.NewInvalidArgument("orgName is required")
 	}
 
 	factors, err := s.repo.FindCountBlockFactorsByCustomerId(ctx, customerId)

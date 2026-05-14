@@ -2,9 +2,10 @@ package blockfactor
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"log/slog"
 	"strconv"
+	"visualizationBdDebet/internal/common"
 )
 
 type Service struct {
@@ -23,7 +24,7 @@ func (s *Service) GetAllView(ctx context.Context) ([]View, error) {
 	}
 
 	if len(factors) == 0 {
-		slog.Error("No views found")
+		slog.Warn("No views found")
 		return []View{}, nil
 	}
 
@@ -32,30 +33,30 @@ func (s *Service) GetAllView(ctx context.Context) ([]View, error) {
 
 func (s *Service) GetViewById(ctx context.Context, id string) (*View, error) {
 	if id == "" {
-		slog.Error("No view id provided")
-		return nil, nil
+		slog.Warn("No view id provided")
+		return nil, common.NewInvalidArgument("id is required")
 	}
 
 	intId, err := strconv.Atoi(id)
 	if err != nil {
-		slog.Error("Cant convert blockfactor id provided")
-		return nil, err
+		slog.Warn("Cannot convert blockfactor id")
+		return nil, common.NewInvalidArgument("id must be integer")
 	}
 
 	if intId <= 0 {
-		slog.Error("No view id provided")
-		return nil, errors.New("invalid view id")
+		slog.Warn("Invalid view id provided")
+		return nil, common.NewInvalidArgument("id must be greater than zero")
 	}
 
 	factor, err := s.repo.GetViewById(ctx, intId)
 	if err != nil {
-		slog.Error("Failed to get all views: %v", "error", err)
+		slog.Error("Failed to get blockfactor view by id", "error", err)
 		return nil, err
 	}
 
 	if factor == nil {
 		slog.Warn("No view found", "id", id)
-		return nil, nil
+		return nil, common.NewNotFound(fmt.Sprintf("view with id '%s' not found", id))
 	}
 
 	return factor, nil

@@ -22,7 +22,7 @@ func (h *BlockFactorHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 
 	factors, err := h.service.GetAllView(ctx)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -33,20 +33,11 @@ func (h *BlockFactorHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 func (h *BlockFactorHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	if id == "" {
-		http.Error(w, "Invalid value", http.StatusBadRequest)
-		return
-	}
 
 	ctx := r.Context()
 	view, err := h.service.GetViewById(ctx, id)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
-		return
-	}
-
-	if view == nil {
-		http.Error(w, "View not found", http.StatusNotFound)
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 

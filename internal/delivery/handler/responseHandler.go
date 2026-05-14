@@ -20,7 +20,7 @@ func (h *ResponseHandler) GetResponse(w http.ResponseWriter, r *http.Request) {
 
 	pageDto, err := h.service.GetResponse(ctx)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -33,7 +33,7 @@ func (h *ResponseHandler) GetResponseWithMIP(w http.ResponseWriter, r *http.Requ
 
 	pageDto, err := h.service.GetResponseWithMIP(ctx)
 	if err != nil {
-		util.RespondError(w, err, "Internal server error")
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
