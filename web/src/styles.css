@@ -537,6 +537,15 @@ body {
     color: #000000;
 }
 
+.pie-chart-total {
+    display: block;
+    width: 100%;
+    text-align: right;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;

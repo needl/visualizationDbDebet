@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/jmoiron/sqlx"
+	"visualizationBdDebet/internal/common"
 )
 
 type Repository struct {
@@ -21,11 +22,11 @@ func (r *Repository) FindAllCustomers(ctx context.Context) ([]Customer, error) {
 	query := `
 				select distinct source_org_name as name
 				from debet
-				where source_org_name != 'АО Мосинжпроект'
+				where source_org_name != $1
 				order by source_org_name
 `
 
-	if err := r.db.SelectContext(ctx, &customers, query); err != nil {
+	if err := r.db.SelectContext(ctx, &customers, query, common.ExcludedSourceOrgName); err != nil {
 		return nil, err
 	}
 

@@ -46,31 +46,31 @@ func main() {
 
 	debetRepo := debet.NewRepository(db)
 	debetService := debet.NewService(debetRepo)
-	debetHandler := handler.NewDebetHandler(debetService)
+	debetHandler := handler.NewHandlerDebet(debetService)
 
 	contractRepo := contract.NewRepository(db)
 	contractService := contract.NewService(contractRepo)
-	contractHandler := handler.NewContractHandler(contractService)
+	contractHandler := handler.NewHandlerContract(contractService)
 
 	blockfactorRepo := blockfactor.NewRepository(db)
 	blockfactorService := blockfactor.NewService(blockfactorRepo)
-	blockfactorHandler := handler.NewBlockFactorHandler(blockfactorService)
+	blockfactorHandler := handler.NewHandlerBlockFactor(blockfactorService)
 
 	responseRepo := response.NewRepository(db)
 	responseService := response.NewService(responseRepo, debetService)
-	responseHandler := handler.NewResponseHandler(responseService)
+	responseHandler := handler.NewHandlerResponse(responseService)
 
 	customerRepo := customer.NewRepository(db)
 	customerService := customer.NewService(customerRepo)
-	customerHandler := handler.NewHandler(customerService)
+	customerHandler := handler.NewHandlerCustomer(customerService)
 
 	contractorRepo := contractor.NewRepository(db)
 	contractorService := contractor.NewService(contractorRepo)
-	contractorHandler := handler.NewContractorHandler(contractorService)
+	contractorHandler := handler.NewHandlerContractor(contractorService)
 
 	objectsRepo := object.NewRepository(db)
 	objectsService := object.NewService(objectsRepo)
-	objectHandler := handler.NewObjectHandler(objectsService)
+	objectHandler := handler.NewHandlerObject(objectsService)
 
 	apiRouter := router.NewRouter(
 		debetHandler,

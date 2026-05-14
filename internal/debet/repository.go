@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/jmoiron/sqlx"
+	"visualizationBdDebet/internal/common"
 )
 
 // Repository отвечает за подключение к бд и работу с ней
@@ -38,11 +39,11 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 						debt_2024_12_31_overdue,
 						construction_title
 				from debet
-				where source_org_name != 'АО Мосинжпроект'
+				where source_org_name != $1
 				order by id
 			`
 
-	if err := r.db.SelectContext(ctx, &debets, query); err != nil {
+	if err := r.db.SelectContext(ctx, &debets, query, common.ExcludedSourceOrgName); err != nil {
 		// Непредвиденная ошибка при обращении к базе
 		return nil, err
 	}
@@ -51,7 +52,7 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 
 }
 
-func (r *Repository) GetAllViewWithMip(ctx context.Context) ([]View, error) {
+func (r *Repository) GetAllViewWithMIP(ctx context.Context) ([]View, error) {
 	var debets []View
 
 	query := `

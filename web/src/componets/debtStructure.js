@@ -65,9 +65,7 @@ export class DebtStructure {
 
         const option = {
             title: {
-                text: 'Структура дебиторской задолженности',
-                left: 'center',
-                top: 0
+                show: false
             },
             tooltip: {
                 trigger: 'item',
@@ -104,13 +102,12 @@ export class DebtStructure {
                                 y: params.labelRect.y + 30,
                                 align: 'centre'
                             };
-                        } else {
-                            return {
-                                x: params.labelRect.x,
-                                y: params.labelRect.y,
-                                align: 'centre'
-                            };
                         }
+                        return {
+                            x: params.labelRect.x,
+                            y: params.labelRect.y,
+                            align: 'centre'
+                        };
                     },
                     labelLine: {
                         length: 15,
@@ -120,7 +117,7 @@ export class DebtStructure {
                     emphasis: {
                         scale: true
                     },
-                    data: data
+                    data
                 }
             ]
         };
@@ -140,10 +137,6 @@ export class DebtStructure {
     }
 
     showTopModal(type) {
-        console.log('lastState.customerTopDebtors:', this.lastState.customerTopDebtors);
-        console.log('lastState.customerTopOverdue:', this.lastState.customerTopOverdue);
-
-
         if (!this.lastState) {
             console.warn('Нет данных для открытия топа подрядчиков');
             return;
@@ -181,7 +174,7 @@ export class DebtStructure {
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
 
-        const onBarClick = (contractorName, value) => {
+        const onBarClick = (contractorName) => {
             const orgName = this.lastState.selectedCustomer;
             if (!orgName) return;
             this.showContractorModal(contractorName, type, orgName);
@@ -224,7 +217,6 @@ export class DebtStructure {
     }
 
     showContractorModal(contractorName, type, orgName) {
-        console.log('showContractorModal called with:', contractorName, type, orgName);
         this.closeContractorModal();
 
         const overlay = document.createElement('div');
@@ -354,9 +346,7 @@ export class DebtStructure {
 
     async showObjectModal(objectName) {
         const orgName = this.lastState?.selectedCustomer;
-        if (!orgName) {
-            return;
-        }
+        if (!orgName) return;
 
         this.closeObjectModal();
 
@@ -511,4 +501,3 @@ export class DebtStructure {
         this.container.innerHTML = '';
     }
 }
-

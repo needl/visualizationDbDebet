@@ -7,11 +7,14 @@ import (
 	"log/slog"
 
 	"github.com/jmoiron/sqlx"
+	"visualizationBdDebet/internal/common"
 )
 
 type Repository struct {
 	db *sqlx.DB
 }
+
+var ErrColumnNotAllowed = errors.New("column is not allowed")
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
@@ -88,14 +91,14 @@ func (r *Repository) FindContractorsWithCurrDebet(ctx context.Context) ([]DebetC
 					- coalesce (sum(debt_2025_12_31_overdue), 0.00)
 					as debet_sum
 				from debet
-				where source_org_name != 'АО Мосинжпроект'
+				where source_org_name != $1
 				group by counterparty_name
 				having coalesce(sum(debt_2025_12_31_total), 0) 
 						   - coalesce (sum(debt_2025_12_31_overdue), 0.00) != 0.00
 				order by debet_sum desc
 			`
 
-	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query, common.ExcludedSourceOrgName); err != nil {
 		return nil, err
 	}
 
@@ -113,13 +116,13 @@ coalesce(sum(paid_amount), 0.00) as paid_sum,
 coalesce(sum(accepted_amount), 0.00) as accepted_sum,
 coalesce(sum(debt_2025_12_31_overdue), 0.00) as debet_sum
 from debet
-where source_org_name != 'АО Мосинжпроект'
+where source_org_name != $1
 group by counterparty_name
 having coalesce(sum(debt_2025_12_31_overdue), 0) != 0.00
 order by debet_sum desc
 `
 
-	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query, common.ExcludedSourceOrgName); err != nil {
 		return nil, err
 	}
 
@@ -151,7 +154,7 @@ func (r *Repository) FindContractorsWithBlockFactors(
 
 	if !allowedColumns[columnName] {
 		slog.Warn("ColumnName not allowed")
-		return nil, errors.New("column " + columnName + " is not allowed")
+		return nil, fmt.Errorf("%w: %s", ErrColumnNotAllowed, columnName)
 	}
 
 	query := fmt.Sprintf(`

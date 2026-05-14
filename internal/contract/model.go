@@ -58,7 +58,7 @@ type View struct {
 	ContractCost    *float64 `db:"contract_cost" json:"contract_cost"`       // Сумма контракта
 	ObjectName      *string  `db:"object_name" json:"object_name"`           //
 	Status          *string  `db:"status" json:"status"`                     // Статус
-	TdcAmount       *float64 `db:"tdc_amount" json:"tdc_amount"`             // Сумма тдс
+	TdcAmount       *float64 `db:"tdc_amount" json:"tdc_amount"`             // Сумма тдц
 	ObjectState     *string  `db:"object_state" json:"object_state"`         //
 	ObjectReadiness *float64 `db:"object_readiness" json:"object_readiness"` // Готовность
 }

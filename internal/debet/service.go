@@ -32,7 +32,7 @@ func (s *Service) GetAll(ctx context.Context) ([]View, error) {
 
 // GetAllWithMIP возвращает все записи View debet
 func (s *Service) GetAllWithMIP(ctx context.Context) ([]View, error) {
-	debets, err := s.repo.GetAllViewWithMip(ctx)
+	debets, err := s.repo.GetAllViewWithMIP(ctx)
 	if err != nil {
 		slog.Error("Failed to get debets", "error", err)
 		return nil, err

@@ -38,9 +38,6 @@ func (r *Repository) GetViewAll(ctx context.Context) ([]View, error) {
 	`
 
 	if err := r.db.SelectContext(ctx, &blocks, query); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
 		return nil, err
 	}
 

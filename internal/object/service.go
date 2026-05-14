@@ -11,6 +11,13 @@ type Service struct {
 	repo *Repository
 }
 
+var (
+	ErrOrgNameEmpty         = errors.New("orgName is empty")
+	ErrObjectNameEmpty      = errors.New("objectName is empty")
+	ErrObjectNameNotAllowed = errors.New("object name not allowed")
+	ErrObjectsNotFound      = errors.New("no objects")
+)
+
 func NewService(repo *Repository) *Service {
 	return &Service{repo: repo}
 }
@@ -18,7 +25,7 @@ func NewService(repo *Repository) *Service {
 func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error) {
 	if orgName == "" {
 		slog.Warn("orgName is empty")
-		return nil, errors.New("orgName is empty")
+		return nil, ErrOrgNameEmpty
 	}
 
 	names, err := s.repo.FindObjectsNameByOrgName(ctx, orgName)
@@ -27,8 +34,8 @@ func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) (
 		return nil, err
 	}
 
-	if names == nil {
-		return nil, fmt.Errorf("no objects")
+	if len(names) == 0 {
+		return nil, ErrObjectsNotFound
 	}
 
 	return names, nil
@@ -37,12 +44,12 @@ func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) (
 func (s *Service) GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName string, objectName string) ([]Object, error) {
 	if orgName == "" {
 		slog.Warn("orgName is empty")
-		return nil, errors.New("orgName is empty")
+		return nil, ErrOrgNameEmpty
 	}
 
 	if objectName == "" {
 		slog.Warn("objectName is empty")
-		return nil, errors.New("objectName is empty")
+		return nil, ErrObjectNameEmpty
 	}
 
 	allowedNames, err := s.GetObjectsNameByOrgName(ctx, orgName)
@@ -58,7 +65,7 @@ func (s *Service) GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName 
 
 	if !allowedSet[objectName] {
 		slog.Warn("Object name not allowed", "name", objectName)
-		return nil, fmt.Errorf("object name not allowed: %s", objectName)
+		return nil, fmt.Errorf("%w: %s", ErrObjectNameNotAllowed, objectName)
 	}
 
 	objects, err := s.repo.FindObjectsByOrgNameAndObjectName(ctx, orgName, objectName)

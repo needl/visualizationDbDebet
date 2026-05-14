@@ -1,15 +1,15 @@
-﻿export class HorizontalBarChart {
+export class HorizontalBarChart {
     constructor(container, title, valueFormatter, onBarClick) {
         this.container = container;
         this.title = title;
-        this.valueFormatter = valueFormatter || ((v) => (v / 1e9).toFixed(2) + ' РјР»СЂРґ в‚Ѕ');
+        this.valueFormatter = valueFormatter || ((v) => (v / 1e9).toFixed(2) + ' млрд ₽');
         this.onBarClick = onBarClick || null;
         this.chart = null;
     }
 
     render(data) {
         if (!data || data.length === 0) {
-            this.container.innerHTML = '<div class="empty-message">РќРµС‚ РґР°РЅРЅС‹С… РїРѕ С‚РѕРї-10</div>';
+            this.container.innerHTML = '<div class="empty-message">Нет данных по топ-10</div>';
             if (this.chart) {
                 this.chart.dispose();
                 this.chart = null;
@@ -46,11 +46,11 @@
             },
             xAxis: {
                 type: 'value',
-                name: 'РЎСѓРјРјР° (РјР»СЂРґ в‚Ѕ)',
+                name: 'Сумма (млрд ₽)',
                 nameLocation: 'middle',
                 nameGap: 28,
                 axisLabel: {
-                    formatter: (value) => (value / 1e9).toFixed(1) + ' РјР»СЂРґ'
+                    formatter: (value) => (value / 1e9).toFixed(1) + ' млрд'
                 }
             },
             yAxis: {

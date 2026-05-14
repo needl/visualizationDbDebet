@@ -44,6 +44,11 @@ export class DashboardRenderer {
                     pieHeader.className = 'pie-chart-title';
                     wrapperDiv.appendChild(pieHeader);
 
+                    const pieTotal = document.createElement('div');
+                    pieTotal.className = 'pie-chart-total';
+                    pieTotal.textContent = 'Сумма всего: —';
+                    wrapperDiv.appendChild(pieTotal);
+
                     const pieWrapper = document.createElement('div');
                     pieWrapper.className = 'pie-wrapper';
 
@@ -56,6 +61,23 @@ export class DashboardRenderer {
                     const pieMetricKey = chartConfig.metric + 'Pie';
                     const pieChart = new PieChartComponent(pieContainer, pieMetricKey, chartConfig.title);
                     this.components.push(pieChart);
+
+                    const unsubscribePieTotal = appState.subscribe((state) => {
+                        const pieData = state.chartData[pieMetricKey]?.data;
+                        if (!pieData || !pieData.length) {
+                            pieTotal.textContent = 'Сумма всего: —';
+                            return;
+                        }
+
+                        const total = pieData.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+                        const totalInBillions = total / 1_000_000_000;
+                        const formatted = totalInBillions.toLocaleString('ru-RU', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                        pieTotal.textContent = `Сумма всего: ${formatted} млрд ₽`;
+                    });
+                    this.statsSubscriptions.push(unsubscribePieTotal);
 
                     chartsContainer.appendChild(wrapperDiv);
                 });
@@ -80,6 +102,12 @@ export class DashboardRenderer {
 
                 const debtStructCol = document.createElement('div');
                 debtStructCol.className = 'stats-col debt-col';
+
+                const debtStructTitle = document.createElement('h3');
+                debtStructTitle.textContent = 'Структура дебиторской задолженности на 31.12.2025';
+                debtStructTitle.className = 'pie-chart-title';
+                debtStructCol.appendChild(debtStructTitle);
+
                 const debtStructureContainer = document.createElement('div');
                 debtStructureContainer.className = 'debt-structure-container';
                 debtStructCol.appendChild(debtStructureContainer);
@@ -87,6 +115,12 @@ export class DashboardRenderer {
 
                 const blockFactorsCol = document.createElement('div');
                 blockFactorsCol.className = 'stats-col factors-col';
+
+                const blockFactorsTitle = document.createElement('h3');
+                blockFactorsTitle.textContent = 'Оценка состояния благонадёжности подрядчика';
+                blockFactorsTitle.className = 'pie-chart-title';
+                blockFactorsCol.appendChild(blockFactorsTitle);
+
                 const blockFactorsContainer = document.createElement('div');
                 blockFactorsContainer.className = 'block-factors-chart-container';
                 blockFactorsCol.appendChild(blockFactorsContainer);

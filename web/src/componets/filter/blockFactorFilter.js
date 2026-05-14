@@ -66,7 +66,7 @@ export class BlockFactorFilter {
         this.container.innerHTML = `
             <div class="block-factor-filter">
                 <div class="select-wrapper">
-                    <label for="block-factor-select">Выберите фактор:</label>
+                    <label for="block-factor-select">Выберите блок-фактор:</label>
                     <select id="block-factor-select">
                         <option value="">-- Выберите --</option>
                     </select>

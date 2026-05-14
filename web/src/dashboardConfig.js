@@ -16,7 +16,7 @@ export const dashboardConfig = [
         }
     },
     {
-        title: 'Дебиторская задолженность по заказчикам',
+        title: 'Дебиторская задолженность по заказчикам на 31.12.2025',
         type: 'charts',
         charts: [
             { metric: 'contractAmount', title: 'Сумма контрактов' },
