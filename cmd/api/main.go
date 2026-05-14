@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"embed"
 	"errors"
 	"io/fs"
 	"log/slog"
@@ -11,6 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	assets "visualizationBdDebet"
 	"visualizationBdDebet/internal/contractor"
 	"visualizationBdDebet/internal/customer"
 	"visualizationBdDebet/internal/object"
@@ -26,9 +26,6 @@ import (
 	"visualizationBdDebet/internal/delivery/handler"
 	"visualizationBdDebet/internal/delivery/router"
 )
-
-//go:embed web
-var staticFiles embed.FS
 
 func main() {
 	cfg, err := config.Load()
@@ -82,7 +79,7 @@ func main() {
 		objectHandler,
 	)
 
-	staticFS, err := fs.Sub(staticFiles, "web")
+	staticFS, err := fs.Sub(assets.FS, "web")
 	if err != nil {
 		slog.Error("Failed to get static files subdir", "error", err)
 		panic(err)
