@@ -1,4 +1,4 @@
-﻿import { fetchContractorsByFactor } from '../../services/contractorApiCaller.js';
+import { fetchContractorsByFactor } from '../../api/contractorApi.js';
 
 export async function loadContractorsByFactor(orgName, columnName) {
     try {

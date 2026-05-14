@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/jmoiron/sqlx"
 	"visualizationBdDebet/internal/common"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Repository struct {

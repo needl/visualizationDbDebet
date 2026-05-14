@@ -1,9 +1,9 @@
-﻿import { appState } from '../appState.js';
-import { fetchDebetData } from '../../services/apiCaller.js';
-import { aggregateByOrg } from '../../transformers/aggregatorByOrg.js';
-import { formatChartData } from '../../transformers/formatter.js';
-import { prepareTableData } from '../../transformers/tableDate.js';
-import { aggregateByYearStacked } from '../../transformers/groupByYear.js';
+import { appState } from '../../../../shared/state/appState.js';
+import { fetchDebetData } from '../../api/debetApi.js';
+import { aggregateByOrg } from '../../lib/aggregateByOrg.js';
+import { formatChartData } from '../../lib/formatChartData.js';
+import { prepareTableData } from '../../lib/prepareTableData.js';
+import { aggregateByYearStacked } from '../../lib/aggregateByYearStacked.js';
 
 export async function loadData() {
     appState.setLoading(true);
@@ -52,4 +52,3 @@ export async function loadData() {
         appState.setLoading(false);
     }
 }
-

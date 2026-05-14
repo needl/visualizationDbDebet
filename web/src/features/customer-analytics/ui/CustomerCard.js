@@ -1,4 +1,4 @@
-import {appState} from "../../state/appState.js";
+import { appState } from '../../../shared/state/appState.js';
 
 export class CustomerCard {
     constructor(container) {
@@ -25,7 +25,7 @@ export class CustomerCard {
     }
 
     mount() {
-        this.unsubscribe = appState.subscribe(state => {
+        this.unsubscribe = appState.subscribe((state) => {
             if (state.customerLoading) {
                 this.container.innerHTML = '<div class="loading">Загрузка статистики...</div>';
             } else if (state.customerSummary) {

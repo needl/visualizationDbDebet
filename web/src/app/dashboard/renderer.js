@@ -1,12 +1,12 @@
-﻿import { ChartComponent } from './componets/chart/debetChart.js';
-import { PieChartComponent } from './componets/pieChartForDeb.js';
-import { MetricCard } from './componets/card/metricCard.js';
-import { StatsTable } from './componets/statsTableForDebet.js';
-import { appState } from './state/appState.js';
-import { CustomerFilter } from './componets/filter/customerFilter.js';
-import { CustomerCard } from './componets/card/customerCard.js';
-import { BlockFactorFilter } from './componets/filter/blockFactorFilter.js';
-import { DebtStructure } from './componets/debtStructure.js';
+import { ChartComponent } from '../../features/debet-overview/ui/ChartComponent.js';
+import { PieChartComponent } from '../../features/debet-overview/ui/PieChartComponent.js';
+import { MetricCard } from '../../features/debet-overview/ui/MetricCard.js';
+import { StatsTable } from '../../features/debet-overview/ui/StatsTable.js';
+import { appState } from '../../shared/state/appState.js';
+import { CustomerFilter } from '../../features/customer-analytics/ui/CustomerFilter.js';
+import { CustomerCard } from '../../features/customer-analytics/ui/CustomerCard.js';
+import { BlockFactorFilter } from '../../features/customer-analytics/ui/block-factor/BlockFactorFilter.js';
+import { DebtStructure } from '../../features/customer-analytics/ui/debt-structure/DebtStructure.js';
 
 export class DashboardRenderer {
     constructor(config) {
@@ -190,4 +190,3 @@ export class DashboardRenderer {
         });
     }
 }
-

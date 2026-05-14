@@ -1,10 +1,10 @@
-﻿import { appState } from '../appState.js';
+import { appState } from '../../../../shared/state/appState.js';
 import {
     fetchCustomerSummary,
     fetchCustomerTopDebtors,
     fetchCustomerTopOverdue,
     fetchCustomerBlockFactors
-} from '../../services/customerApiCaller.js';
+} from '../../api/customerApi.js';
 
 export async function loadCustomerData(orgName) {
     if (!orgName) return;
@@ -28,5 +28,3 @@ export async function loadCustomerData(orgName) {
         appState.setCustomerLoading(false);
     }
 }
-
-

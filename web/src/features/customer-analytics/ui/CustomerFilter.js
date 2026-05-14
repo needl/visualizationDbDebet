@@ -1,6 +1,6 @@
-import { appState } from '../../state/appState.js';
-import { fetchCustomers } from '../../services/customerApiCaller.js';
-import { loadCustomerData } from '../../state/actions/actionForCustomers.js';
+import { appState } from '../../../shared/state/appState.js';
+import { fetchCustomers } from '../api/customerApi.js';
+import { loadCustomerData } from '../model/actions/loadCustomerData.js';
 
 export class CustomerFilter {
     constructor(container) {
@@ -65,4 +65,3 @@ export class CustomerFilter {
         });
     }
 }
-

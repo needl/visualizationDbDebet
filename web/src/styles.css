@@ -712,3 +712,7 @@ body {
     font-weight: 600
 }
 
+.result-table .error {
+    text-align: center;
+}
+

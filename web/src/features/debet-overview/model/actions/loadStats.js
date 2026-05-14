@@ -1,5 +1,5 @@
-﻿import { appState } from '../appState.js';
-import {fetchResponseData} from "../../services/apiCaller.js";
+import { appState } from '../../../../shared/state/appState.js';
+import { fetchResponseData } from '../../api/statsApi.js';
 
 export async function loadStats() {
     appState.setLoading(true);

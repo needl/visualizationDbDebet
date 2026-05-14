@@ -1,8 +1,12 @@
-import { appState } from '../state/appState.js';
-import { HorizontalBarChart } from './chart/horizonBarChart.js';
-import { fetchContractorDebt, fetchContractorOverdue } from '../services/customerApiCaller.js';
-import { fetchObjectData } from '../services/objectApiCaller.js';
-import { aggregateObjectMetrics, prepareChartData } from '../transformers/objectAggregator.js';
+import { appState } from '../../../../shared/state/appState.js';
+import { HorizontalBarChart } from './HorizontalBarChart.js';
+import { fetchContractorDebt, fetchContractorOverdue } from '../../api/contractorApi.js';
+import { fetchObjectData } from '../../api/objectApi.js';
+import { getUserFriendlyError } from '../../../../shared/lib/userFriendlyError.js';
+import { aggregateObjectMetrics, prepareChartData } from '../../lib/objectAggregator.js';
+import { TOP_MODAL_TITLES } from './helpers/constants.js';
+import { escapeHtml } from './helpers/formatters.js';
+import { renderContractorTable, renderObjectMetricCards } from './helpers/renderers.js';
 
 export class DebtStructure {
     constructor(container) {
@@ -51,8 +55,8 @@ export class DebtStructure {
 
         const data = [
             { name: 'Текущая', value: currentDebt, itemStyle: { color: '#10b981' } },
-            { name: 'Просроченная', value: overdueDebt, itemStyle: { color: '#ef4444' } },
-        ].filter(item => item.value > 0);
+            { name: 'Просроченная', value: overdueDebt, itemStyle: { color: '#ef4444' } }
+        ].filter((item) => item.value > 0);
 
         if (data.length === 0) {
             if (this.chart) {
@@ -64,9 +68,7 @@ export class DebtStructure {
         }
 
         const option = {
-            title: {
-                show: false
-            },
+            title: { show: false },
             tooltip: {
                 trigger: 'item',
                 formatter: (params) => {
@@ -114,9 +116,7 @@ export class DebtStructure {
                         length2: 10,
                         smooth: true
                     },
-                    emphasis: {
-                        scale: true
-                    },
+                    emphasis: { scale: true },
                     data
                 }
             ]
@@ -127,10 +127,9 @@ export class DebtStructure {
 
         this.chart.off('click');
         this.chart.on('click', (params) => {
-            const name = params.name;
-            if (name === 'Просроченная') {
+            if (params.name === 'Просроченная') {
                 this.showTopModal('overdue');
-            } else if (name === 'Текущая') {
+            } else if (params.name === 'Текущая') {
                 this.showTopModal('debt');
             }
         });
@@ -155,9 +154,8 @@ export class DebtStructure {
         const header = document.createElement('div');
         header.className = 'modal-header';
         const title = document.createElement('h3');
-        title.textContent = type === 'overdue'
-            ? 'Топ-10 подрядчиков по просроченной дебиторской задолженности'
-            : 'Топ-10 подрядчиков по текущей дебиторской задолженности';
+        title.textContent = TOP_MODAL_TITLES[type] || TOP_MODAL_TITLES.debt;
+
         const closeBtn = document.createElement('button');
         closeBtn.className = 'modal-close';
         closeBtn.innerHTML = '&times;';
@@ -183,14 +181,12 @@ export class DebtStructure {
         const barChart = new HorizontalBarChart(
             chartContainer,
             title.textContent,
-            (v) => (v / 1e9).toFixed(2) + ' млрд ₽',
+            (v) => `${(v / 1e9).toFixed(2)} млрд ₽`,
             onBarClick
         );
 
         const updateChart = (state) => {
-            const data = type === 'overdue'
-                ? state.customerTopOverdue
-                : state.customerTopDebtors;
+            const data = type === 'overdue' ? state.customerTopOverdue : state.customerTopDebtors;
             barChart.render(data || []);
         };
 
@@ -242,9 +238,13 @@ export class DebtStructure {
 
         const fetchFn = type === 'overdue' ? fetchContractorOverdue : fetchContractorDebt;
         fetchFn(orgName, contractorName)
-            .then(data => this.renderContractorTable(data, modal.querySelector('.modal-body')))
-            .catch(err => {
-                modal.querySelector('.modal-body').innerHTML = `<div class="error">Ошибка: ${err.message}</div>`;
+            .then((data) => {
+                const body = modal.querySelector('.modal-body');
+                renderContractorTable(body, data, (objectName) => this.showObjectModal(objectName));
+            })
+            .catch((err) => {
+                const message = getUserFriendlyError(err, 'Не удалось загрузить контракты подрядчика');
+                modal.querySelector('.modal-body').innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
             });
     }
 
@@ -265,83 +265,6 @@ export class DebtStructure {
             document.body.removeChild(this.objectModal);
             this.objectModal = null;
         }
-    }
-
-    escapeHtml(value) {
-        return String(value)
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#39;');
-    }
-
-    renderContractorTable(data, container) {
-        if (!data || data.length === 0) {
-            container.innerHTML = 'Нет данных';
-            return;
-        }
-
-        const formatDate = (dateStr) => {
-            if (!dateStr) return '—';
-            const date = new Date(dateStr);
-            if (isNaN(date.getTime())) return dateStr;
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
-        const formatMoney = (value) => {
-            if (value === null || value === undefined) return '—';
-            const num = Number(value);
-            if (isNaN(num)) return '—';
-            const mln = num / 1_000_000;
-            return mln.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        };
-
-        const headers = {
-            object: 'Объект',
-            contract_date: 'Дата заключения контракта',
-            work_end_date: 'Дата окончания работ',
-            number: 'Номер контракта',
-            amount: 'Сумма контракта, млн ₽',
-            debet_total: 'Общая задолженность, млн ₽',
-            debet_overdue: 'Просроченная задолженность, млн ₽'
-        };
-
-        let html = '<table class="contractor-table"><thead><tr>';
-        Object.values(headers).forEach(h => html += `<th>${h}</th>`);
-        html += '</tr></thead><tbody>';
-
-        data.forEach(item => {
-            html += '<tr>';
-            if (item.object) {
-                const safeObject = this.escapeHtml(item.object);
-                html += `<td><button type="button" class="object-link-btn" data-object="${safeObject}">${safeObject}</button></td>`;
-            } else {
-                html += '<td>—</td>';
-            }
-            html += `<td>${formatDate(item.contract_date)}</td>`;
-            html += `<td>${formatDate(item.work_end_date)}</td>`;
-            html += `<td>${item.number || '—'}</td>`;
-            html += `<td>${formatMoney(item.amount)}</td>`;
-            html += `<td>${formatMoney(item.debet_total)}</td>`;
-            html += `<td>${formatMoney(item.debet_overdue)}</td>`;
-            html += '</tr>';
-        });
-
-        html += '</tbody></table>';
-        container.innerHTML = html;
-
-        const objectButtons = container.querySelectorAll('.object-link-btn');
-        objectButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-                const objectName = button.dataset.object;
-                if (!objectName) return;
-                this.showObjectModal(objectName);
-            });
-        });
     }
 
     async showObjectModal(objectName) {
@@ -386,7 +309,8 @@ export class DebtStructure {
             const rawData = await fetchObjectData(orgName, objectName);
             this.renderObjectAnalytics(body, rawData || []);
         } catch (err) {
-            body.innerHTML = `<div class="error">Ошибка: ${this.escapeHtml(err.message)}</div>`;
+            const message = getUserFriendlyError(err, 'Не удалось загрузить аналитику по объекту');
+            body.innerHTML = `<div class="error">${escapeHtml(message)}</div>`;
         }
     }
 
@@ -413,40 +337,7 @@ export class DebtStructure {
         root.appendChild(chartContainer);
 
         container.appendChild(root);
-
-        const metricDefs = [
-            { label: 'Подрядчик', key: 'contractorName', format: 'string' },
-            { label: 'Дата начала работ', key: 'workStartDate', format: 'date' },
-            { label: 'Дата окончания работ', key: 'workEndDate', format: 'date' },
-            { label: 'Строительная готовность', key: 'buildReadyPercent', format: 'boolean' },
-            { label: 'Разрешение на ввод', key: 'permissionToEnter', format: 'boolean' },
-            { label: 'Заключение МКЭ', key: 'conclusionMke', format: 'boolean' },
-            { label: 'Твёрдая договорная цена', key: 'hardContractPrice', format: 'money' },
-            { label: 'Сумма договора', key: 'contractAmount', format: 'money' },
-            { label: 'Перечислено', key: 'paidAmount', format: 'money' },
-            { label: 'Принято', key: 'acceptedAmount', format: 'money' },
-        ];
-
-        metricDefs.forEach((def) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'metric-card-wrapper';
-
-            const card = document.createElement('div');
-            card.className = 'metric-card';
-
-            const cardTitle = document.createElement('div');
-            cardTitle.className = 'card-title';
-            cardTitle.textContent = def.label;
-
-            const cardValue = document.createElement('div');
-            cardValue.className = 'card-value';
-            cardValue.textContent = this.formatObjectMetric(metrics[def.key], def.format);
-
-            card.appendChild(cardTitle);
-            card.appendChild(cardValue);
-            wrapper.appendChild(card);
-            cardsGrid.appendChild(wrapper);
-        });
+        renderObjectMetricCards(cardsGrid, metrics);
 
         if (this.objectModalChart) {
             this.objectModalChart.dispose();
@@ -461,7 +352,7 @@ export class DebtStructure {
             yAxis: {
                 type: 'value',
                 axisLabel: {
-                    formatter: (value) => (value / 1_000_000).toFixed(1) + ' млн'
+                    formatter: (value) => `${(value / 1_000_000).toFixed(1)} млн`
                 }
             },
             series: chartData.series
@@ -469,21 +360,6 @@ export class DebtStructure {
 
         this.objectModalChart.setOption(option, true);
         this.objectModalChart.resize();
-    }
-
-    formatObjectMetric(value, format) {
-        if (value === null || value === undefined) return '—';
-
-        if (format === 'money') {
-            const number = Number(value);
-            if (Number.isNaN(number)) return '—';
-            const inMillions = number / 1_000_000;
-            const rounded = Math.round(inMillions * 10) / 10;
-            return `${rounded.toLocaleString('ru-RU').replace('.', ',')} млн ₽`;
-        }
-
-        if (format === 'boolean') return value ? 'Да' : 'Нет';
-        return String(value);
     }
 
     clear() {

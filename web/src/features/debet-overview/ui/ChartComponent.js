@@ -1,6 +1,4 @@
-
-
-import { appState } from '../../state/appState.js';
+import { appState } from '../../../shared/state/appState.js';
 
 export class ChartComponent {
     constructor(container, metricKey, title) {
@@ -36,7 +34,7 @@ export class ChartComponent {
         }
         if (chartData.series && Array.isArray(chartData.series)) {
             this.drawGroupedChart(chartData.names, chartData.series);
-        }  else {
+        } else {
             this.showEmpty();
         }
     }
@@ -60,7 +58,6 @@ export class ChartComponent {
         };
 
         const option = {
-            
             title: {
                 text: this.title,
                 left: 'center'
@@ -72,13 +69,12 @@ export class ChartComponent {
                 top: '10%',
                 bottom: '2%'
             },
-            
             tooltip: {
                 trigger: 'item',
                 formatter: function(params) {
                     const val = params.value;
-                    const inMillions = (val / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
-                    return `${params.seriesName}: ${inMillions} млрд ₽`;
+                    const inBillions = (val / 1_000_000_000).toLocaleString('ru-RU', { maximumFractionDigits: 2 });
+                    return `${params.seriesName}: ${inBillions} млрд ₽`;
                 }
             },
             xAxis: {
@@ -98,7 +94,7 @@ export class ChartComponent {
                     }
                 }
             },
-            series: series.map(s => ({
+            series: series.map((s) => ({
                 name: s.name,
                 type: 'bar',
                 stack: s.stack,
@@ -112,10 +108,6 @@ export class ChartComponent {
         this.chart.setOption(option);
         this.chart.resize();
     }
-
-    
-
-    
 
     showLoading() {
         if (this.chart) {

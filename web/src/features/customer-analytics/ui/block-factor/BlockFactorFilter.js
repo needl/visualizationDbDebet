@@ -1,5 +1,6 @@
-import { appState } from '../../state/appState.js';
-import { loadContractorsByFactor } from '../../state/actions/actionForContractor.js';
+import { appState } from '../../../../shared/state/appState.js';
+import { loadContractorsByFactor } from '../../model/actions/loadContractorsByFactor.js';
+import { getUserFriendlyError } from '../../../../shared/lib/userFriendlyError.js';
 
 export class BlockFactorFilter {
     constructor(container) {
@@ -40,7 +41,7 @@ export class BlockFactorFilter {
     }
 
     subscribe() {
-        this._unsubscribe = appState.subscribe(state => {
+        this._unsubscribe = appState.subscribe((state) => {
             const selectWrapper = this.container.querySelector('.select-wrapper');
             const emptyMessage = this.container.querySelector('.empty-message');
 
@@ -62,13 +63,14 @@ export class BlockFactorFilter {
             }
         });
     }
+
     render() {
         this.container.innerHTML = `
             <div class="block-factor-filter">
                 <div class="select-wrapper">
                     <label for="block-factor-select">Выберите блок-фактор:</label>
                     <select id="block-factor-select">
-                        <option value="">-- Выберите --</option>
+                        <option value="">-- Блок фактор --</option>
                     </select>
                 </div>
                 <div class="empty-message" style="display:none;">Нет данных по блок-факторам</div>
@@ -88,7 +90,7 @@ export class BlockFactorFilter {
             .filter(([_, value]) => (value ?? 0) > 0)
             .sort((a, b) => b[1] - a[1]);
 
-        let html = '<option value="">-- Выберите --</option>';
+        let html = '<option value="">--  Блок фактор --</option>';
         options.forEach(([key, value]) => {
             const displayName = this.factorMap[key] || key;
             html += `<option value="${key}">${displayName} (${value})</option>`;
@@ -113,8 +115,18 @@ export class BlockFactorFilter {
             const contractors = await loadContractorsByFactor(selectedOrg, columnName);
             this.renderContractorsTable(contractors, resultTable);
         } catch (err) {
-            if (resultTable) resultTable.innerHTML = `<div class="error">Ошибка: ${err.message}</div>`;
+            const message = getUserFriendlyError(err, 'Не удалось загрузить подрядчиков по выбранному блок-фактору');
+            if (resultTable) resultTable.innerHTML = `<div class="error">${this.escapeHtml(message)}</div>`;
         }
+    }
+
+    escapeHtml(value) {
+        return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
     }
 
     renderContractorsTable(data, container) {
@@ -126,7 +138,7 @@ export class BlockFactorFilter {
         const formatDate = (dateStr) => {
             if (!dateStr) return '—';
             const date = new Date(dateStr);
-            if (isNaN(date.getTime())) return dateStr;
+            if (Number.isNaN(date.getTime())) return dateStr;
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
@@ -134,8 +146,8 @@ export class BlockFactorFilter {
         };
         const formatNumber = (value) => {
             if (value === null || value === undefined) return '—';
-            let num = typeof value === 'number' ? value : parseFloat(value);
-            if (isNaN(num)) return value;
+            const num = typeof value === 'number' ? value : parseFloat(value);
+            if (Number.isNaN(num)) return value;
             const mln = num / 1_000_000;
             return mln.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         };
@@ -153,12 +165,12 @@ export class BlockFactorFilter {
 
         let html = '<table class="contractor-table"><thead>';
         const first = data[0];
-        Object.keys(first).forEach(key => {
+        Object.keys(first).forEach((key) => {
             const header = headerMap[key] || key;
             html += `<th>${header}</th>`;
         });
         html += '</thead><tbody>';
-        data.forEach(item => {
+        data.forEach((item) => {
             html += '<tr>';
             Object.entries(item).forEach(([key, val]) => {
                 let displayValue = val != null ? val : '—';

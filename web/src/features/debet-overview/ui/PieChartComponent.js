@@ -1,4 +1,4 @@
-import { appState } from '../state/appState.js';
+import { appState } from '../../../shared/state/appState.js';
 
 export class PieChartComponent {
     constructor(container, metricKey, title) {
@@ -54,12 +54,10 @@ export class PieChartComponent {
             return `${valueInBillions} млрд ₽ (${percent}%)`;
         };
 
-        const tooltipFormatter = (params) => {
-            return formatValue(params.value, params.percent);
-        };
+        const tooltipFormatter = (params) => formatValue(params.value, params.percent);
 
         const legendTooltipFormatter = (params) => {
-            const item = data.find(d => d.name === params.name);
+            const item = data.find((d) => d.name === params.name);
             if (item) {
                 const total = data.reduce((sum, d) => sum + d.value, 0);
                 const percent = ((item.value / total) * 100).toFixed(2);
@@ -87,9 +85,9 @@ export class PieChartComponent {
                     width: 200,
                     overflow: 'break'
                 },
-                formatter: function (name) {
+                formatter: function(name) {
                     if (name.length > 20) {
-                        return name.slice(0, 20) + '…';
+                        return `${name.slice(0, 20)}…`;
                     }
                     return name;
                 },
@@ -117,11 +115,11 @@ export class PieChartComponent {
                             show: true,
                             fontSize: 12,
                             position: 'outer',
-                            fontWeight: 'bold',
+                            fontWeight: 'bold'
                         }
                     },
                     labelLine: { show: false },
-                    data: data
+                    data
                 }
             ]
         };
@@ -177,7 +175,4 @@ export class PieChartComponent {
         }
         this.container.innerHTML = '';
     }
-
-    
-
 }
