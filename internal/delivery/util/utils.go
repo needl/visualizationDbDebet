@@ -9,7 +9,7 @@ import (
 func RespondJSON(w http.ResponseWriter, data any) {
 	buf, err := json.Marshal(data)
 	if err != nil {
-		//slog.Error(err.Error(), "info", "Ошибка парса ответа")
+		slog.Error("failed to marshal response", "error", err)
 		http.Error(w, "failed to encode response", http.StatusInternalServerError)
 		return
 	}
@@ -17,7 +17,6 @@ func RespondJSON(w http.ResponseWriter, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	if _, err = w.Write(buf); err != nil {
-		http.Error(w, "failed to encode response", http.StatusInternalServerError) // ?
 		slog.Error("failed to write response", "error", err)
 	}
 }

@@ -1,4 +1,4 @@
-/* Импорт шрифта Google Fonts (опционально) */
+﻿
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
 
 * {
@@ -20,7 +20,7 @@ body {
     margin: 0 auto;
 }
 
-/* Блоки дашборда */
+
 .dashboard-block {
     background: #ddd7d7;
     border-radius: 1rem;
@@ -45,7 +45,7 @@ body {
     text-align: center;
 }
 
-/* Сетка для графиков */
+
 .charts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
@@ -59,6 +59,7 @@ body {
     border: 1px solid #e2e8f0;
     overflow: visible;
     transition: transform 0.2s, box-shadow 0.2s;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .chart-wrapper:hover {
@@ -71,7 +72,7 @@ body {
     height: 18%;
 }
 
-/* Стили для состояний загрузки, ошибки, пустых данных */
+
 .loading, .error, .empty {
     display: flex;
     align-items: center;
@@ -98,7 +99,7 @@ body {
     background: #f9fafb;
 }
 
-/* Адаптивность */
+
 @media (max-width: 768px) {
     body {
         padding: 1rem;
@@ -121,10 +122,6 @@ body {
     }
 }
 
-.chart-wrapper {
-    animation: fadeIn 0.5s ease-out;
-}
-
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -136,7 +133,7 @@ body {
     }
 }
 
-/* Блок статистики */
+
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -164,7 +161,7 @@ body {
     flex-direction: column;
     padding: 1.25rem;
     text-align: center;
-    /*min-height: 100%;*/
+    
     flex: 1;
     word-break: break-word;
     overflow-wrap: break-word;
@@ -194,7 +191,7 @@ body {
     word-break: break-word;
 }
 
-/* Полноширинные графики */
+
 .chart-wrapper-full {
     background: #ffffff;
     border-radius: 0.75rem;
@@ -207,7 +204,7 @@ body {
     box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.2);
 }
 
-/* Контейнер таблицы */
+
 .stats-table-container {
     background-color: #f9fafb;
     border-radius: 0.75rem;
@@ -240,7 +237,7 @@ body {
     min-width: 140px;
 }
 
-/* Прогресс-бар */
+
 .progress-container {
     position: relative;
     height: 24px;
@@ -271,7 +268,7 @@ body {
     font-weight: bold;
 }
 
-/* Ряды для двухколоночных макетов */
+
 .stats-row {
     display: flex;
     gap: 1.5rem;
@@ -288,7 +285,7 @@ body {
     border: 1px solid #e5e7eb;
 }
 
-/* Специфические классы для колонок */
+
 .stats-col.debt-col {
     flex: 0 0 35%;
     max-width: 35%;
@@ -300,7 +297,7 @@ body {
 }
 
 
-/* Контейнеры для графиков */
+
 .debt-structure-container,
 .block-factors-chart-container,
 .chart-wrapper-full {
@@ -311,14 +308,14 @@ body {
     padding: 0.5rem;
 }
 
-/* Центрирование круговой диаграммы */
+
 .debt-structure-container {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* Для canvas внутри контейнеров — растягиваем на всю доступную область */
+
 .debt-structure-container canvas,
 .block-factors-chart-container canvas,
 .chart-wrapper-full canvas {
@@ -326,7 +323,7 @@ body {
     height: 100% !important;
 }
 
-/* Единообразные сообщения об отсутствии данных */
+
 .debt-structure-container .empty-message,
 .block-factors-chart-container .empty-message,
 .chart-wrapper-full .empty-message {
@@ -343,7 +340,7 @@ body {
     margin: 0;
 }
 
-/* Адаптивность: на мобильных устройствах колонки вертикальны */
+
 @media (max-width: 768px) {
     .stats-row {
         flex-direction: column;
@@ -356,7 +353,7 @@ body {
     }
 }
 
-/* Элементы для фильтра */
+
 .customer-filter-container {
     margin-bottom: 1.5rem;
     padding: 1rem;
@@ -378,17 +375,17 @@ body {
     font-size: 1rem;
 }
 
-/* Карточки заказчика */
+
 .customer-metrics {
     margin-bottom: 1.5rem;
 }
 .customer-metrics-grid {
-    /*display: flex;*/
+    
     display: grid;
 
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
-    /*flex-wrap: wrap;*/
+    
     gap: 1rem;
 }
 .customer-metrics-grid .metric-card {
@@ -405,7 +402,7 @@ body {
     transition: box-shadow 0.2s;
     word-break: break-word;
     overflow-wrap: break-word;
-    /* min-height больше не нужен, грид растянет карточку */
+    
 }
 .metric-card {
     flex: 1;
@@ -431,7 +428,7 @@ body {
     color: #0f172a;
 }
 
-/* Исправление ширины для обёртки круговой диаграммы */
+
 .chart-wrapper > div.pie-wrapper {
     width: 100%;
     overflow: visible;
@@ -503,6 +500,30 @@ body {
     background-color: #f2f2f2;
     font-weight: bold;
 }
+
+.object-link-btn {
+    border: none;
+    background: transparent;
+    color: #1d4ed8;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+}
+
+.object-link-btn:hover {
+    color: #1e40af;
+}
+
+.object-modal-body {
+    max-height: 75vh;
+}
+
+.object-modal-chart {
+    width: 100%;
+    height: 420px;
+}
+
 .modal-content h3 {
     text-align: center;
 }
@@ -514,6 +535,15 @@ body {
     font-size: 18px;
     margin: 0.75rem 0 0 0;
     color: #000000;
+}
+
+.pie-chart-total {
+    display: block;
+    width: 100%;
+    text-align: right;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1f2937;
 }
 
 .modal-overlay {
@@ -535,34 +565,34 @@ body {
     border-radius: 8px;
     width: 95%;
     max-width: 2000px;
-    max-height: 90vh;         /* лучше заменить на 90vh, но оставим как есть */
+    max-height: 90vh;         
     display: flex;
     flex-direction: column;
-    padding: 5px 20px 20px 20px;   /* верхний padding уменьшен до 10px */
+    padding: 5px 20px 20px 20px;   
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .modal-header {
-    position: relative;          /* чтобы абсолютно позиционировать кнопку */
+    position: relative;          
     display: flex;
     align-items: center;
-    justify-content: center;     /* заголовок остаётся по центру */
-    margin-bottom: 4px;          /* отступ снизу до графика */
+    justify-content: center;     
+    margin-bottom: 4px;          
     padding-top: 0;
 }
 
 .modal-header h3 {
-    flex: 1;                     /* занимает всё доступное пространство */
+    flex: 1;                     
     text-align: center;
     margin: 0;
-    font-size: 26px;             /* можно оставить как было */
+    font-size: 26px;             
 }
 
 .modal-close {
     position: absolute;
-    right: 10px;                    /* прижимаем к правому краю */
+    right: 10px;                    
     top: 10px;
-    transform: translateY(-50%); /* вертикальное центрирование */
+    transform: translateY(-50%); 
     background: none;
     border: none;
     font-size: 28px;
@@ -583,21 +613,21 @@ body {
     margin-bottom: 1.5rem;
 }
 
-/* Адаптив для планшетов (2-3 колонки) */
+
 @media (max-width: 1024px) {
     .object-metrics-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
-/* Адаптив для телефонов (1 колонка) */
+
 @media (max-width: 640px) {
     .object-metrics-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* Контейнер графика объекта */
+
 .analytics-chart {
     background: #ffffff;
     border-radius: 0.75rem;
@@ -610,103 +640,26 @@ body {
     box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.2);
 }
 
-.object-filter-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-}
-
-/* Сам фильтр – 20% ширины */
-.object-filter {
-    width: 35%;
-    min-width: 200px; /* чтобы на узких экранах не исчезал */
-    text-align: center;
-}
-
-.object-filter label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: block;
-    text-align: center;
-}
-
-/* Кастомный селект */
-.custom-select {
-    position: relative;
-    width: 100%;
-}
-
-/* Выбранное значение – показываем только первое слово, обрезаем многоточием */
-.selected-value {
-    padding: 0.5rem;
-    border: 1px solid #cbd5e1;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    background-color: #fff;
-}
-
-/* Выпадающий список */
-.options {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #cbd5e1;
-    border-radius: 0.5rem;
-    max-height: 300px;
-    overflow: auto; /* вертикальная и горизонтальная прокрутка */
-    z-index: 1000;
-    list-style: none;
-    padding: 0;
-    margin: 4px 0 0 0;
-    display: none;
-}
-.options.open {
-    display: block;
-}
-
-/* Элемент списка */
-.option-item {
-    padding: 0.5rem;
-    cursor: pointer;
-    white-space: nowrap; /* чтобы длинные названия не переносились, а давали горизонтальный скролл */
-}
-.option-item:hover {
-    background-color: #f1f5f9;
-}
-
-/* Сообщения о загрузке/пустоте */
-.object-filter-loading,
-.object-filter-empty {
-    text-align: center;
-    padding: 0.5rem;
-    color: #64748b;
-}
-
 .block-factors-chart-container {
     width: 100%;
-    height: 400px;              /* ← фиксированная высота */
+    height: 400px;              
     background: #ffffff;
     border-radius: 0.5rem;
     padding: 0.5rem;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;     /* чтобы padding не увеличивал общую высоту */
+    box-sizing: border-box;     
 }
 
-/* Внутренний фильтр */
+
 .block-factor-filter {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 0;                /* важно для flex-контейнера с overflow */
+    min-height: 0;                
 }
 
-/* Строка с меткой и селектом */
+
 .select-wrapper {
     display: flex;
     align-items: center;
@@ -720,19 +673,18 @@ body {
     white-space: nowrap;
 }
 
-/* Селект */
+
 #block-factor-select {
-    padding: 0.3rem 0.5rem;       /* уменьшенная высота */
+    padding: 0.3rem 0.5rem;
     border-radius: 0.5rem;
     border: 1px solid #cbd5e1;
     font-size: 1rem;
-    width: 350px;                 /* фиксированная ширина */
+    width: 350px;
     max-width: 100%;
     text-align: center;
     text-align-last: center;
 }
 
-/* Контейнер таблицы – прокручиваемая область */
 .result-table {
     flex: 1;
     overflow: auto;
@@ -741,7 +693,6 @@ body {
     margin-top: 0.5rem;
 }
 
-/* Таблица внутри контейнера */
 .result-table table {
     width: 100%;
     border-collapse: collapse;
@@ -760,3 +711,8 @@ body {
     background-color: #f1f5f9;
     font-weight: 600
 }
+
+.result-table .error {
+    text-align: center;
+}
+

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"visualizationBdDebet/internal/common"
 )
 
 // Repository отвечает за подключение к бд и работу с ней
@@ -26,10 +27,10 @@ func (r *Repository) GetPageDto(ctx context.Context) (*Response, error) {
 					round(coalesce(sum(debt_2025_12_31_total), 0)) as sum_debet_total,
 					round(coalesce(sum(debt_2025_12_31_overdue), 0)) as sum_debet_overdue
 				from debet
-				where source_org_name not like '%Мосинж%'
+				where source_org_name != $1
 				`
 
-	if err := r.db.GetContext(ctx, &pageDto, query); err != nil {
+	if err := r.db.GetContext(ctx, &pageDto, query, common.ExcludedSourceOrgName); err != nil {
 		return nil, fmt.Errorf("failed to get dto without in response repo: %w", err)
 	}
 	return &pageDto, nil

@@ -12,7 +12,7 @@ type Object struct {
 	ConclusionMke     *bool      `db:"conclusion" json:"conclusion"`                   // Заключение МКЭ
 	HardContractPrice *float64   `db:"hard_contract_price" json:"hard_contract_price"` // Твёрдая договорная цена (ТДЦ)
 	ContractAmount    *float64   `db:"contract_amount" json:"contract_amount"`         // Сумма договора
-	PaidAmount        *float64   `db:"paid_amount" json:"paid_amount"`                 // Перечисленно
+	PaidAmount        *float64   `db:"paid_amount" json:"paid_amount"`                 // Перечислено
 	AcceptedAmount    *float64   `db:"accepted_amount" json:"accepted_amount"`         // Принято
 	DebetTotal2024    *float64   `db:"debt_2024_12_31_total" json:"debt_2024_12_31_total"`
 	DebetOverdue2024  *float64   `db:"debt_2024_12_31_overdue" json:"debt_2024_12_31_overdue"`

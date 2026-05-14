@@ -1,0 +1,3 @@
+package common
+
+const ExcludedSourceOrgName = "\u0410\u041e \u041c\u043e\u0441\u0438\u043d\u0436\u043f\u0440\u043e\u0435\u043a\u0442"

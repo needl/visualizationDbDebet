@@ -41,10 +41,6 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 			`
 
 	if err := r.db.SelectContext(ctx, &contracts, query); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
-
 		return nil, err
 	}
 
