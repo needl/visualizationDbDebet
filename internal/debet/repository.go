@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"visualizationBdDebet/internal/common"
+	"visualizationBdDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -45,7 +45,7 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 		order by id
 	`
 
-	if err := r.db.SelectContext(ctx, &debets, query, common.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &debets, query, domainconst.ExcludedSourceOrgName); err != nil {
 		// Непредвиденная ошибка при обращении к базе
 		return nil, err
 	}

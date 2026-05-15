@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"visualizationBdDebet/internal/common"
+	"visualizationBdDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -27,7 +27,7 @@ func (r *Repository) FindAllCustomers(ctx context.Context) ([]Customer, error) {
 		order by source_org_name
 `
 
-	if err := r.db.SelectContext(ctx, &customers, query, common.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &customers, query, domainconst.ExcludedSourceOrgName); err != nil {
 		return nil, err
 	}
 

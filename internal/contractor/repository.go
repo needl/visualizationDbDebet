@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"visualizationBdDebet/internal/common"
+	"visualizationBdDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -98,7 +98,7 @@ func (r *Repository) FindContractorsWithCurrDebet(ctx context.Context) ([]Debet,
 		order by debet_sum desc
 	`
 
-	if err := r.db.SelectContext(ctx, &contractors, query, common.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query, domainconst.ExcludedSourceOrgName); err != nil {
 		return nil, err
 	}
 
@@ -122,7 +122,7 @@ func (r *Repository) FindContractorsWithOverdueDebet(ctx context.Context) ([]Deb
 		order by debet_sum desc
 `
 
-	if err := r.db.SelectContext(ctx, &contractors, query, common.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query, domainconst.ExcludedSourceOrgName); err != nil {
 		return nil, err
 	}
 
@@ -206,7 +206,7 @@ func (r *Repository) FindContractorForTable(
 		order by d.source_org_name asc, d.work_start_date asc
 	`
 
-	if err := r.db.SelectContext(ctx, &contractors, query, counterpartyName, common.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query, counterpartyName, domainconst.ExcludedSourceOrgName); err != nil {
 		return nil, err
 	}
 

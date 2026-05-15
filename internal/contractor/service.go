@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-	"visualizationBdDebet/internal/common"
+	"visualizationBdDebet/internal/apperr"
 )
 
 type Service struct {
@@ -51,19 +51,19 @@ func (s *Service) GetContractorsWithBlockFactors(
 
 	if sourceOrgName == "" {
 		slog.Warn("sourceOrgName is empty")
-		return nil, common.NewInvalidArgument("orgName is required")
+		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
 	if columnName == "" {
 		slog.Warn("columnName is empty")
-		return nil, common.NewInvalidArgument("columnName is required")
+		return nil, apperr.NewInvalidArgument("columnName is required")
 	}
 
 	contractors, err := s.repo.FindContractorsWithBlockFactors(ctx, sourceOrgName, columnName)
 	if err != nil {
 		slog.Error("FindContractorsWithBlockFactors err:", "err", err)
 		if errors.Is(err, ErrColumnNotAllowed) {
-			return nil, common.NewInvalidArgument(err.Error())
+			return nil, apperr.NewInvalidArgument(err.Error())
 		}
 		return nil, err
 	}
@@ -79,12 +79,12 @@ func (s *Service) GetContractorsWithDebt(
 
 	if sourceOrgName == "" {
 		slog.Warn("sourceOrgName is empty")
-		return nil, common.NewInvalidArgument("orgName is required")
+		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
 	if counterpartyName == "" {
 		slog.Warn("counterpartyName is empty")
-		return nil, common.NewInvalidArgument("counterpartyName is required")
+		return nil, apperr.NewInvalidArgument("counterpartyName is required")
 	}
 
 	contractors, err := s.repo.FindContractorWithDebt(ctx, sourceOrgName, counterpartyName)
@@ -104,12 +104,12 @@ func (s *Service) GetContractorsWithOverdue(
 
 	if sourceOrgName == "" {
 		slog.Warn("sourceOrgName is empty")
-		return nil, common.NewInvalidArgument("orgName is required")
+		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
 	if counterpartyName == "" {
 		slog.Warn("counterpartyName is empty")
-		return nil, common.NewInvalidArgument("counterpartyName is required")
+		return nil, apperr.NewInvalidArgument("counterpartyName is required")
 	}
 
 	contractors, err := s.repo.FindContractorWithOverdue(ctx, sourceOrgName, counterpartyName)
@@ -128,7 +128,7 @@ func (s *Service) GetContractorForTable(
 
 	if counterpartyName == "" {
 		slog.Warn("counterpartyName is empty")
-		return nil, common.NewInvalidArgument("counterpartyName is required")
+		return nil, apperr.NewInvalidArgument("counterpartyName is required")
 	}
 
 	contractors, err := s.repo.FindContractorForTable(ctx, counterpartyName)

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
-	"visualizationBdDebet/internal/common"
+	"visualizationBdDebet/internal/apperr"
 )
 
 // Service предоставляет бизнес-логику для работы с таблицей contract
@@ -35,18 +35,18 @@ func (s *Service) GetAll(ctx context.Context) ([]View, error) {
 func (s *Service) GetById(ctx context.Context, id string) (*View, error) {
 	if id == "" {
 		slog.Warn("Invalid id value")
-		return nil, common.NewInvalidArgument("id is required")
+		return nil, apperr.NewInvalidArgument("id is required")
 	}
 
 	intId, err := strconv.Atoi(id)
 	if err != nil {
 		slog.Warn("Cannot convert contract id to int")
-		return nil, common.NewInvalidArgument("id must be integer")
+		return nil, apperr.NewInvalidArgument("id must be integer")
 	}
 
 	if intId <= 0 {
 		slog.Warn("Invalid id value")
-		return nil, common.NewInvalidArgument("id must be greater than zero")
+		return nil, apperr.NewInvalidArgument("id must be greater than zero")
 	}
 
 	contract, err := s.repo.GetViewById(ctx, intId)
@@ -57,7 +57,7 @@ func (s *Service) GetById(ctx context.Context, id string) (*View, error) {
 
 	if contract == nil {
 		slog.Warn("No contract found", "id", id)
-		return nil, common.NewNotFound(fmt.Sprintf("contract with id '%s' not found", id))
+		return nil, apperr.NewNotFound(fmt.Sprintf("contract with id '%s' not found", id))
 	}
 
 	return contract, nil
