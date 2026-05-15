@@ -35,19 +35,17 @@ func (h *Handler) GetAllObjectsNamesByOrgName(w http.ResponseWriter, r *http.Req
 	slog.Info("GetAllObjectsNamesByOrgName", "sourceOrgName", sourceOrgName)
 }
 
-func (h *Handler) GetAllObjectsByOrgNameAndObjectName(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	sourceOrgName := vars["sourceOrgName"]
-	objectName := vars["objectName"]
+func (h *Handler) GetObjectByName(w http.ResponseWriter, r *http.Request) {
+	objectName := r.URL.Query().Get("objectName")
 
-	objects, err := h.service.GetObjectsByOrgNameAndObjectName(r.Context(), sourceOrgName, objectName)
+	objects, err := h.service.GetObjectByObjectName(r.Context(), objectName)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
 	}
 
 	httpx.RespondJSON(w, objects)
-	slog.Info("GetObjectsByOrgNameAndObjectName", "sourceOrgName", sourceOrgName, "objectName", objectName)
+	slog.Info("GetObjectByName", "objectName", objectName)
 }
 
 func (h *Handler) GetAllObjectsByOrgNameAndObjectNameQuery(w http.ResponseWriter, r *http.Request) {

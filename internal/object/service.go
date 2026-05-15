@@ -33,6 +33,25 @@ func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) (
 	return names, nil
 }
 
+func (s *Service) GetObjectByObjectName(ctx context.Context, objectName string) ([]Object, error) {
+	if objectName == "" {
+		slog.Warn("objectName is empty")
+		return nil, apperr.NewInvalidArgument("objectName is required")
+	}
+
+	objects, err := s.repo.FindObjectByName(ctx, objectName)
+	if err != nil {
+		slog.Error("FindObjectByName err", "err", err)
+		return nil, err
+	}
+
+	if len(objects) == 0 {
+		return nil, apperr.NewNotFound("objects not found")
+	}
+
+	return objects, nil
+}
+
 func (s *Service) GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName string, objectName string) ([]Object, error) {
 	if orgName == "" {
 		slog.Warn("orgName is empty")

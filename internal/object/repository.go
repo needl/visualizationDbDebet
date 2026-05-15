@@ -31,6 +31,33 @@ func (r *Repository) FindObjectsNameByOrgName(ctx context.Context, orgName strin
 	return objectsName, nil
 }
 
+func (r *Repository) FindObjectByName(ctx context.Context, name string) ([]Object, error) {
+	var objects []Object
+
+	query := `
+		select
+			construction_object,
+			contract_amount,
+			counterparty_name,
+			work_start_date,
+			work_end_date,
+			paid_amount,
+			accepted_amount,
+			debt_2024_12_31_total,
+			debt_2024_12_31_overdue,
+			debt_2025_12_31_total,
+			debt_2025_12_31_overdue
+		from debet
+		where construction_object = $1
+	`
+
+	if err := r.db.SelectContext(ctx, &objects, query, name); err != nil {
+		return nil, err
+	}
+
+	return objects, nil
+}
+
 func (r *Repository) FindObjectsByOrgNameAndObjectName(ctx context.Context,
 	orgName string,
 	objectName string,
