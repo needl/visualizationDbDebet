@@ -1,6 +1,7 @@
 package blockfactor
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"visualizationDbDebet/internal/httpx"
@@ -9,10 +10,15 @@ import (
 )
 
 type Handler struct {
-	service *Service
+	service service
 }
 
-func NewHandler(service *Service) *Handler {
+type service interface {
+	GetAllView(ctx context.Context) ([]View, error)
+	GetViewById(ctx context.Context, id string) (*View, error)
+}
+
+func NewHandler(service service) *Handler {
 	return &Handler{service: service}
 }
 

@@ -1,6 +1,7 @@
 package customer
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"visualizationDbDebet/internal/httpx"
@@ -9,10 +10,18 @@ import (
 )
 
 type Handler struct {
-	service *Service
+	service service
 }
 
-func NewHandler(service *Service) *Handler {
+type service interface {
+	GetCustomers(ctx context.Context) ([]Customer, error)
+	GetSummaryByCustomerId(ctx context.Context, id string) (*Summary, error)
+	GetTopItemsByCustomerId(ctx context.Context, customerId string) ([]TopItem, error)
+	GetTopItemsOverdueByCustomerId(ctx context.Context, customerId string) ([]TopItem, error)
+	GetCountBlockFactorsByCustomerId(ctx context.Context, customerId string) (*BlockFactors, error)
+}
+
+func NewHandler(service service) *Handler {
 	return &Handler{service: service}
 }
 
