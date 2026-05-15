@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"visualizationBdDebet/internal/delivery/util"
@@ -25,21 +24,7 @@ func (h *ObjectHandler) GetAllObjectsNamesByOrgName(w http.ResponseWriter, r *ht
 	ctx := r.Context()
 	names, err := h.service.GetObjectsNameByOrgName(ctx, sourceOrgName)
 	if err != nil {
-		util.RespondError(
-			w,
-			err,
-			"internal server error",
-			util.ErrorMapping{
-				Err:     object.ErrOrgNameEmpty,
-				Status:  http.StatusBadRequest,
-				Message: "sourceOrgName is required",
-			},
-			util.ErrorMapping{
-				Err:     object.ErrObjectsNotFound,
-				Status:  http.StatusNotFound,
-				Message: fmt.Sprintf("Objects with orgName '%s' not found", sourceOrgName),
-			},
-		)
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -55,31 +40,7 @@ func (h *ObjectHandler) GetAllObjectsByOrgNameAndObjectName(w http.ResponseWrite
 	ctx := r.Context()
 	names, err := h.service.GetObjectsByOrgNameAndObjectName(ctx, sourceOrgName, objectName)
 	if err != nil {
-		util.RespondError(
-			w,
-			err,
-			"internal server error",
-			util.ErrorMapping{
-				Err:     object.ErrOrgNameEmpty,
-				Status:  http.StatusBadRequest,
-				Message: "orgName and objectName are required",
-			},
-			util.ErrorMapping{
-				Err:     object.ErrObjectNameEmpty,
-				Status:  http.StatusBadRequest,
-				Message: "orgName and objectName are required",
-			},
-			util.ErrorMapping{
-				Err:     object.ErrObjectNameNotAllowed,
-				Status:  http.StatusNotFound,
-				Message: fmt.Sprintf("Objects with orgName '%s' or objectName '%s' not found", sourceOrgName, objectName),
-			},
-			util.ErrorMapping{
-				Err:     object.ErrObjectsNotFound,
-				Status:  http.StatusNotFound,
-				Message: fmt.Sprintf("Objects with orgName '%s' or objectName '%s' not found", sourceOrgName, objectName),
-			},
-		)
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 
@@ -94,31 +55,7 @@ func (h *ObjectHandler) GetAllObjectsByOrgNameAndObjectNameQuery(w http.Response
 	ctx := r.Context()
 	names, err := h.service.GetObjectsByOrgNameAndObjectName(ctx, orgName, objectName)
 	if err != nil {
-		util.RespondError(
-			w,
-			err,
-			"internal server error",
-			util.ErrorMapping{
-				Err:     object.ErrOrgNameEmpty,
-				Status:  http.StatusBadRequest,
-				Message: "orgName and objectName are required",
-			},
-			util.ErrorMapping{
-				Err:     object.ErrObjectNameEmpty,
-				Status:  http.StatusBadRequest,
-				Message: "orgName and objectName are required",
-			},
-			util.ErrorMapping{
-				Err:     object.ErrObjectNameNotAllowed,
-				Status:  http.StatusNotFound,
-				Message: fmt.Sprintf("Objects with orgName '%s' or objectName '%s' not found", orgName, objectName),
-			},
-			util.ErrorMapping{
-				Err:     object.ErrObjectsNotFound,
-				Status:  http.StatusNotFound,
-				Message: fmt.Sprintf("Objects with orgName '%s' or objectName '%s' not found", orgName, objectName),
-			},
-		)
+		util.RespondError(w, err, "internal server error")
 		return
 	}
 

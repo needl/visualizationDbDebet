@@ -20,3 +20,10 @@ export async function fetchContractorOverdue(orgName, counterpartyName) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.json();
 }
+
+export async function fetchContractorTable(counterpartyName) {
+    const url = `/contractor/table?counterpartyName=${encodeURIComponent(counterpartyName)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+}

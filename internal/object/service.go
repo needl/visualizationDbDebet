@@ -2,21 +2,13 @@ package object
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"log/slog"
+	"visualizationBdDebet/internal/common"
 )
 
 type Service struct {
 	repo *Repository
 }
-
-var (
-	ErrOrgNameEmpty         = errors.New("orgName is empty")
-	ErrObjectNameEmpty      = errors.New("objectName is empty")
-	ErrObjectNameNotAllowed = errors.New("object name not allowed")
-	ErrObjectsNotFound      = errors.New("no objects")
-)
 
 func NewService(repo *Repository) *Service {
 	return &Service{repo: repo}
@@ -25,7 +17,7 @@ func NewService(repo *Repository) *Service {
 func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error) {
 	if orgName == "" {
 		slog.Warn("orgName is empty")
-		return nil, ErrOrgNameEmpty
+		return nil, common.NewInvalidArgument("orgName is required")
 	}
 
 	names, err := s.repo.FindObjectsNameByOrgName(ctx, orgName)
@@ -35,7 +27,7 @@ func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) (
 	}
 
 	if len(names) == 0 {
-		return nil, ErrObjectsNotFound
+		return nil, common.NewNotFound("objects not found")
 	}
 
 	return names, nil
@@ -44,17 +36,16 @@ func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) (
 func (s *Service) GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName string, objectName string) ([]Object, error) {
 	if orgName == "" {
 		slog.Warn("orgName is empty")
-		return nil, ErrOrgNameEmpty
+		return nil, common.NewInvalidArgument("orgName is required")
 	}
 
 	if objectName == "" {
 		slog.Warn("objectName is empty")
-		return nil, ErrObjectNameEmpty
+		return nil, common.NewInvalidArgument("objectName is required")
 	}
 
 	allowedNames, err := s.GetObjectsNameByOrgName(ctx, orgName)
 	if err != nil {
-		//slog.Error("GetObjectsNameByOrgName err in GetObjectsByOrgNameAndObjectName", "err", err)
 		return nil, err
 	}
 
@@ -65,13 +56,17 @@ func (s *Service) GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName 
 
 	if !allowedSet[objectName] {
 		slog.Warn("Object name not allowed", "name", objectName)
-		return nil, fmt.Errorf("%w: %s", ErrObjectNameNotAllowed, objectName)
+		return nil, common.NewNotFound("objects not found")
 	}
 
 	objects, err := s.repo.FindObjectsByOrgNameAndObjectName(ctx, orgName, objectName)
 	if err != nil {
 		slog.Error("FindObjectsByOrgNameAndObjectName err", "err", err)
 		return nil, err
+	}
+
+	if len(objects) == 0 {
+		return nil, common.NewNotFound("objects not found")
 	}
 
 	return objects, nil

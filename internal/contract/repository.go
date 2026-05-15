@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -25,20 +26,21 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 	var contracts []View
 
 	query := `
-				select c.id,
-					c.unrepaid_advance,
-					c.contract_cost,
-					c.object_name,
-					c.status,
-					c.tdc_amount,
-					c.object_state,
-					c.object_readiness
-				from debet d
-				left join contracts c
-				on c.titul = d.construction_title
-				and c.contract_number = d.contract_number
-				order by id
-			`
+		select
+			c.id,
+			c.unrepaid_advance,
+			c.contract_cost,
+			c.object_name,
+			c.status,
+			c.tdc_amount,
+			c.object_state,
+			c.object_readiness
+		from debet d
+		left join contracts c
+			on c.titul = d.construction_title
+			and c.contract_number = d.contract_number
+		order by id
+	`
 
 	if err := r.db.SelectContext(ctx, &contracts, query); err != nil {
 		return nil, err
@@ -54,18 +56,18 @@ func (r *Repository) GetViewById(ctx context.Context, id int) (*View, error) {
 	var contract View
 
 	query := `
-				select 
-				    	id,
-						unrepaid_advance,
-						contract_cost,
-						object_name,
-						status,
-						tdc_amount,
-						object_state,
-						object_readiness
-					from contracts
-				where id = $1
-			`
+		select
+			id,
+			unrepaid_advance,
+			contract_cost,
+			object_name,
+			status,
+			tdc_amount,
+			object_state,
+			object_readiness
+		from contracts
+		where id = $1
+	`
 
 	if err := r.db.GetContext(ctx, &contract, query, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
