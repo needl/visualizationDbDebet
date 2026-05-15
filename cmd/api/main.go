@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"log/slog"
 	"net/http"
@@ -28,18 +29,27 @@ import (
 )
 
 func main() {
+	if err := run(); err != nil {
+		slog.Error("Application stopped with error", "error", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	cfg, err := config.Load()
 	if err != nil {
-		slog.Error("Failed to load config", "error", err)
-		panic(err)
+		return fmt.Errorf("load config: %w", err)
 	}
 
 	db, err := sqlx.Connect("postgres", cfg.DBConnString())
 	if err != nil {
-		slog.Error("Failed to connect to db", "error", err)
-		panic(err)
+		return fmt.Errorf("connect to db: %w", err)
 	}
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			slog.Error("Failed to close db", "error", err)
+		}
+	}()
 
 	debetRepo := debet.NewRepository(db)
 	debetService := debet.NewService(debetRepo)
@@ -81,38 +91,44 @@ func main() {
 
 	staticFS, err := fs.Sub(assets.FS, "web")
 	if err != nil {
-		slog.Error("Failed to get static files subdir", "error", err)
-		panic(err)
+		return fmt.Errorf("get static files subdir: %w", err)
 	}
 
 	apiRouter.PathPrefix("/").Handler(http.FileServer(http.FS(staticFS)))
 
-	srv := http.Server{
+	srv := &http.Server{
 		Handler:      apiRouter,
 		Addr:         ":" + cfg.Port,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 		IdleTimeout:  60 * time.Second,
 	}
+	serveErr := make(chan error, 1)
 
 	go func() {
 		slog.Info("starting server", "port", cfg.Port)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			slog.Error("Failed to start server", "error", err)
-			panic(err)
+			serveErr <- err
 		}
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	slog.Info("Shutdown Server ...")
+	defer signal.Stop(quit)
+
+	select {
+	case sig := <-quit:
+		slog.Info("Shutdown signal received", "signal", sig.String())
+	case err := <-serveErr:
+		return fmt.Errorf("start server: %w", err)
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		slog.Error("Server Shutdown Failed", "error", err)
+		return fmt.Errorf("shutdown server: %w", err)
 	}
 
 	slog.Info("Server exiting")
+	return nil
 }
