@@ -336,9 +336,6 @@ export class BlockFactorFilter {
     }
 
     async showObjectModal(objectName) {
-        const orgName = appState._getState().selectedCustomer;
-        if (!orgName) return;
-
         this.closeObjectModal();
 
         const overlay = document.createElement('div');
@@ -375,7 +372,7 @@ export class BlockFactorFilter {
         this.objectModal = overlay;
 
         try {
-            const rawData = await fetchObjectData(orgName, objectName);
+            const rawData = await fetchObjectData(objectName);
             this.renderObjectAnalytics(body, rawData || []);
         } catch (err) {
             const message = getUserFriendlyError(err, 'Не удалось загрузить аналитику по объекту');
@@ -417,7 +414,7 @@ export class BlockFactorFilter {
             tooltip: { trigger: 'axis' },
             legend: {
                 data: chartData.series.map((series) => series.name),
-                top: 0
+                bottom: 0
             },
             xAxis: { type: 'category', data: chartData.categories },
             yAxis: {
