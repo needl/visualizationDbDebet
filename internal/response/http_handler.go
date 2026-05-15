@@ -1,16 +1,22 @@
 package response
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"visualizationDbDebet/internal/httpx"
 )
 
 type Handler struct {
-	service *Service
+	service service
 }
 
-func NewHandler(service *Service) *Handler {
+type service interface {
+	GetResponse(ctx context.Context) (*Response, error)
+	GetResponseWithMIP(ctx context.Context) (*Response, error)
+}
+
+func NewHandler(service service) *Handler {
 	return &Handler{service: service}
 }
 

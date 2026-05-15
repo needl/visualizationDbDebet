@@ -1,6 +1,7 @@
 package debet
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"visualizationDbDebet/internal/httpx"
@@ -9,10 +10,16 @@ import (
 )
 
 type Handler struct {
-	service *Service
+	service service
 }
 
-func NewHandler(service *Service) *Handler {
+type service interface {
+	GetAll(ctx context.Context) ([]View, error)
+	GetAllWithMIP(ctx context.Context) ([]View, error)
+	GetByOrgName(ctx context.Context, orgName string) (*View, error)
+}
+
+func NewHandler(service service) *Handler {
 	return &Handler{service: service}
 }
 
