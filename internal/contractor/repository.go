@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"visualizationBdDebet/internal/domainconst"
+	"visualizationDbDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
-	"visualizationBdDebet/internal/apperr"
+	"visualizationDbDebet/internal/apperr"
 )
 
 // Service предоставляет бизнес-логику для работы с таблицей contract

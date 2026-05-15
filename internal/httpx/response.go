@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
-	"visualizationBdDebet/internal/apperr"
+	"visualizationDbDebet/internal/apperr"
 )
 
 type ErrorMapping struct {

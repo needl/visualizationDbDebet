@@ -11,20 +11,20 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	assets "visualizationBdDebet"
-	"visualizationBdDebet/internal/contractor"
-	"visualizationBdDebet/internal/customer"
-	"visualizationBdDebet/internal/object"
-	"visualizationBdDebet/internal/response"
+	assets "visualizationDbDebet"
+	"visualizationDbDebet/internal/contractor"
+	"visualizationDbDebet/internal/customer"
+	"visualizationDbDebet/internal/object"
+	"visualizationDbDebet/internal/response"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
-	"visualizationBdDebet/internal/blockfactor"
-	"visualizationBdDebet/internal/config"
-	"visualizationBdDebet/internal/contract"
-	"visualizationBdDebet/internal/debet"
-	"visualizationBdDebet/internal/delivery/router"
+	"visualizationDbDebet/internal/blockfactor"
+	"visualizationDbDebet/internal/config"
+	"visualizationDbDebet/internal/contract"
+	"visualizationDbDebet/internal/debet"
+	"visualizationDbDebet/internal/delivery/router"
 )
 
 func main() {

@@ -3,7 +3,7 @@ package response
 import (
 	"log/slog"
 	"net/http"
-	"visualizationBdDebet/internal/httpx"
+	"visualizationDbDebet/internal/httpx"
 )
 
 type Handler struct {

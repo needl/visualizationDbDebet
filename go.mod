@@ -1,4 +1,4 @@
-module visualizationBdDebet
+module visualizationDbDebet
 
 go 1.26.2
 

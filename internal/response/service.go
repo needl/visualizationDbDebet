@@ -3,7 +3,7 @@ package response
 import (
 	"context"
 	"fmt"
-	"visualizationBdDebet/internal/debet"
+	"visualizationDbDebet/internal/debet"
 )
 
 type Service struct {

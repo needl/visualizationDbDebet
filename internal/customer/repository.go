@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"visualizationBdDebet/internal/domainconst"
+	"visualizationDbDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )

@@ -3,7 +3,7 @@ package debet
 import (
 	"context"
 	"log/slog"
-	"visualizationBdDebet/internal/apperr"
+	"visualizationDbDebet/internal/apperr"
 )
 
 // Service предоставляет бизнес-логику для работы с таблицей debet

@@ -3,8 +3,9 @@ package response
 import (
 	"context"
 	"fmt"
+	"visualizationDbDebet/internal/domainconst"
+
 	"github.com/jmoiron/sqlx"
-	"visualizationBdDebet/internal/domainconst"
 )
 
 // Repository отвечает за подключение к бд и работу с ней
