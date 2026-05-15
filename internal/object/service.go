@@ -3,7 +3,7 @@ package object
 import (
 	"context"
 	"log/slog"
-	"visualizationBdDebet/internal/common"
+	"visualizationBdDebet/internal/apperr"
 )
 
 type Service struct {
@@ -17,7 +17,7 @@ func NewService(repo *Repository) *Service {
 func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error) {
 	if orgName == "" {
 		slog.Warn("orgName is empty")
-		return nil, common.NewInvalidArgument("orgName is required")
+		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
 	names, err := s.repo.FindObjectsNameByOrgName(ctx, orgName)
@@ -27,7 +27,7 @@ func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) (
 	}
 
 	if len(names) == 0 {
-		return nil, common.NewNotFound("objects not found")
+		return nil, apperr.NewNotFound("objects not found")
 	}
 
 	return names, nil
@@ -36,12 +36,12 @@ func (s *Service) GetObjectsNameByOrgName(ctx context.Context, orgName string) (
 func (s *Service) GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName string, objectName string) ([]Object, error) {
 	if orgName == "" {
 		slog.Warn("orgName is empty")
-		return nil, common.NewInvalidArgument("orgName is required")
+		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
 	if objectName == "" {
 		slog.Warn("objectName is empty")
-		return nil, common.NewInvalidArgument("objectName is required")
+		return nil, apperr.NewInvalidArgument("objectName is required")
 	}
 
 	allowedNames, err := s.GetObjectsNameByOrgName(ctx, orgName)
@@ -56,7 +56,7 @@ func (s *Service) GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName 
 
 	if !allowedSet[objectName] {
 		slog.Warn("Object name not allowed", "name", objectName)
-		return nil, common.NewNotFound("objects not found")
+		return nil, apperr.NewNotFound("objects not found")
 	}
 
 	objects, err := s.repo.FindObjectsByOrgNameAndObjectName(ctx, orgName, objectName)
@@ -66,7 +66,7 @@ func (s *Service) GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName 
 	}
 
 	if len(objects) == 0 {
-		return nil, common.NewNotFound("objects not found")
+		return nil, apperr.NewNotFound("objects not found")
 	}
 
 	return objects, nil

@@ -24,7 +24,6 @@ import (
 	"visualizationBdDebet/internal/config"
 	"visualizationBdDebet/internal/contract"
 	"visualizationBdDebet/internal/debet"
-	"visualizationBdDebet/internal/delivery/handler"
 	"visualizationBdDebet/internal/delivery/router"
 )
 
@@ -53,31 +52,31 @@ func run() error {
 
 	debetRepo := debet.NewRepository(db)
 	debetService := debet.NewService(debetRepo)
-	debetHandler := handler.NewHandlerDebet(debetService)
+	debetHandler := debet.NewHandler(debetService)
 
 	contractRepo := contract.NewRepository(db)
 	contractService := contract.NewService(contractRepo)
-	contractHandler := handler.NewHandlerContract(contractService)
+	contractHandler := contract.NewHandler(contractService)
 
 	blockfactorRepo := blockfactor.NewRepository(db)
 	blockfactorService := blockfactor.NewService(blockfactorRepo)
-	blockfactorHandler := handler.NewHandlerBlockFactor(blockfactorService)
+	blockfactorHandler := blockfactor.NewHandler(blockfactorService)
 
 	responseRepo := response.NewRepository(db)
 	responseService := response.NewService(responseRepo, debetService)
-	responseHandler := handler.NewHandlerResponse(responseService)
+	responseHandler := response.NewHandler(responseService)
 
 	customerRepo := customer.NewRepository(db)
 	customerService := customer.NewService(customerRepo)
-	customerHandler := handler.NewHandlerCustomer(customerService)
+	customerHandler := customer.NewHandler(customerService)
 
 	contractorRepo := contractor.NewRepository(db)
 	contractorService := contractor.NewService(contractorRepo)
-	contractorHandler := handler.NewHandlerContractor(contractorService)
+	contractorHandler := contractor.NewHandler(contractorService)
 
 	objectsRepo := object.NewRepository(db)
 	objectsService := object.NewService(objectsRepo)
-	objectHandler := handler.NewHandlerObject(objectsService)
+	objectHandler := object.NewHandler(objectsService)
 
 	apiRouter := router.NewRouter(
 		debetHandler,

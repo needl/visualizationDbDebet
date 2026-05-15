@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
-	"visualizationBdDebet/internal/common"
+	"visualizationBdDebet/internal/apperr"
 )
 
 type Service struct {
@@ -34,18 +34,18 @@ func (s *Service) GetAllView(ctx context.Context) ([]View, error) {
 func (s *Service) GetViewById(ctx context.Context, id string) (*View, error) {
 	if id == "" {
 		slog.Warn("No view id provided")
-		return nil, common.NewInvalidArgument("id is required")
+		return nil, apperr.NewInvalidArgument("id is required")
 	}
 
 	intId, err := strconv.Atoi(id)
 	if err != nil {
 		slog.Warn("Cannot convert blockfactor id")
-		return nil, common.NewInvalidArgument("id must be integer")
+		return nil, apperr.NewInvalidArgument("id must be integer")
 	}
 
 	if intId <= 0 {
 		slog.Warn("Invalid view id provided")
-		return nil, common.NewInvalidArgument("id must be greater than zero")
+		return nil, apperr.NewInvalidArgument("id must be greater than zero")
 	}
 
 	factor, err := s.repo.GetViewById(ctx, intId)
@@ -56,7 +56,7 @@ func (s *Service) GetViewById(ctx context.Context, id string) (*View, error) {
 
 	if factor == nil {
 		slog.Warn("No view found", "id", id)
-		return nil, common.NewNotFound(fmt.Sprintf("view with id '%s' not found", id))
+		return nil, apperr.NewNotFound(fmt.Sprintf("view with id '%s' not found", id))
 	}
 
 	return factor, nil
