@@ -18,7 +18,6 @@ func NewRouter(
 ) *mux.Router {
 	r := mux.NewRouter()
 
-	// Группа маршрутов для debet
 	debet := r.PathPrefix("/debet").Subrouter()
 	debet.HandleFunc("", debetHandler.GetAll).Methods("GET")
 	debet.HandleFunc("/withMIP", debetHandler.GetAllWithMIP).Methods("GET")
