@@ -3,7 +3,7 @@ package object
 import (
 	"context"
 	"log/slog"
-	"visualizationBdDebet/internal/apperr"
+	"visualizationDbDebet/internal/apperr"
 )
 
 type Service struct {

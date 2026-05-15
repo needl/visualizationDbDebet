@@ -3,7 +3,7 @@ package object
 import (
 	"log/slog"
 	"net/http"
-	"visualizationBdDebet/internal/httpx"
+	"visualizationDbDebet/internal/httpx"
 
 	"github.com/gorilla/mux"
 )

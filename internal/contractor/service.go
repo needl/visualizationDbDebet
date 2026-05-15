@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-	"visualizationBdDebet/internal/apperr"
+	"visualizationDbDebet/internal/apperr"
 )
 
 type Service struct {

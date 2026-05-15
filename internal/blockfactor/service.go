@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
-	"visualizationBdDebet/internal/apperr"
+	"visualizationDbDebet/internal/apperr"
 )
 
 type Service struct {

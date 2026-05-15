@@ -1,4 +1,4 @@
-const API_URL_DEBET = '/debet';
+const API_URL_DEBETS = '/debets';
 
 async function fetchJson(url) {
     const response = await fetch(url);
@@ -10,7 +10,7 @@ async function fetchJson(url) {
 
 export async function fetchDebetData() {
     try {
-        return await fetchJson(API_URL_DEBET);
+        return await fetchJson(API_URL_DEBETS);
     } catch (error) {
         console.error('Failed to fetch data:', error);
         throw error;

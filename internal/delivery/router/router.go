@@ -1,13 +1,13 @@
 package router
 
 import (
-	"visualizationBdDebet/internal/blockfactor"
-	"visualizationBdDebet/internal/contract"
-	"visualizationBdDebet/internal/contractor"
-	"visualizationBdDebet/internal/customer"
-	"visualizationBdDebet/internal/debet"
-	"visualizationBdDebet/internal/object"
-	"visualizationBdDebet/internal/response"
+	"visualizationDbDebet/internal/blockfactor"
+	"visualizationDbDebet/internal/contract"
+	"visualizationDbDebet/internal/contractor"
+	"visualizationDbDebet/internal/customer"
+	"visualizationDbDebet/internal/debet"
+	"visualizationDbDebet/internal/object"
+	"visualizationDbDebet/internal/response"
 
 	"github.com/gorilla/mux"
 )
