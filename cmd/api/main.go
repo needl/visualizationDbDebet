@@ -63,7 +63,7 @@ func run() error {
 	blockfactorHandler := blockfactor.NewHandler(blockfactorService)
 
 	responseRepo := response.NewRepository(db)
-	responseService := response.NewService(responseRepo, debetService)
+	responseService := response.NewService(responseRepo)
 	responseHandler := response.NewHandler(responseService)
 
 	customerRepo := customer.NewRepository(db)
