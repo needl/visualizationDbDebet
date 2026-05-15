@@ -515,6 +515,26 @@ body {
     color: #1e40af;
 }
 
+.contractor-link-btn {
+    border: none;
+    background: transparent;
+    color: #1d4ed8;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+}
+
+.contractor-link-btn:hover {
+    color: #1e40af;
+}
+
+.contractor-table-details .date-col {
+    width: 150px;
+    min-width: 150px;
+    white-space: nowrap;
+}
+
 .object-modal-body {
     max-height: 75vh;
 }
@@ -611,6 +631,13 @@ body {
     grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
     margin-bottom: 1.5rem;
+}
+
+.object-metrics-grid .card-value {
+    font-size: 1.45rem;
+    word-break: normal;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 
