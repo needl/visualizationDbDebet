@@ -203,6 +203,7 @@ func (r *Repository) FindContractorForTable(
 			limit 1
 		)
 			and d.source_org_name != $2
+		order by d.source_org_name asc, d.work_start_date asc
 	`
 
 	if err := r.db.SelectContext(ctx, &contractors, query, counterpartyName, common.ExcludedSourceOrgName); err != nil {
