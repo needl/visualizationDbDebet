@@ -15,6 +15,7 @@ type Handler struct {
 
 type service interface {
 	GetObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error)
+	GetObjectByObjectName(ctx context.Context, objectName string) ([]Object, error)
 	GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName string, objectName string) ([]Object, error)
 }
 
@@ -46,6 +47,21 @@ func (h *Handler) GetObjectByName(w http.ResponseWriter, r *http.Request) {
 
 	httpx.RespondJSON(w, objects)
 	slog.Info("GetObjectByName", "objectName", objectName)
+}
+
+func (h *Handler) GetAllObjectsByOrgNameAndObjectName(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	sourceOrgName := vars["sourceOrgName"]
+	objectName := vars["objectName"]
+
+	objects, err := h.service.GetObjectsByOrgNameAndObjectName(r.Context(), sourceOrgName, objectName)
+	if err != nil {
+		httpx.RespondError(w, err, "internal server error")
+		return
+	}
+
+	httpx.RespondJSON(w, objects)
+	slog.Info("GetObjectsByOrgNameAndObjectName", "sourceOrgName", sourceOrgName, "objectName", objectName)
 }
 
 func (h *Handler) GetAllObjectsByOrgNameAndObjectNameQuery(w http.ResponseWriter, r *http.Request) {

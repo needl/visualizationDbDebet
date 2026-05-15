@@ -6,7 +6,6 @@ import (
 	"visualizationDbDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
-	"visualizationDbDebet/internal/domainconst"
 )
 
 // Repository отвечает за подключение к бд и работу с ней

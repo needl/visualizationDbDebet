@@ -18,6 +18,13 @@ func (s *objectServiceStub) GetObjectsNameByOrgName(_ context.Context, orgName s
 	return []string{"obj"}, nil
 }
 
+func (s *objectServiceStub) GetObjectByObjectName(_ context.Context, objectName string) ([]Object, error) {
+	if objectName == "" {
+		return nil, apperr.NewInvalidArgument("objectName is required")
+	}
+	return []Object{}, nil
+}
+
 func (s *objectServiceStub) GetObjectsByOrgNameAndObjectName(_ context.Context, orgName string, objectName string) ([]Object, error) {
 	if orgName == "" {
 		return nil, apperr.NewInvalidArgument("orgName is required")
