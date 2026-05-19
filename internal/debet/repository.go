@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"visualizationDbDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -41,11 +40,10 @@ func (r *Repository) getAllView(ctx context.Context) ([]View, error) {
 			debt_2024_12_31_overdue,
 			construction_title
 		from debet
-		where source_org_name != $1
 		order by id
 	`
 
-	if err := r.db.SelectContext(ctx, &debets, query, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &debets, query); err != nil {
 		// Непредвиденная ошибка при обращении к базе
 		return nil, err
 	}

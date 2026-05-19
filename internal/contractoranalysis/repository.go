@@ -27,6 +27,7 @@ type objectDetailsRow struct {
 	AcceptedSum      float64         `db:"accepted_sum"`
 	DebetSum         float64         `db:"debet_sum"`
 	OverdueDebtSum   float64         `db:"overdue_debt_sum"`
+	RVExists         bool            `db:"rv_exists"`
 	ReadinessPercent sql.NullFloat64 `db:"readiness_percent"`
 	WorkStartDate    sql.NullTime    `db:"work_start_date"`
 	WorkEndDate      sql.NullTime    `db:"work_end_date"`
@@ -116,6 +117,13 @@ func (r *Repository) findObjectDetails(
 			coalesce(sum(accepted_amount), 0.0) as accepted_sum,
 			coalesce(sum(debt_2025_12_31_total), 0.0) as debet_sum,
 			coalesce(sum(debt_2025_12_31_overdue), 0.0) as overdue_debt_sum,
+			bool_or(
+				case
+					when permission_to_enter is null then false
+					when lower(btrim(permission_to_enter::text)) in ('', 'false', '0', 'нет', 'no', 'null') then false
+					else true
+				end
+			) as rv_exists,
 			avg(build_ready_percent)::float8 as readiness_percent,
 			min(work_start_date) as work_start_date,
 			max(work_end_date) as work_end_date

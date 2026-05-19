@@ -93,18 +93,18 @@ func (s *Service) getObjectDetails(
 	}
 
 	details := &ObjectDetails{
-		Status:         statusFromMetrics(row.OverdueDebtSum, row.WorkEndDate),
-		CustomerName:   customerName,
-		ContractorName: contractorName,
-		ObjectName:     objectName,
-		ContractSum:    row.ContractSum,
-		PaidSum:        row.PaidSum,
-		TDCSum:         row.ContractSum,
-		RVSum:          row.AcceptedSum,
-		DebetSum:       row.DebetSum,
-		OverdueDays:    overdueDays(row.OverdueDebtSum, row.WorkEndDate),
-		WorkStartDate:  nullableTime(row.WorkStartDate),
-		WorkEndDate:    nullableTime(row.WorkEndDate),
+		Status:            statusFromMetrics(row.OverdueDebtSum, row.WorkEndDate),
+		CustomerName:      customerName,
+		ContractorName:    contractorName,
+		ObjectName:        objectName,
+		ContractSum:       row.ContractSum,
+		PaidSum:           row.PaidSum,
+		TDCSum:            row.ContractSum,
+		RVExists:          row.RVExists,
+		DebetSum:          row.DebetSum,
+		OverdueDebtAmount: row.OverdueDebtSum,
+		WorkStartDate:     nullableTime(row.WorkStartDate),
+		WorkEndDate:       nullableTime(row.WorkEndDate),
 	}
 
 	if row.ReadinessPercent.Valid {
@@ -179,20 +179,6 @@ func statusFromMetrics(overdueDebtSum float64, workEnd sql.NullTime) string {
 		return "Просрочен"
 	}
 	return "В работе"
-}
-
-func overdueDays(overdueDebtSum float64, workEnd sql.NullTime) int {
-	if overdueDebtSum <= 0 || !workEnd.Valid {
-		return 0
-	}
-
-	now := time.Now()
-	if !workEnd.Time.Before(now) {
-		return 0
-	}
-
-	diff := now.Sub(workEnd.Time)
-	return int(diff.Hours() / 24)
 }
 
 func nullableTime(value sql.NullTime) *time.Time {

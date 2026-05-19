@@ -3,7 +3,6 @@ package response
 import (
 	"context"
 	"fmt"
-	"visualizationDbDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -28,10 +27,9 @@ func (r *Repository) getPageDTO(ctx context.Context) (*Response, error) {
 			round(coalesce(sum(debt_2025_12_31_total), 0)) as sum_debet_total,
 			round(coalesce(sum(debt_2025_12_31_overdue), 0)) as sum_debet_overdue
 		from debet
-		where source_org_name != $1
 	`
 
-	if err := r.db.GetContext(ctx, &pageDto, query, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.GetContext(ctx, &pageDto, query); err != nil {
 		return nil, fmt.Errorf("failed to get dto without in response repo: %w", err)
 	}
 	return &pageDto, nil

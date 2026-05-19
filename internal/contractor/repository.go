@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	"visualizationDbDebet/internal/domainconst"
-
 	"github.com/jmoiron/sqlx"
 )
 
@@ -91,14 +89,13 @@ func (r *Repository) findContractorsWithCurrDebet(ctx context.Context) ([]Debet,
 			coalesce(sum(debt_2025_12_31_total), 0.00)
 				- coalesce(sum(debt_2025_12_31_overdue), 0.00) as debet_sum
 		from debet
-		where source_org_name != $1
 		group by counterparty_name
 		having coalesce(sum(debt_2025_12_31_total), 0)
 			- coalesce(sum(debt_2025_12_31_overdue), 0.00) != 0.00
 		order by debet_sum desc
 	`
 
-	if err := r.db.SelectContext(ctx, &contractors, query, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
 		return nil, err
 	}
 
@@ -116,13 +113,12 @@ func (r *Repository) findContractorsWithOverdueDebet(ctx context.Context) ([]Deb
 			coalesce(sum(accepted_amount), 0.00) as accepted_sum,
 			coalesce(sum(debt_2025_12_31_overdue), 0.00) as debet_sum
 		from debet
-		where source_org_name != $1
 		group by counterparty_name
 		having coalesce(sum(debt_2025_12_31_overdue), 0) != 0.00
 		order by debet_sum desc
 `
 
-	if err := r.db.SelectContext(ctx, &contractors, query, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
 		return nil, err
 	}
 
@@ -198,15 +194,13 @@ func (r *Repository) findContractorForTable(
 			select d2.counterparty_inn
 			from debet d2
 			where d2.counterparty_name = $1
-				and d2.source_org_name != $2
 				and d2.counterparty_inn is not null
 			limit 1
 		)
-			and d.source_org_name != $2
 		order by d.source_org_name asc, d.work_start_date asc
 	`
 
-	if err := r.db.SelectContext(ctx, &contractors, query, counterpartyName, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query, counterpartyName); err != nil {
 		return nil, err
 	}
 

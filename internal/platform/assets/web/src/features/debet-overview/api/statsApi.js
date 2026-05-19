@@ -1,4 +1,4 @@
-const API_URL_RESPONSES = '/responses';
+const API_URL_RESPONSES = '/responses/with-mip';
 
 export async function fetchResponseData() {
     const response = await fetch(API_URL_RESPONSES);

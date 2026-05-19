@@ -25,20 +25,20 @@ type CustomerNode struct {
 }
 
 type ObjectDetails struct {
-	Status           string     `db:"status" json:"status"`
-	CustomerName     string     `db:"customer_name" json:"customer_name"`
-	ContractorName   string     `db:"contractor_name" json:"contractor_name"`
-	ObjectName       string     `db:"object_name" json:"object_name"`
-	ContractSum      float64    `db:"contract_sum" json:"contract_sum"`
-	PaidSum          float64    `db:"paid_sum" json:"paid_sum"`
-	ReadinessPercent *float64   `db:"readiness_percent" json:"readiness_percent"`
-	TDCSum           float64    `db:"tdc_sum" json:"tdc_sum"`
-	RVSum            float64    `db:"rv_sum" json:"rv_sum"`
-	DebetSum         float64    `db:"debet_sum" json:"debet_sum"`
-	OverdueDays      int        `db:"overdue_days" json:"overdue_days"`
-	AcceptedPercent  float64    `db:"accepted_percent" json:"accepted_percent"`
-	WorkStartDate    *time.Time `db:"work_start_date" json:"work_start_date"`
-	WorkEndDate      *time.Time `db:"work_end_date" json:"work_end_date"`
+	Status            string     `db:"status" json:"status"`
+	CustomerName      string     `db:"customer_name" json:"customer_name"`
+	ContractorName    string     `db:"contractor_name" json:"contractor_name"`
+	ObjectName        string     `db:"object_name" json:"object_name"`
+	ContractSum       float64    `db:"contract_sum" json:"contract_sum"`
+	PaidSum           float64    `db:"paid_sum" json:"paid_sum"`
+	ReadinessPercent  *float64   `db:"readiness_percent" json:"readiness_percent"`
+	TDCSum            float64    `db:"tdc_sum" json:"tdc_sum"`
+	RVExists          bool       `db:"rv_exists" json:"rv_exists"`
+	DebetSum          float64    `db:"debet_sum" json:"debet_sum"`
+	OverdueDebtAmount float64    `db:"overdue_debt_amount" json:"overdue_debt_amount"`
+	AcceptedPercent   float64    `db:"accepted_percent" json:"accepted_percent"`
+	WorkStartDate     *time.Time `db:"work_start_date" json:"work_start_date"`
+	WorkEndDate       *time.Time `db:"work_end_date" json:"work_end_date"`
 }
 
 type Analytics struct {
