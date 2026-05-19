@@ -8,7 +8,7 @@ import (
 	"visualizationDbDebet/internal/apperr"
 )
 
-func TestService_GetById_Validation(t *testing.T) {
+func TestService_getByID_Validation(t *testing.T) {
 	t.Parallel()
 
 	svc := NewService(nil)
@@ -47,7 +47,7 @@ func TestService_GetById_Validation(t *testing.T) {
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := svc.GetById(context.Background(), tc.id)
+			_, err := svc.getByID(context.Background(), tc.id)
 			if err == nil {
 				t.Fatal("expected error, got nil")
 			}

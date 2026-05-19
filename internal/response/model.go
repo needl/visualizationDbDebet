@@ -1,7 +1,7 @@
 package response
 
 type Response struct {
-	ID                *int    `json:"id"`
+	ID                *int    `db:"id" json:"id"`
 	CountSourceOrg    int     `db:"count_source_org" json:"count_source_org"`       // Количество заказчиков из дебет // Уникальные
 	CountContracts    int     `db:"count_contracts" json:"count_contracts"`         // Количество контрактов //Уникальные
 	SumContractAmount float64 `db:"sum_contract_amount" json:"sum_contract_amount"` // Сумма контрактов

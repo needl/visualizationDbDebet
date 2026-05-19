@@ -17,7 +17,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) FindAllCustomers(ctx context.Context) ([]Customer, error) {
+func (r *Repository) findAllCustomers(ctx context.Context) ([]Customer, error) {
 	var customers []Customer
 
 	query := `
@@ -34,7 +34,7 @@ func (r *Repository) FindAllCustomers(ctx context.Context) ([]Customer, error) {
 	return customers, nil
 }
 
-func (r *Repository) FindSummaryByCustomerId(ctx context.Context, id string) (*Summary, error) {
+func (r *Repository) findSummaryByCustomerID(ctx context.Context, id string) (*Summary, error) {
 	var summary Summary
 
 	/*query := `
@@ -72,7 +72,7 @@ func (r *Repository) FindSummaryByCustomerId(ctx context.Context, id string) (*S
 	return &summary, nil
 }
 
-func (r *Repository) FindTopItemsByCustomerId(ctx context.Context, id string) ([]TopItem, error) {
+func (r *Repository) findTopItemsByCustomerID(ctx context.Context, id string) ([]TopItem, error) {
 	items := make([]TopItem, 0)
 
 	query := `
@@ -94,7 +94,7 @@ func (r *Repository) FindTopItemsByCustomerId(ctx context.Context, id string) ([
 	return items, nil
 }
 
-func (r *Repository) FindTopItemsOverdueByCustomerId(ctx context.Context, id string) ([]TopItem, error) {
+func (r *Repository) findTopItemsOverdueByCustomerID(ctx context.Context, id string) ([]TopItem, error) {
 	items := make([]TopItem, 0)
 
 	query := `
@@ -116,7 +116,7 @@ func (r *Repository) FindTopItemsOverdueByCustomerId(ctx context.Context, id str
 	return items, nil
 }
 
-func (r *Repository) FindCountBlockFactorsByCustomerId(ctx context.Context, id string) (*BlockFactors, error) {
+func (r *Repository) findCountBlockFactorsByCustomerID(ctx context.Context, id string) (*BlockFactors, error) {
 	var factor BlockFactors
 
 	query := `

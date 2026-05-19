@@ -23,7 +23,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 // GetAllView отвечает за обращение к базе для получения списка
 // всех сущностей debet без учёта Мосинжпроекта
 // ctx используется для отмены, таймаутов и тп
-func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
+func (r *Repository) getAllView(ctx context.Context) ([]View, error) {
 	var debets []View
 
 	query := `
@@ -54,7 +54,7 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 
 }
 
-func (r *Repository) GetAllViewWithMIP(ctx context.Context) ([]View, error) {
+func (r *Repository) getAllViewWithMIP(ctx context.Context) ([]View, error) {
 	var debets []View
 
 	query := `
@@ -85,7 +85,7 @@ func (r *Repository) GetAllViewWithMIP(ctx context.Context) ([]View, error) {
 // GetViewByOrgName отвечает за обращение к базе для получения конкретной
 // сущности debet по его названию(orgName)
 // ctx используется для отмены, таймаутов и тп
-func (r *Repository) GetViewByOrgName(ctx context.Context, orgName string) (*View, error) {
+func (r *Repository) getViewByOrgName(ctx context.Context, orgName string) (*View, error) {
 	var debet View
 
 	query := `

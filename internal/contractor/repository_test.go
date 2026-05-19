@@ -6,14 +6,14 @@ import (
 	"testing"
 )
 
-func TestRepository_FindContractorsWithBlockFactors_InvalidColumn(t *testing.T) {
+func TestRepository_findContractorsWithBlockFactors_InvalidColumn(t *testing.T) {
 	repo := NewRepository(nil)
 
-	_, err := repo.FindContractorsWithBlockFactors(context.Background(), "org", "unknown_column")
+	_, err := repo.findContractorsWithBlockFactors(context.Background(), "org", "unknown_column")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
-	if !errors.Is(err, ErrColumnNotAllowed) {
-		t.Fatalf("expected ErrColumnNotAllowed, got %v", err)
+	if !errors.Is(err, errColumnNotAllowed) {
+		t.Fatalf("expected errColumnNotAllowed, got %v", err)
 	}
 }

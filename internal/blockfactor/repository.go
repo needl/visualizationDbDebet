@@ -16,7 +16,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetViewAll(ctx context.Context) ([]View, error) {
+func (r *Repository) getViewAll(ctx context.Context) ([]View, error) {
 	var blocks []View
 
 	query := `
@@ -45,7 +45,7 @@ func (r *Repository) GetViewAll(ctx context.Context) ([]View, error) {
 	return blocks, nil
 }
 
-func (r *Repository) GetViewById(ctx context.Context, id int) (*View, error) {
+func (r *Repository) getViewByID(ctx context.Context, id int) (*View, error) {
 	var block View
 
 	query := `

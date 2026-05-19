@@ -14,19 +14,19 @@ type Handler struct {
 }
 
 type service interface {
-	GetObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error)
-	GetObjectByObjectName(ctx context.Context, objectName string) ([]Object, error)
-	GetObjectsByOrgNameAndObjectName(ctx context.Context, orgName string, objectName string) ([]Object, error)
+	getObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error)
+	getObjectByObjectName(ctx context.Context, objectName string) ([]Object, error)
+	getObjectsByOrgNameAndObjectName(ctx context.Context, orgName string, objectName string) ([]Object, error)
 }
 
 func NewHandler(service service) *Handler {
 	return &Handler{service: service}
 }
 
-func (h *Handler) GetAllObjectsNamesByOrgName(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getAllObjectsNamesByOrgName(w http.ResponseWriter, r *http.Request) {
 	sourceOrgName := mux.Vars(r)["sourceOrgName"]
 
-	names, err := h.service.GetObjectsNameByOrgName(r.Context(), sourceOrgName)
+	names, err := h.service.getObjectsNameByOrgName(r.Context(), sourceOrgName)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -36,10 +36,10 @@ func (h *Handler) GetAllObjectsNamesByOrgName(w http.ResponseWriter, r *http.Req
 	slog.Info("GetAllObjectsNamesByOrgName", "sourceOrgName", sourceOrgName)
 }
 
-func (h *Handler) GetObjectByName(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getObjectByName(w http.ResponseWriter, r *http.Request) {
 	objectName := r.URL.Query().Get("objectName")
 
-	objects, err := h.service.GetObjectByObjectName(r.Context(), objectName)
+	objects, err := h.service.getObjectByObjectName(r.Context(), objectName)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -49,12 +49,12 @@ func (h *Handler) GetObjectByName(w http.ResponseWriter, r *http.Request) {
 	slog.Info("GetObjectByName", "objectName", objectName)
 }
 
-func (h *Handler) GetAllObjectsByOrgNameAndObjectName(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getAllObjectsByOrgNameAndObjectName(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	sourceOrgName := vars["sourceOrgName"]
 	objectName := vars["objectName"]
 
-	objects, err := h.service.GetObjectsByOrgNameAndObjectName(r.Context(), sourceOrgName, objectName)
+	objects, err := h.service.getObjectsByOrgNameAndObjectName(r.Context(), sourceOrgName, objectName)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -64,16 +64,16 @@ func (h *Handler) GetAllObjectsByOrgNameAndObjectName(w http.ResponseWriter, r *
 	slog.Info("GetObjectsByOrgNameAndObjectName", "sourceOrgName", sourceOrgName, "objectName", objectName)
 }
 
-func (h *Handler) GetAllObjectsByOrgNameAndObjectNameQuery(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getAllObjectsByOrgNameAndObjectNameQuery(w http.ResponseWriter, r *http.Request) {
 	orgName := r.URL.Query().Get("orgName")
 	objectName := r.URL.Query().Get("objectName")
 
-	objects, err := h.service.GetObjectsByOrgNameAndObjectName(r.Context(), orgName, objectName)
+	objects, err := h.service.getObjectsByOrgNameAndObjectName(r.Context(), orgName, objectName)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
 	}
 
 	httpx.RespondJSON(w, objects)
-	slog.Info("GetAllObjectsByOrgNameAndObjectNameQuery", "sourceOrgName", orgName, "objectName", objectName)
+	slog.Info("getAllObjectsByOrgNameAndObjectNameQuery", "sourceOrgName", orgName, "objectName", objectName)
 }

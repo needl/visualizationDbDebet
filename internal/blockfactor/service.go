@@ -16,8 +16,8 @@ func NewService(repo *Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) GetAllView(ctx context.Context) ([]View, error) {
-	factors, err := s.repo.GetViewAll(ctx)
+func (s *Service) getAllView(ctx context.Context) ([]View, error) {
+	factors, err := s.repo.getViewAll(ctx)
 	if err != nil {
 		slog.Error("Failed to get all views", "error", err)
 		return nil, err
@@ -31,7 +31,7 @@ func (s *Service) GetAllView(ctx context.Context) ([]View, error) {
 	return factors, nil
 }
 
-func (s *Service) GetViewById(ctx context.Context, id string) (*View, error) {
+func (s *Service) getViewByID(ctx context.Context, id string) (*View, error) {
 	if id == "" {
 		slog.Warn("No view id provided")
 		return nil, apperr.NewInvalidArgument("id is required")
@@ -48,7 +48,7 @@ func (s *Service) GetViewById(ctx context.Context, id string) (*View, error) {
 		return nil, apperr.NewInvalidArgument("id must be greater than zero")
 	}
 
-	factor, err := s.repo.GetViewById(ctx, intId)
+	factor, err := s.repo.getViewByID(ctx, intId)
 	if err != nil {
 		slog.Error("Failed to get blockfactor view by id", "error", err)
 		return nil, err

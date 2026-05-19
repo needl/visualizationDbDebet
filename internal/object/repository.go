@@ -14,7 +14,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) FindObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error) {
+func (r *Repository) findObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error) {
 	var objectsName []string
 
 	/*query := `select distinct construction_object from debet where source_org_name = $1`*/
@@ -31,7 +31,7 @@ func (r *Repository) FindObjectsNameByOrgName(ctx context.Context, orgName strin
 	return objectsName, nil
 }
 
-func (r *Repository) FindObjectByName(ctx context.Context, name string) ([]Object, error) {
+func (r *Repository) findObjectByName(ctx context.Context, name string) ([]Object, error) {
 	var objects []Object
 
 	query := `
@@ -58,7 +58,7 @@ func (r *Repository) FindObjectByName(ctx context.Context, name string) ([]Objec
 	return objects, nil
 }
 
-func (r *Repository) FindObjectsByOrgNameAndObjectName(ctx context.Context,
+func (r *Repository) findObjectsByOrgNameAndObjectName(ctx context.Context,
 	orgName string,
 	objectName string,
 ) ([]Object, error) {

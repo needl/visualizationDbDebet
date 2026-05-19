@@ -17,7 +17,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetPageDto(ctx context.Context) (*Response, error) {
+func (r *Repository) getPageDTO(ctx context.Context) (*Response, error) {
 	var pageDto Response
 
 	query := `
@@ -37,7 +37,7 @@ func (r *Repository) GetPageDto(ctx context.Context) (*Response, error) {
 	return &pageDto, nil
 }
 
-func (r *Repository) GetPageDtoWithMIP(ctx context.Context) (*Response, error) {
+func (r *Repository) getPageDTOWithMIP(ctx context.Context) (*Response, error) {
 	var pageDto Response
 	query := `
 		select

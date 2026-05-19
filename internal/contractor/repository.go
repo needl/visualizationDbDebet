@@ -15,13 +15,13 @@ type Repository struct {
 	db *sqlx.DB
 }
 
-var ErrColumnNotAllowed = errors.New("column is not allowed")
+var errColumnNotAllowed = errors.New("column is not allowed")
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) FindContractorWithDebt(
+func (r *Repository) findContractorWithDebt(
 	ctx context.Context,
 	sourceOrgName string,
 	counterpartyName string,
@@ -50,7 +50,7 @@ func (r *Repository) FindContractorWithDebt(
 	return contractors, nil
 }
 
-func (r *Repository) FindContractorWithOverdue(
+func (r *Repository) findContractorWithOverdue(
 	ctx context.Context,
 	sourceOrgName string,
 	counterpartyName string,
@@ -79,7 +79,7 @@ func (r *Repository) FindContractorWithOverdue(
 	return contractors, nil
 }
 
-func (r *Repository) FindContractorsWithCurrDebet(ctx context.Context) ([]Debet, error) {
+func (r *Repository) findContractorsWithCurrDebet(ctx context.Context) ([]Debet, error) {
 	var contractors []Debet
 
 	query := `
@@ -105,7 +105,7 @@ func (r *Repository) FindContractorsWithCurrDebet(ctx context.Context) ([]Debet,
 	return contractors, nil
 }
 
-func (r *Repository) FindContractorsWithOverdueDebet(ctx context.Context) ([]Debet, error) {
+func (r *Repository) findContractorsWithOverdueDebet(ctx context.Context) ([]Debet, error) {
 	var contractors []Debet
 
 	query := `
@@ -131,7 +131,7 @@ func (r *Repository) FindContractorsWithOverdueDebet(ctx context.Context) ([]Deb
 
 // FindContractorsWithBlockFactors возвращает список подрядчиков с блок-факторами
 // по заданному наименованию организации-источника и признаку банкротства
-func (r *Repository) FindContractorsWithBlockFactors(
+func (r *Repository) findContractorsWithBlockFactors(
 	ctx context.Context,
 	sourceOrgName string,
 	columnName string,
@@ -154,7 +154,7 @@ func (r *Repository) FindContractorsWithBlockFactors(
 
 	if !allowedColumns[columnName] {
 		slog.Warn("ColumnName not allowed")
-		return nil, fmt.Errorf("%w: %s", ErrColumnNotAllowed, columnName)
+		return nil, fmt.Errorf("%w: %s", errColumnNotAllowed, columnName)
 	}
 
 	query := fmt.Sprintf(`
@@ -177,7 +177,7 @@ func (r *Repository) FindContractorsWithBlockFactors(
 	return contractors, nil
 }
 
-func (r *Repository) FindContractorForTable(
+func (r *Repository) findContractorForTable(
 	ctx context.Context,
 	counterpartyName string,
 ) ([]Table, error) {

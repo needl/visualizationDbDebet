@@ -14,8 +14,8 @@ func NewService(repo *Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) GetCustomers(ctx context.Context) ([]Customer, error) {
-	customers, err := s.repo.FindAllCustomers(ctx)
+func (s *Service) getCustomers(ctx context.Context) ([]Customer, error) {
+	customers, err := s.repo.findAllCustomers(ctx)
 	if err != nil {
 		slog.Error("Failed to get customer", "error", err)
 		return nil, err
@@ -24,13 +24,13 @@ func (s *Service) GetCustomers(ctx context.Context) ([]Customer, error) {
 	return customers, nil
 }
 
-func (s *Service) GetSummaryByCustomerId(ctx context.Context, id string) (*Summary, error) {
+func (s *Service) getSummaryByCustomerID(ctx context.Context, id string) (*Summary, error) {
 	if id == "" {
 		slog.Warn("Customer id is empty")
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
-	summary, err := s.repo.FindSummaryByCustomerId(ctx, id)
+	summary, err := s.repo.findSummaryByCustomerID(ctx, id)
 	if err != nil {
 		slog.Error("Failed to get customer summary", "error", err)
 		return nil, err
@@ -44,13 +44,13 @@ func (s *Service) GetSummaryByCustomerId(ctx context.Context, id string) (*Summa
 	return summary, nil
 }
 
-func (s *Service) GetTopItemsByCustomerId(ctx context.Context, customerId string) ([]TopItem, error) {
-	if customerId == "" {
+func (s *Service) getTopItemsByCustomerID(ctx context.Context, customerID string) ([]TopItem, error) {
+	if customerID == "" {
 		slog.Warn("Customer id is empty")
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
-	items, err := s.repo.FindTopItemsByCustomerId(ctx, customerId)
+	items, err := s.repo.findTopItemsByCustomerID(ctx, customerID)
 	if err != nil {
 		slog.Warn("Failed to get customer items", "error", err)
 		return []TopItem{}, err
@@ -59,13 +59,13 @@ func (s *Service) GetTopItemsByCustomerId(ctx context.Context, customerId string
 	return items, nil
 }
 
-func (s *Service) GetTopItemsOverdueByCustomerId(ctx context.Context, customerId string) ([]TopItem, error) {
-	if customerId == "" {
+func (s *Service) getTopItemsOverdueByCustomerID(ctx context.Context, customerID string) ([]TopItem, error) {
+	if customerID == "" {
 		slog.Warn("Customer id is empty")
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
-	items, err := s.repo.FindTopItemsOverdueByCustomerId(ctx, customerId)
+	items, err := s.repo.findTopItemsOverdueByCustomerID(ctx, customerID)
 	if err != nil {
 		slog.Error("Failed to get customer items", "error", err)
 		return []TopItem{}, err
@@ -74,13 +74,13 @@ func (s *Service) GetTopItemsOverdueByCustomerId(ctx context.Context, customerId
 	return items, nil
 }
 
-func (s *Service) GetCountBlockFactorsByCustomerId(ctx context.Context, customerId string) (*BlockFactors, error) {
-	if customerId == "" {
+func (s *Service) getCountBlockFactorsByCustomerID(ctx context.Context, customerID string) (*BlockFactors, error) {
+	if customerID == "" {
 		slog.Warn("Customer id is empty")
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
-	factors, err := s.repo.FindCountBlockFactorsByCustomerId(ctx, customerId)
+	factors, err := s.repo.findCountBlockFactorsByCustomerID(ctx, customerID)
 	if err != nil {
 		slog.Error("Failed to get customer items", "error", err)
 		return nil, err

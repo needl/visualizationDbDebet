@@ -8,10 +8,10 @@ import (
 	"visualizationDbDebet/internal/apperr"
 )
 
-func TestService_GetByOrgName_Validation(t *testing.T) {
+func TestService_getByOrgName_Validation(t *testing.T) {
 	svc := NewService(nil)
 
-	_, err := svc.GetByOrgName(context.Background(), "")
+	_, err := svc.getByOrgName(context.Background(), "")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}

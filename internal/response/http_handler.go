@@ -12,16 +12,16 @@ type Handler struct {
 }
 
 type service interface {
-	GetResponse(ctx context.Context) (*Response, error)
-	GetResponseWithMIP(ctx context.Context) (*Response, error)
+	getResponse(ctx context.Context) (*Response, error)
+	getResponseWithMIP(ctx context.Context) (*Response, error)
 }
 
 func NewHandler(service service) *Handler {
 	return &Handler{service: service}
 }
 
-func (h *Handler) GetResponse(w http.ResponseWriter, r *http.Request) {
-	pageDTO, err := h.service.GetResponse(r.Context())
+func (h *Handler) getResponse(w http.ResponseWriter, r *http.Request) {
+	pageDTO, err := h.service.getResponse(r.Context())
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -31,8 +31,8 @@ func (h *Handler) GetResponse(w http.ResponseWriter, r *http.Request) {
 	slog.Info("GetResponse", "pageDto", pageDTO)
 }
 
-func (h *Handler) GetResponseWithMIP(w http.ResponseWriter, r *http.Request) {
-	pageDTO, err := h.service.GetResponseWithMIP(r.Context())
+func (h *Handler) getResponseWithMIP(w http.ResponseWriter, r *http.Request) {
+	pageDTO, err := h.service.getResponseWithMIP(r.Context())
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return

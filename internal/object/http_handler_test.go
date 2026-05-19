@@ -11,21 +11,21 @@ import (
 
 type objectServiceStub struct{}
 
-func (s *objectServiceStub) GetObjectsNameByOrgName(_ context.Context, orgName string) ([]string, error) {
+func (s *objectServiceStub) getObjectsNameByOrgName(_ context.Context, orgName string) ([]string, error) {
 	if orgName == "" {
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 	return []string{"obj"}, nil
 }
 
-func (s *objectServiceStub) GetObjectByObjectName(_ context.Context, objectName string) ([]Object, error) {
+func (s *objectServiceStub) getObjectByObjectName(_ context.Context, objectName string) ([]Object, error) {
 	if objectName == "" {
 		return nil, apperr.NewInvalidArgument("objectName is required")
 	}
 	return []Object{}, nil
 }
 
-func (s *objectServiceStub) GetObjectsByOrgNameAndObjectName(_ context.Context, orgName string, objectName string) ([]Object, error) {
+func (s *objectServiceStub) getObjectsByOrgNameAndObjectName(_ context.Context, orgName string, objectName string) ([]Object, error) {
 	if orgName == "" {
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
@@ -35,12 +35,12 @@ func (s *objectServiceStub) GetObjectsByOrgNameAndObjectName(_ context.Context, 
 	return []Object{}, nil
 }
 
-func TestHandler_GetAllObjectsNamesByOrgName_BadRequest(t *testing.T) {
+func TestHandler_getAllObjectsNamesByOrgName_BadRequest(t *testing.T) {
 	h := NewHandler(&objectServiceStub{})
 
 	req := httptest.NewRequest(http.MethodGet, "/objects/", nil)
 	rec := httptest.NewRecorder()
-	h.GetAllObjectsNamesByOrgName(rec, req)
+	h.getAllObjectsNamesByOrgName(rec, req)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400, got %d", rec.Code)
@@ -50,12 +50,12 @@ func TestHandler_GetAllObjectsNamesByOrgName_BadRequest(t *testing.T) {
 	}
 }
 
-func TestHandler_GetAllObjectsByOrgNameAndObjectName_BadRequest(t *testing.T) {
+func TestHandler_getAllObjectsByOrgNameAndObjectName_BadRequest(t *testing.T) {
 	h := NewHandler(&objectServiceStub{})
 
 	req := httptest.NewRequest(http.MethodGet, "/objects/org/", nil)
 	rec := httptest.NewRecorder()
-	h.GetAllObjectsByOrgNameAndObjectName(rec, req)
+	h.getAllObjectsByOrgNameAndObjectName(rec, req)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400, got %d", rec.Code)
@@ -65,12 +65,12 @@ func TestHandler_GetAllObjectsByOrgNameAndObjectName_BadRequest(t *testing.T) {
 	}
 }
 
-func TestHandler_GetAllObjectsByOrgNameAndObjectNameQuery_BadRequest(t *testing.T) {
+func TestHandler_getAllObjectsByOrgNameAndObjectNameQuery_BadRequest(t *testing.T) {
 	h := NewHandler(&objectServiceStub{})
 
 	req := httptest.NewRequest(http.MethodGet, "/objects/search", nil)
 	rec := httptest.NewRecorder()
-	h.GetAllObjectsByOrgNameAndObjectNameQuery(rec, req)
+	h.getAllObjectsByOrgNameAndObjectNameQuery(rec, req)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400, got %d", rec.Code)

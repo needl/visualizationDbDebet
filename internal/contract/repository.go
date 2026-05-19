@@ -22,7 +22,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 // GetAllView отвечает за обращение к базе для получения списка
 // всех сущностей contract без учёта Мосинжпроекта
 // ctx используется для отмены, таймаутов и тп
-func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
+func (r *Repository) getAllView(ctx context.Context) ([]View, error) {
 	var contracts []View
 
 	query := `
@@ -52,7 +52,7 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 // GetViewById отвечает за обращение к базе для получения конкретной
 // сущности contract по его id(id)
 // ctx используется для отмены, таймаутов и тп
-func (r *Repository) GetViewById(ctx context.Context, id int) (*View, error) {
+func (r *Repository) getViewByID(ctx context.Context, id int) (*View, error) {
 	var contract View
 
 	query := `
