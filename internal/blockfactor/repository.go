@@ -32,7 +32,7 @@ func (r *Repository) getViewAll(ctx context.Context) ([]View, error) {
 			b.administrativnaya_otvetstvennost_19_28,
 			b.blokirovka_schetov,
 			b.srednespisochnaya_chislennost_le_1
-		from debet d
+		from debet_new d
 		left join blockfactor b
 			on b.kod_nalogoplatelshchika = d.counterparty_inn
 		order by b.id

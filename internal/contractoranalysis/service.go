@@ -3,10 +3,14 @@ package contractoranalysis
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 	"log/slog"
 	"time"
 	"visualizationDbDebet/internal/apperr"
 )
+
+var errContractorHasNoObjects = errors.New("contractor has no objects")
 
 type Service struct {
 	repo *Repository
@@ -48,7 +52,16 @@ func (s *Service) getAnalytics(ctx context.Context, contractorName string) (*Ana
 	}
 
 	if len(treeRows) == 0 {
-		return nil, apperr.NewNotFound("contractor not found")
+		exists, err := s.repo.findContractorExists(ctx, contractorName)
+		if err != nil {
+			slog.Error("FindContractorExists failed", "error", err)
+			return nil, err
+		}
+		if !exists {
+			return nil, apperr.NewNotFound("contractor not found")
+		}
+
+		return nil, fmt.Errorf("%w: %s", errContractorHasNoObjects, contractorName)
 	}
 
 	customers := buildCustomerTree(treeRows)
@@ -99,7 +112,7 @@ func (s *Service) getObjectDetails(
 		ObjectName:        objectName,
 		ContractSum:       row.ContractSum,
 		PaidSum:           row.PaidSum,
-		TDCSum:            row.ContractSum,
+		TDCSum:            row.TDCSum,
 		RVExists:          row.RVExists,
 		DebetSum:          row.DebetSum,
 		OverdueDebtAmount: row.OverdueDebtSum,
@@ -108,8 +121,7 @@ func (s *Service) getObjectDetails(
 	}
 
 	if row.ReadinessPercent.Valid {
-		readiness := row.ReadinessPercent.Float64
-		details.ReadinessPercent = &readiness
+		details.ReadinessPercent = new(row.ReadinessPercent.Float64)
 	}
 
 	if row.ContractSum > 0 {
@@ -170,8 +182,7 @@ func nullableReadiness(value sql.NullFloat64) *float64 {
 		return nil
 	}
 
-	v := value.Float64
-	return &v
+	return new(value.Float64)
 }
 
 func statusFromMetrics(overdueDebtSum float64, workEnd sql.NullTime) string {
@@ -186,6 +197,5 @@ func nullableTime(value sql.NullTime) *time.Time {
 		return nil
 	}
 
-	t := value.Time
-	return &t
+	return new(value.Time)
 }

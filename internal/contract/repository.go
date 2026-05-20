@@ -35,7 +35,7 @@ func (r *Repository) getAllView(ctx context.Context) ([]View, error) {
 			c.tdc_amount,
 			c.object_state,
 			c.object_readiness
-		from debet d
+		from debet_new d
 		left join contracts c
 			on c.titul = d.construction_title
 			and c.contract_number = d.contract_number

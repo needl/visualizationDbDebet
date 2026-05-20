@@ -7,6 +7,7 @@ import { CustomerFilter } from '../../features/customer-analytics/ui/CustomerFil
 import { CustomerCard } from '../../features/customer-analytics/ui/CustomerCard.js';
 import { BlockFactorFilter } from '../../features/customer-analytics/ui/block-factor/BlockFactorFilter.js';
 import { DebtStructure } from '../../features/customer-analytics/ui/debt-structure/DebtStructure.js';
+import { ContractorAnalytics } from '../../features/contractor-analytics/ui/ContractorAnalytics.js';
 
 export class DashboardRenderer {
     constructor(config) {
@@ -26,6 +27,9 @@ export class DashboardRenderer {
         this.config.forEach((block) => {
             const blockDiv = document.createElement('div');
             blockDiv.className = 'dashboard-block';
+            if (block.type === 'contractor-analytics') {
+                blockDiv.classList.add('contractor-analytics-block');
+            }
 
             const titleElem = document.createElement('h2');
             titleElem.textContent = block.title;
@@ -104,7 +108,7 @@ export class DashboardRenderer {
                 debtStructCol.className = 'stats-col debt-col';
 
                 const debtStructTitle = document.createElement('h3');
-                debtStructTitle.textContent = 'Структура дебиторской задолженности на 31.12.2025';
+                debtStructTitle.textContent = 'Структура дебиторской задолженности на 31.03.2026';
                 debtStructTitle.className = 'pie-chart-title';
                 debtStructCol.appendChild(debtStructTitle);
 
@@ -135,6 +139,13 @@ export class DashboardRenderer {
                     debtStructure.render(state.customerSummary);
                 });
                 this.statsSubscriptions.push(debtUnsub);
+            } else if (block.type === 'contractor-analytics') {
+                const contractorContainer = document.createElement('div');
+                contractorContainer.className = 'contractor-analytics-container';
+                blockDiv.appendChild(contractorContainer);
+
+                const contractorAnalytics = new ContractorAnalytics(contractorContainer);
+                this.components.push(contractorAnalytics);
             } else if (block.type === 'stats') {
                 const statsContainer = document.createElement('div');
                 statsContainer.className = 'stats-grid';

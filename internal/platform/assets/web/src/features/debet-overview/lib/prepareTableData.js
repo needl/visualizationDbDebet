@@ -11,6 +11,6 @@
             coefficient
         });
     }
-    rows.sort((a, b) => b.coefficient - a.coefficient);
+    rows.sort((a, b) => b.debetTotal - a.debetTotal);
     return rows;
 }

@@ -31,14 +31,14 @@ func (r *Repository) findContractorWithDebt(
 			d.construction_object as object,
 			d.contract_number as number,
 			d.contract_amount as amount,
-			d.debt_2025_12_31_total as debet_total,
-			d.debt_2025_12_31_overdue as debet_overdue,
+			d.debt_2026_03_31_total as debet_total,
+			d.debt_2026_03_31_overdue as debet_overdue,
 			d.contract_date as contract_date,
 			d.work_end_date
-		from debet d
+		from debet_new d
 		where d.source_org_name = $1
 			and d.counterparty_name = $2
-			and d.debt_2025_12_31_total <> 0
+			and d.debt_2026_03_31_total <> 0
 	`
 
 	if err := r.db.SelectContext(ctx, &contractors, query, sourceOrgName, counterpartyName); err != nil {
@@ -60,14 +60,14 @@ func (r *Repository) findContractorWithOverdue(
 			d.construction_object as object,
 			d.contract_number as number,
 			d.contract_amount as amount,
-			d.debt_2025_12_31_total as debet_total,
-			d.debt_2025_12_31_overdue as debet_overdue,
+			d.debt_2026_03_31_total as debet_total,
+			d.debt_2026_03_31_overdue as debet_overdue,
 			d.contract_date as contract_date,
 			d.work_end_date
-		from debet d
+		from debet_new d
 		where d.source_org_name = $1
 			and d.counterparty_name = $2
-			and d.debt_2025_12_31_overdue <> 0
+			and d.debt_2026_03_31_overdue <> 0
 	`
 
 	if err := r.db.SelectContext(ctx, &contractors, query, sourceOrgName, counterpartyName); err != nil {
@@ -86,12 +86,12 @@ func (r *Repository) findContractorsWithCurrDebet(ctx context.Context) ([]Debet,
 			coalesce(sum(contract_amount), 0.00) as contract_sum,
 			coalesce(sum(paid_amount), 0.00) as paid_sum,
 			coalesce(sum(accepted_amount), 0.00) as accepted_sum,
-			coalesce(sum(debt_2025_12_31_total), 0.00)
-				- coalesce(sum(debt_2025_12_31_overdue), 0.00) as debet_sum
-		from debet
+			coalesce(sum(debt_2026_03_31_total), 0.00)
+				- coalesce(sum(debt_2026_03_31_overdue), 0.00) as debet_sum
+		from debet_new
 		group by counterparty_name
-		having coalesce(sum(debt_2025_12_31_total), 0)
-			- coalesce(sum(debt_2025_12_31_overdue), 0.00) != 0.00
+		having coalesce(sum(debt_2026_03_31_total), 0)
+			- coalesce(sum(debt_2026_03_31_overdue), 0.00) != 0.00
 		order by debet_sum desc
 	`
 
@@ -111,10 +111,10 @@ func (r *Repository) findContractorsWithOverdueDebet(ctx context.Context) ([]Deb
 			coalesce(sum(contract_amount), 0.00) as contract_sum,
 			coalesce(sum(paid_amount), 0.00) as paid_sum,
 			coalesce(sum(accepted_amount), 0.00) as accepted_sum,
-			coalesce(sum(debt_2025_12_31_overdue), 0.00) as debet_sum
-		from debet
+			coalesce(sum(debt_2026_03_31_overdue), 0.00) as debet_sum
+		from debet_new
 		group by counterparty_name
-		having coalesce(sum(debt_2025_12_31_overdue), 0) != 0.00
+		having coalesce(sum(debt_2026_03_31_overdue), 0) != 0.00
 		order by debet_sum desc
 `
 
@@ -157,9 +157,9 @@ func (r *Repository) findContractorsWithBlockFactors(
 		select
 			min(d.counterparty_name) as name,
 			sum(d.contract_amount) as amount,
-			sum(d.debt_2025_12_31_total) as debet_total,
-			sum(d.debt_2025_12_31_overdue) as debet_overdue
-		from debet d
+			sum(d.debt_2026_03_31_total) as debet_total,
+			sum(d.debt_2026_03_31_overdue) as debet_overdue
+		from debet_new d
 		inner join blockfactor b on d.counterparty_inn = b.kod_nalogoplatelshchika
 		where d.source_org_name = $1
 			and b.%s = 1
@@ -187,12 +187,12 @@ func (r *Repository) findContractorForTable(
 			d.contract_number as number,
 			d.contract_amount as amount,
 			d.construction_object as object,
-			d.debt_2025_12_31_total as debet_total,
-			d.debt_2025_12_31_overdue as debet_overdue
-		from debet d
+			d.debt_2026_03_31_total as debet_total,
+			d.debt_2026_03_31_overdue as debet_overdue
+		from debet_new d
 		where d.counterparty_inn = (
 			select d2.counterparty_inn
-			from debet d2
+			from debet_new d2
 			where d2.counterparty_name = $1
 				and d2.counterparty_inn is not null
 			limit 1

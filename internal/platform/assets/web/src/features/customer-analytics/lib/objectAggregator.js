@@ -1,9 +1,7 @@
-
-
 function findMaxContractObject(objects) {
     let maxObj = null;
     let maxAmount = -Infinity;
-    objects.forEach(obj => {
+    objects.forEach((obj) => {
         const amount = obj.contract_amount || 0;
         if (amount > maxAmount) {
             maxAmount = amount;
@@ -13,7 +11,6 @@ function findMaxContractObject(objects) {
     return maxObj;
 }
 
-
 function formatDate(dateStr) {
     if (!dateStr) return '—';
     const d = new Date(dateStr);
@@ -21,10 +18,9 @@ function formatDate(dateStr) {
     return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-
 function getEarliestStartDate(objects) {
     let earliest = null;
-    objects.forEach(obj => {
+    objects.forEach((obj) => {
         if (obj.work_start_date) {
             const d = new Date(obj.work_start_date);
             if (!isNaN(d.getTime())) {
@@ -35,10 +31,9 @@ function getEarliestStartDate(objects) {
     return earliest ? formatDate(earliest.toISOString()) : '—';
 }
 
-
 function getLatestEndDate(objects) {
     let latest = null;
-    objects.forEach(obj => {
+    objects.forEach((obj) => {
         if (obj.work_end_date) {
             const d = new Date(obj.work_end_date);
             if (!isNaN(d.getTime())) {
@@ -49,6 +44,15 @@ function getLatestEndDate(objects) {
     return latest ? formatDate(latest.toISOString()) : '—';
 }
 
+function toStatusBool(value) {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'boolean') return value;
+
+    const normalized = String(value).trim().toLowerCase();
+    if (!normalized) return null;
+
+    return !['нет', 'false', '0', 'null', 'не получено', '-'].includes(normalized);
+}
 
 export function aggregateObjectMetrics(rawData) {
     if (!rawData || rawData.length === 0) {
@@ -61,10 +65,10 @@ export function aggregateObjectMetrics(rawData) {
         hardContractPrice: 0,
         contractAmount: 0,
         paidAmount: 0,
-        acceptedAmount: 0,
+        acceptedAmount: 0
     };
 
-    rawData.forEach(item => {
+    rawData.forEach((item) => {
         sums.hardContractPrice += item.hard_contract_price || 0;
         sums.contractAmount += item.contract_amount || 0;
         sums.paidAmount += item.paid_amount || 0;
@@ -73,8 +77,8 @@ export function aggregateObjectMetrics(rawData) {
 
     const contractorName = maxObj?.counterparty_name || '—';
     const buildReady = maxObj?.build_ready_percent ?? null;
-    const permission = maxObj?.permission_to_enter ?? null;
-    const conclusion = maxObj?.conclusion ?? null;
+    const permission = toStatusBool(maxObj?.permission_to_enter);
+    const conclusion = toStatusBool(maxObj?.conclusion);
 
     const startDate = getEarliestStartDate(rawData);
     const endDate = getLatestEndDate(rawData);
@@ -89,35 +93,36 @@ export function aggregateObjectMetrics(rawData) {
         hardContractPrice: sums.hardContractPrice,
         contractAmount: sums.contractAmount,
         paidAmount: sums.paidAmount,
-        acceptedAmount: sums.acceptedAmount,
+        acceptedAmount: sums.acceptedAmount
     };
 }
 
-
 export function prepareChartData(rawData) {
-    let total2024 = 0, overdue2024 = 0;
-    let total2025 = 0, overdue2025 = 0;
+    let total2024 = 0;
+    let overdue2024 = 0;
+    let total2026 = 0;
+    let overdue2026 = 0;
 
-    rawData.forEach(item => {
+    rawData.forEach((item) => {
         total2024 += item.debt_2024_12_31_total || 0;
         overdue2024 += item.debt_2024_12_31_overdue || 0;
-        total2025 += item.debt_2025_12_31_total || 0;
-        overdue2025 += item.debt_2025_12_31_overdue || 0;
+        total2026 += item.debt_2026_03_31_total || 0;
+        overdue2026 += item.debt_2026_03_31_overdue || 0;
     });
 
     return {
-        categories: ['31.12.2024', '31.12.2025'],
+        categories: ['31.12.2024', '31.03.2026'],
         series: [
             {
                 name: 'Дебиторская задолженность',
                 type: 'line',
-                data: [total2024, total2025],
+                data: [total2024, total2026],
                 itemStyle: { color: '#3b82f6' }
             },
             {
                 name: 'Просроченная задолженность',
                 type: 'line',
-                data: [overdue2024, overdue2025],
+                data: [overdue2024, overdue2026],
                 itemStyle: { color: '#ef4444' }
             }
         ]

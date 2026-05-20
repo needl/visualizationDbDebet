@@ -21,7 +21,7 @@ func (r *Repository) findAllCustomers(ctx context.Context) ([]Customer, error) {
 
 	query := `
 		select distinct source_org_name as name
-		from debet
+		from debet_new
 		order by source_org_name
 `
 
@@ -38,25 +38,25 @@ func (r *Repository) findSummaryByCustomerID(ctx context.Context, id string) (*S
 	/*query := `
 					select
 	    				count(distinct counterparty_inn) as contractors_count,
-	    				coalesce(sum(debt_2025_12_31_total), 0) as total_debet,
-	    				coalesce(sum(debt_2025_12_31_overdue), 0) as total_debet_overdue,
-	    				coalesce(sum(debt_2025_12_31_long_term), 0) as total_debet_long,
+	    				coalesce(sum(debt_2026_03_31_total), 0) as total_debet,
+	    				coalesce(sum(debt_2026_03_31_overdue), 0) as total_debet_overdue,
+	    				coalesce(sum(debt_2026_03_31_long_term), 0) as total_debet_long,
 						coalesce(sum(contract_amount), 0) as total_contract_amount,
 						coalesce(sum(paid_amount), 0) as total_paid_amount,
 						coalesce(sum(accepted_amount), 0) as total_accepted_amount
-					from debet
+					from debet_new
 					where source_org_name = $1
 	`*/
 
 	query := `
 		select
 			count(distinct counterparty_inn) as contractors_count,
-			coalesce(sum(debt_2025_12_31_total), 0) as total_debet,
-			coalesce(sum(debt_2025_12_31_overdue), 0) as total_debet_overdue,
+			coalesce(sum(debt_2026_03_31_total), 0) as total_debet,
+			coalesce(sum(debt_2026_03_31_overdue), 0) as total_debet_overdue,
 			coalesce(sum(contract_amount), 0) as total_contract_amount,
 			coalesce(sum(paid_amount), 0) as total_paid_amount,
 			coalesce(sum(accepted_amount), 0) as total_accepted_amount
-		from debet
+		from debet_new
 		where source_org_name = $1
 `
 
@@ -76,11 +76,11 @@ func (r *Repository) findTopItemsByCustomerID(ctx context.Context, id string) ([
 	query := `
 		select
 			counterparty_name as name,
-			coalesce(sum(debt_2025_12_31_total), 0) as value
-		from debet
+			coalesce(sum(debt_2026_03_31_total), 0) as value
+		from debet_new
 		where source_org_name = $1
 		group by counterparty_name
-		having coalesce(sum(debt_2025_12_31_total), 0) > 0
+		having coalesce(sum(debt_2026_03_31_total), 0) > 0
 		order by value desc
 		limit 10
 `
@@ -98,11 +98,11 @@ func (r *Repository) findTopItemsOverdueByCustomerID(ctx context.Context, id str
 	query := `
 		select
 			counterparty_name as name,
-			coalesce(sum(debt_2025_12_31_overdue), 0) as value
-		from debet
+			coalesce(sum(debt_2026_03_31_overdue), 0) as value
+		from debet_new
 		where source_org_name = $1
 		group by counterparty_name
-		having coalesce(sum(debt_2025_12_31_overdue), 0) > 0
+		having coalesce(sum(debt_2026_03_31_overdue), 0) > 0
 		order by value desc
 		limit 10
 `
@@ -132,7 +132,7 @@ func (r *Repository) findCountBlockFactorsByCustomerID(ctx context.Context, id s
 			sum(b.srednespisochnaya_chislennost_le_1) as chisl_count
 		from (
 			select distinct counterparty_inn
-			from debet
+			from debet_new
 			where source_org_name = $1
 		) as d
 		inner join blockfactor b on b.kod_nalogoplatelshchika = d.counterparty_inn

@@ -24,9 +24,9 @@ func (r *Repository) getPageDTO(ctx context.Context) (*Response, error) {
 			count(distinct source_org_name) as count_source_org,
 			count(distinct contract_number) as count_contracts,
 			round(coalesce(sum(contract_amount), 0)) as sum_contract_amount,
-			round(coalesce(sum(debt_2025_12_31_total), 0)) as sum_debet_total,
-			round(coalesce(sum(debt_2025_12_31_overdue), 0)) as sum_debet_overdue
-		from debet
+			round(coalesce(sum(debt_2026_03_31_total), 0)) as sum_debet_total,
+			round(coalesce(sum(debt_2026_03_31_overdue), 0)) as sum_debet_overdue
+		from debet_new
 	`
 
 	if err := r.db.GetContext(ctx, &pageDto, query); err != nil {
@@ -42,9 +42,9 @@ func (r *Repository) getPageDTOWithMIP(ctx context.Context) (*Response, error) {
 			count(distinct source_org_name) as count_source_org,
 			count(distinct contract_number) as count_contracts,
 			round(coalesce(sum(contract_amount), 0)) as sum_contract_amount,
-			round(coalesce(sum(debt_2025_12_31_total), 0)) as sum_debet_total,
-			round(coalesce(sum(debt_2025_12_31_overdue), 0)) as sum_debet_overdue
-		from debet
+			round(coalesce(sum(debt_2026_03_31_total), 0)) as sum_debet_total,
+			round(coalesce(sum(debt_2026_03_31_overdue), 0)) as sum_debet_overdue
+		from debet_new
 	`
 
 	if err := r.db.GetContext(ctx, &pageDto, query); err != nil {

@@ -34,12 +34,16 @@ func (r *Repository) getAllView(ctx context.Context) ([]View, error) {
 			contract_date,
 			contract_amount,
 			construction_object,
+			debt_2026_03_31_total,
 			debt_2025_12_31_total,
+			debt_2025_03_31_total,
 			debt_2024_12_31_total,
 			debt_2025_12_31_overdue,
+			debt_2025_03_31_overdue,
+			debt_2026_03_31_overdue,
 			debt_2024_12_31_overdue,
 			construction_title
-		from debet
+		from debet_new
 		order by id
 	`
 
@@ -64,10 +68,16 @@ func (r *Repository) getAllViewWithMIP(ctx context.Context) ([]View, error) {
 			contract_date,
 			contract_amount,
 			construction_object,
+			debt_2026_03_31_total,
 			debt_2025_12_31_total,
+			debt_2025_03_31_total,
+			debt_2024_12_31_total,
 			debt_2025_12_31_overdue,
+			debt_2025_03_31_overdue,
+			debt_2026_03_31_overdue,
+			debt_2024_12_31_overdue,
 			construction_title
-		from debet
+		from debet_new
 		order by id
 	`
 
@@ -94,10 +104,16 @@ func (r *Repository) getViewByOrgName(ctx context.Context, orgName string) (*Vie
 			contract_date,
 			contract_amount,
 			construction_object,
+			debt_2026_03_31_total,
 			debt_2025_12_31_total,
+			debt_2025_03_31_total,
+			debt_2024_12_31_total,
 			debt_2025_12_31_overdue,
+			debt_2025_03_31_overdue,
+			debt_2026_03_31_overdue,
+			debt_2024_12_31_overdue,
 			construction_title
-		from debet
+		from debet_new
 		where source_org_name = $1
 	`
 

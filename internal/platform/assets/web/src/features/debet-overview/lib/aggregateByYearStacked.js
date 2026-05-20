@@ -1,96 +1,95 @@
 export function aggregateByYearStacked(items) {
     const map = new Map();
 
-    items.forEach(item => {
+    items.forEach((item) => {
         const orgName = item.source_org_name;
         if (!orgName) return;
 
         if (!map.has(orgName)) {
             map.set(orgName, {
-                total2024: 0,
-                overdue2024: 0,
-                total2025: 0,
-                overdue2025: 0
+                total20241231: 0,
+                overdue20241231: 0,
+                total20250331: 0,
+                overdue20250331: 0,
+                total20251231: 0,
+                overdue20251231: 0,
+                total20260331: 0,
+                overdue20260331: 0
             });
         }
+
         const entry = map.get(orgName);
 
         if (typeof item.debt_2024_12_31_total === 'number') {
-            entry.total2024 += item.debt_2024_12_31_total;
+            entry.total20241231 += item.debt_2024_12_31_total;
         }
         if (typeof item.debt_2024_12_31_overdue === 'number') {
-            entry.overdue2024 += item.debt_2024_12_31_overdue;
+            entry.overdue20241231 += item.debt_2024_12_31_overdue;
+        }
+
+        if (typeof item.debt_2025_03_31_total === 'number') {
+            entry.total20250331 += item.debt_2025_03_31_total;
+        }
+        if (typeof item.debt_2025_03_31_overdue === 'number') {
+            entry.overdue20250331 += item.debt_2025_03_31_overdue;
         }
 
         if (typeof item.debt_2025_12_31_total === 'number') {
-            entry.total2025 += item.debt_2025_12_31_total;
+            entry.total20251231 += item.debt_2025_12_31_total;
         }
         if (typeof item.debt_2025_12_31_overdue === 'number') {
-            entry.overdue2025 += item.debt_2025_12_31_overdue;
+            entry.overdue20251231 += item.debt_2025_12_31_overdue;
+        }
+
+        if (typeof item.debt_2026_03_31_total === 'number') {
+            entry.total20260331 += item.debt_2026_03_31_total;
+        }
+        if (typeof item.debt_2026_03_31_overdue === 'number') {
+            entry.overdue20260331 += item.debt_2026_03_31_overdue;
         }
     });
 
     const names = [];
-    const current2024 = [];
-    const overdue2024 = [];
-    const current2025 = [];
-    const overdue2025 = [];
+    const current20241231 = [];
+    const overdue20241231 = [];
+    const current20250331 = [];
+    const overdue20250331 = [];
+    const current20251231 = [];
+    const overdue20251231 = [];
+    const current20260331 = [];
+    const overdue20260331 = [];
 
     for (const [org, data] of map.entries()) {
         names.push(org);
-        const cur24 = Math.max(0, data.total2024 - data.overdue2024);
-        const cur25 = Math.max(0, data.total2025 - data.overdue2025);
-        current2024.push(cur24);
-        overdue2024.push(data.overdue2024);
-        current2025.push(cur25);
-        overdue2025.push(data.overdue2025);
+
+        current20241231.push(Math.max(0, data.total20241231 - data.overdue20241231));
+        overdue20241231.push(data.overdue20241231);
+
+        current20250331.push(Math.max(0, data.total20250331 - data.overdue20250331));
+        overdue20250331.push(data.overdue20250331);
+
+        current20251231.push(Math.max(0, data.total20251231 - data.overdue20251231));
+        overdue20251231.push(data.overdue20251231);
+
+        current20260331.push(Math.max(0, data.total20260331 - data.overdue20260331));
+        overdue20260331.push(data.overdue20260331);
     }
 
     return {
         names,
         series: [
-            { name: '31.12.2024 Текущая дебиторская задолженность',   stack: '2024', data: current2024 },
-            { name: '31.12.2024 Просроченная дебиторская задолженность', stack: '2024', data: overdue2024 },
-            { name: '31.12.2025 Текущая дебиторская задолженность',   stack: '2025', data: current2025 },
-            { name: '31.12.2025 Просроченная дебиторская задолженность', stack: '2025', data: overdue2025 }
+            { name: '31.12.2024 Текущая дебиторская задолженность', stack: '2024-12-31', data: current20241231 },
+            { name: '31.12.2024 Просроченная дебиторская задолженность', stack: '2024-12-31', data: overdue20241231 },
+            { name: '31.03.2025 Текущая дебиторская задолженность', stack: '2025-03-31', data: current20250331 },
+            { name: '31.03.2025 Просроченная дебиторская задолженность', stack: '2025-03-31', data: overdue20250331 },
+            { name: '31.12.2025 Текущая дебиторская задолженность', stack: '2025-12-31', data: current20251231 },
+            { name: '31.12.2025 Просроченная дебиторская задолженность', stack: '2025-12-31', data: overdue20251231 },
+            { name: '31.03.2026 Текущая дебиторская задолженность', stack: '2026-03-31', data: current20260331 },
+            { name: '31.03.2026 Просроченная дебиторская задолженность', stack: '2026-03-31', data: overdue20260331 }
         ]
     };
 }
 
 export function aggregateByYear(items) {
-    const map = new Map();
-
-    items.forEach(item => {
-        const orgName = item.source_org_name;
-        if (!orgName) return;
-
-        if (!map.has(orgName)) {
-            map.set(orgName, { year2024: 0, year2025: 0 });
-        }
-        const entry = map.get(orgName);
-        if (typeof item.debt_2024_12_31_total === 'number') {
-            entry.year2024 += item.debt_2024_12_31_total;
-        }
-        if (typeof item.debt_2025_12_31_total === 'number') {
-            entry.year2025 += item.debt_2025_12_31_total;
-        }
-    });
-
-    const names = [];
-    const series2024 = [];
-    const series2025 = [];
-
-    for (const [org, data] of map.entries()) {
-        names.push(org);
-        series2024.push(data.year2024);
-        series2025.push(data.year2025);
-    }
-
-    return {
-        names: names,
-        series: [
-            { name: '2024', data: series2024 },
-            { name: '2025', data: series2025 }
-        ]
-    };
+    return aggregateByYearStacked(items);
 }

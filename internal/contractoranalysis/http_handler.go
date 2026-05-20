@@ -39,7 +39,11 @@ func (h *Handler) getAnalytics(w http.ResponseWriter, r *http.Request) {
 
 	analytics, err := h.service.getAnalytics(r.Context(), contractorName)
 	if err != nil {
-		httpx.RespondError(w, err, "internal server error")
+		httpx.RespondError(w, err, "internal server error", httpx.ErrorMapping{
+			Err:     errContractorHasNoObjects,
+			Status:  http.StatusUnprocessableEntity,
+			Message: err.Error(),
+		})
 		return
 	}
 
