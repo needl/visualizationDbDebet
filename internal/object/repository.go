@@ -14,13 +14,13 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) FindObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error) {
+func (r *Repository) findObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error) {
 	var objectsName []string
 
-	/*query := `select distinct construction_object from debet where source_org_name = $1`*/
+	/*query := `select distinct construction_object from debet_new where source_org_name = $1`*/
 	query := `
 		select distinct coalesce(construction_object, '') as construction_object
-		from debet
+		from debet_new
 		where source_org_name = $1
 	`
 
@@ -31,7 +31,7 @@ func (r *Repository) FindObjectsNameByOrgName(ctx context.Context, orgName strin
 	return objectsName, nil
 }
 
-func (r *Repository) FindObjectByName(ctx context.Context, name string) ([]Object, error) {
+func (r *Repository) findObjectByName(ctx context.Context, name string) ([]Object, error) {
 	var objects []Object
 
 	query := `
@@ -45,9 +45,21 @@ func (r *Repository) FindObjectByName(ctx context.Context, name string) ([]Objec
 			accepted_amount,
 			debt_2024_12_31_total,
 			debt_2024_12_31_overdue,
-			debt_2025_12_31_total,
-			debt_2025_12_31_overdue
-		from debet
+			debt_2026_03_31_total,
+			debt_2026_03_31_overdue,
+			construction_readiness_percent as build_ready_percent,
+			coalesce(
+				nullif(btrim(mge_status::text), '') is not null
+				and lower(btrim(mge_status::text)) not in ('нет', 'false', '0', 'null', 'не получено', '-'),
+				false
+			) as conclusion,
+			coalesce(
+				nullif(btrim(rv_status::text), '') is not null
+				and lower(btrim(rv_status::text)) not in ('нет', 'false', '0', 'null', 'не получено', '-'),
+				false
+			) as permission_to_enter,
+			fixed_contract_price as hard_contract_price
+		from debet_new
 		where construction_object = $1
 	`
 
@@ -58,7 +70,7 @@ func (r *Repository) FindObjectByName(ctx context.Context, name string) ([]Objec
 	return objects, nil
 }
 
-func (r *Repository) FindObjectsByOrgNameAndObjectName(ctx context.Context,
+func (r *Repository) findObjectsByOrgNameAndObjectName(ctx context.Context,
 	orgName string,
 	objectName string,
 ) ([]Object, error) {
@@ -75,9 +87,21 @@ func (r *Repository) FindObjectsByOrgNameAndObjectName(ctx context.Context,
 			accepted_amount,
 			debt_2024_12_31_total,
 			debt_2024_12_31_overdue,
-			debt_2025_12_31_total,
-			debt_2025_12_31_overdue
-		from debet
+			debt_2026_03_31_total,
+			debt_2026_03_31_overdue,
+			construction_readiness_percent as build_ready_percent,
+			coalesce(
+				nullif(btrim(mge_status::text), '') is not null
+				and lower(btrim(mge_status::text)) not in ('нет', 'false', '0', 'null', 'не получено', '-'),
+				false
+			) as conclusion,
+			coalesce(
+				nullif(btrim(rv_status::text), '') is not null
+				and lower(btrim(rv_status::text)) not in ('нет', 'false', '0', 'null', 'не получено', '-'),
+				false
+			) as permission_to_enter,
+			fixed_contract_price as hard_contract_price
+		from debet_new
 		where source_org_name = $1 and construction_object = $2
 	`
 

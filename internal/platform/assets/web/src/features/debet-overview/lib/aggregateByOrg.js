@@ -16,11 +16,11 @@
         if (typeof item.contract_amount === 'number') {
             aggregated[orgName].contractAmount += item.contract_amount;
         }
-        if (typeof item.debt_2025_12_31_total === 'number') {
-            aggregated[orgName].debetTotal += item.debt_2025_12_31_total;
+        if (typeof item.debt_2026_03_31_total === 'number') {
+            aggregated[orgName].debetTotal += item.debt_2026_03_31_total;
         }
-        if (typeof item.debt_2025_12_31_overdue === 'number') {
-            aggregated[orgName].debetOverdose += item.debt_2025_12_31_overdue;
+        if (typeof item.debt_2026_03_31_overdue === 'number') {
+            aggregated[orgName].debetOverdose += item.debt_2026_03_31_overdue;
         }
     });
         Math.round(aggregated)

@@ -3,7 +3,6 @@ package response
 import (
 	"context"
 	"fmt"
-	"visualizationDbDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -17,7 +16,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetPageDto(ctx context.Context) (*Response, error) {
+func (r *Repository) getPageDTO(ctx context.Context) (*Response, error) {
 	var pageDto Response
 
 	query := `
@@ -25,28 +24,27 @@ func (r *Repository) GetPageDto(ctx context.Context) (*Response, error) {
 			count(distinct source_org_name) as count_source_org,
 			count(distinct contract_number) as count_contracts,
 			round(coalesce(sum(contract_amount), 0)) as sum_contract_amount,
-			round(coalesce(sum(debt_2025_12_31_total), 0)) as sum_debet_total,
-			round(coalesce(sum(debt_2025_12_31_overdue), 0)) as sum_debet_overdue
-		from debet
-		where source_org_name != $1
+			round(coalesce(sum(debt_2026_03_31_total), 0)) as sum_debet_total,
+			round(coalesce(sum(debt_2026_03_31_overdue), 0)) as sum_debet_overdue
+		from debet_new
 	`
 
-	if err := r.db.GetContext(ctx, &pageDto, query, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.GetContext(ctx, &pageDto, query); err != nil {
 		return nil, fmt.Errorf("failed to get dto without in response repo: %w", err)
 	}
 	return &pageDto, nil
 }
 
-func (r *Repository) GetPageDtoWithMIP(ctx context.Context) (*Response, error) {
+func (r *Repository) getPageDTOWithMIP(ctx context.Context) (*Response, error) {
 	var pageDto Response
 	query := `
 		select
 			count(distinct source_org_name) as count_source_org,
 			count(distinct contract_number) as count_contracts,
 			round(coalesce(sum(contract_amount), 0)) as sum_contract_amount,
-			round(coalesce(sum(debt_2025_12_31_total), 0)) as sum_debet_total,
-			round(coalesce(sum(debt_2025_12_31_overdue), 0)) as sum_debet_overdue
-		from debet
+			round(coalesce(sum(debt_2026_03_31_total), 0)) as sum_debet_total,
+			round(coalesce(sum(debt_2026_03_31_overdue), 0)) as sum_debet_overdue
+		from debet_new
 	`
 
 	if err := r.db.GetContext(ctx, &pageDto, query); err != nil {

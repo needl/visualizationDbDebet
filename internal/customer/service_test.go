@@ -7,7 +7,7 @@ import (
 	"visualizationDbDebet/internal/apperr"
 )
 
-func TestService_Validation_EmptyCustomerID(t *testing.T) {
+func TestService_validationEmptyCustomerID(t *testing.T) {
 	ctx := context.Background()
 	svc := NewService(nil)
 
@@ -16,30 +16,30 @@ func TestService_Validation_EmptyCustomerID(t *testing.T) {
 		call func() error
 	}{
 		{
-			name: "GetSummaryByCustomerId",
+			name: "getSummaryByCustomerID",
 			call: func() error {
-				_, err := svc.GetSummaryByCustomerId(ctx, "")
+				_, err := svc.getSummaryByCustomerID(ctx, "")
 				return err
 			},
 		},
 		{
-			name: "GetTopItemsByCustomerId",
+			name: "getTopItemsByCustomerID",
 			call: func() error {
-				_, err := svc.GetTopItemsByCustomerId(ctx, "")
+				_, err := svc.getTopItemsByCustomerID(ctx, "")
 				return err
 			},
 		},
 		{
-			name: "GetTopItemsOverdueByCustomerId",
+			name: "getTopItemsOverdueByCustomerID",
 			call: func() error {
-				_, err := svc.GetTopItemsOverdueByCustomerId(ctx, "")
+				_, err := svc.getTopItemsOverdueByCustomerID(ctx, "")
 				return err
 			},
 		},
 		{
-			name: "GetCountBlockFactorsByCustomerId",
+			name: "getCountBlockFactorsByCustomerID",
 			call: func() error {
-				_, err := svc.GetCountBlockFactorsByCustomerId(ctx, "")
+				_, err := svc.getCountBlockFactorsByCustomerID(ctx, "")
 				return err
 			},
 		},

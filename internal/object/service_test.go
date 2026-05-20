@@ -7,9 +7,9 @@ import (
 	"visualizationDbDebet/internal/apperr"
 )
 
-func TestService_GetObjectsNameByOrgName_Validation(t *testing.T) {
+func TestService_getObjectsNameByOrgName_Validation(t *testing.T) {
 	svc := NewService(nil)
-	_, err := svc.GetObjectsNameByOrgName(context.Background(), "")
+	_, err := svc.getObjectsNameByOrgName(context.Background(), "")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -18,11 +18,11 @@ func TestService_GetObjectsNameByOrgName_Validation(t *testing.T) {
 	}
 }
 
-func TestService_GetObjectsByOrgNameAndObjectName_Validation(t *testing.T) {
+func TestService_getObjectsByOrgNameAndObjectName_Validation(t *testing.T) {
 	svc := NewService(nil)
 	ctx := context.Background()
 
-	_, err := svc.GetObjectsByOrgNameAndObjectName(ctx, "", "object")
+	_, err := svc.getObjectsByOrgNameAndObjectName(ctx, "", "object")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -30,7 +30,7 @@ func TestService_GetObjectsByOrgNameAndObjectName_Validation(t *testing.T) {
 		t.Fatalf("expected ErrInvalidArgument for orgName, got %v", err)
 	}
 
-	_, err = svc.GetObjectsByOrgNameAndObjectName(ctx, "org", "")
+	_, err = svc.getObjectsByOrgNameAndObjectName(ctx, "org", "")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}

@@ -7,11 +7,11 @@ import (
 	"visualizationDbDebet/internal/apperr"
 )
 
-func TestService_GetContractorsWithBlockFactors_Validation(t *testing.T) {
+func TestService_getContractorsWithBlockFactors_Validation(t *testing.T) {
 	svc := NewService(nil)
 	ctx := context.Background()
 
-	_, err := svc.GetContractorsWithBlockFactors(ctx, "", "priznanie_bankrotom")
+	_, err := svc.getContractorsWithBlockFactors(ctx, "", "priznanie_bankrotom")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -19,7 +19,7 @@ func TestService_GetContractorsWithBlockFactors_Validation(t *testing.T) {
 		t.Fatalf("expected ErrInvalidArgument, got %v", err)
 	}
 
-	_, err = svc.GetContractorsWithBlockFactors(ctx, "org", "")
+	_, err = svc.getContractorsWithBlockFactors(ctx, "org", "")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -28,11 +28,11 @@ func TestService_GetContractorsWithBlockFactors_Validation(t *testing.T) {
 	}
 }
 
-func TestService_GetContractorsWithDebt_Validation(t *testing.T) {
+func TestService_getContractorsWithDebt_Validation(t *testing.T) {
 	svc := NewService(nil)
 	ctx := context.Background()
 
-	_, err := svc.GetContractorsWithDebt(ctx, "", "counterparty")
+	_, err := svc.getContractorsWithDebt(ctx, "", "counterparty")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -40,7 +40,7 @@ func TestService_GetContractorsWithDebt_Validation(t *testing.T) {
 		t.Fatalf("expected ErrInvalidArgument, got %v", err)
 	}
 
-	_, err = svc.GetContractorsWithDebt(ctx, "org", "")
+	_, err = svc.getContractorsWithDebt(ctx, "org", "")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -49,11 +49,11 @@ func TestService_GetContractorsWithDebt_Validation(t *testing.T) {
 	}
 }
 
-func TestService_GetContractorsWithOverdue_Validation(t *testing.T) {
+func TestService_getContractorsWithOverdue_Validation(t *testing.T) {
 	svc := NewService(nil)
 	ctx := context.Background()
 
-	_, err := svc.GetContractorsWithOverdue(ctx, "", "counterparty")
+	_, err := svc.getContractorsWithOverdue(ctx, "", "counterparty")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -61,7 +61,7 @@ func TestService_GetContractorsWithOverdue_Validation(t *testing.T) {
 		t.Fatalf("expected ErrInvalidArgument, got %v", err)
 	}
 
-	_, err = svc.GetContractorsWithOverdue(ctx, "org", "")
+	_, err = svc.getContractorsWithOverdue(ctx, "org", "")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -70,9 +70,9 @@ func TestService_GetContractorsWithOverdue_Validation(t *testing.T) {
 	}
 }
 
-func TestService_GetContractorForTable_Validation(t *testing.T) {
+func TestService_getContractorForTable_Validation(t *testing.T) {
 	svc := NewService(nil)
-	_, err := svc.GetContractorForTable(context.Background(), "")
+	_, err := svc.getContractorForTable(context.Background(), "")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}

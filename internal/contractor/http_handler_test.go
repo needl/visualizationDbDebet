@@ -9,14 +9,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func TestHandler_GetContractorsWithBlockFactors_BadRequest(t *testing.T) {
+func TestHandler_getContractorsWithBlockFactors_BadRequest(t *testing.T) {
 	h := NewHandler(NewService(nil))
 
 	t.Run("missing orgName from path vars", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/contractor/?columnName=priznanie_bankrotom", nil)
 		rec := httptest.NewRecorder()
 
-		h.GetContractorsWithBlockFactors(rec, req)
+		h.getContractorsWithBlockFactors(rec, req)
 
 		if rec.Code != http.StatusBadRequest {
 			t.Fatalf("expected status 400, got %d", rec.Code)
@@ -31,7 +31,7 @@ func TestHandler_GetContractorsWithBlockFactors_BadRequest(t *testing.T) {
 		req = mux.SetURLVars(req, map[string]string{"orgName": "org"})
 		rec := httptest.NewRecorder()
 
-		h.GetContractorsWithBlockFactors(rec, req)
+		h.getContractorsWithBlockFactors(rec, req)
 
 		if rec.Code != http.StatusBadRequest {
 			t.Fatalf("expected status 400, got %d", rec.Code)
@@ -42,14 +42,14 @@ func TestHandler_GetContractorsWithBlockFactors_BadRequest(t *testing.T) {
 	})
 }
 
-func TestHandler_GetContractorsWithDebt_BadRequest(t *testing.T) {
+func TestHandler_getContractorsWithDebt_BadRequest(t *testing.T) {
 	h := NewHandler(NewService(nil))
 
 	req := httptest.NewRequest(http.MethodGet, "/contractor/org/debt", nil)
 	req = mux.SetURLVars(req, map[string]string{"orgName": "org"})
 	rec := httptest.NewRecorder()
 
-	h.GetContractorsWithDebt(rec, req)
+	h.getContractorsWithDebt(rec, req)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400, got %d", rec.Code)
@@ -59,14 +59,14 @@ func TestHandler_GetContractorsWithDebt_BadRequest(t *testing.T) {
 	}
 }
 
-func TestHandler_GetContractorsWithOverdue_BadRequest(t *testing.T) {
+func TestHandler_getContractorsWithOverdue_BadRequest(t *testing.T) {
 	h := NewHandler(NewService(nil))
 
 	req := httptest.NewRequest(http.MethodGet, "/contractor/org/overdue", nil)
 	req = mux.SetURLVars(req, map[string]string{"orgName": "org"})
 	rec := httptest.NewRecorder()
 
-	h.GetContractorsWithOverdue(rec, req)
+	h.getContractorsWithOverdue(rec, req)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400, got %d", rec.Code)
@@ -76,13 +76,13 @@ func TestHandler_GetContractorsWithOverdue_BadRequest(t *testing.T) {
 	}
 }
 
-func TestHandler_GetContractorForTable_BadRequest(t *testing.T) {
+func TestHandler_getContractorForTable_BadRequest(t *testing.T) {
 	h := NewHandler(NewService(nil))
 
 	req := httptest.NewRequest(http.MethodGet, "/contractor/table", nil)
 	rec := httptest.NewRecorder()
 
-	h.GetContractorForTable(rec, req)
+	h.getContractorForTable(rec, req)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400, got %d", rec.Code)

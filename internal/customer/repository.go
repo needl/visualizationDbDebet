@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"visualizationDbDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -17,48 +16,47 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) FindAllCustomers(ctx context.Context) ([]Customer, error) {
+func (r *Repository) findAllCustomers(ctx context.Context) ([]Customer, error) {
 	var customers []Customer
 
 	query := `
 		select distinct source_org_name as name
-		from debet
-		where source_org_name != $1
+		from debet_new
 		order by source_org_name
 `
 
-	if err := r.db.SelectContext(ctx, &customers, query, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &customers, query); err != nil {
 		return nil, err
 	}
 
 	return customers, nil
 }
 
-func (r *Repository) FindSummaryByCustomerId(ctx context.Context, id string) (*Summary, error) {
+func (r *Repository) findSummaryByCustomerID(ctx context.Context, id string) (*Summary, error) {
 	var summary Summary
 
 	/*query := `
 					select
 	    				count(distinct counterparty_inn) as contractors_count,
-	    				coalesce(sum(debt_2025_12_31_total), 0) as total_debet,
-	    				coalesce(sum(debt_2025_12_31_overdue), 0) as total_debet_overdue,
-	    				coalesce(sum(debt_2025_12_31_long_term), 0) as total_debet_long,
+	    				coalesce(sum(debt_2026_03_31_total), 0) as total_debet,
+	    				coalesce(sum(debt_2026_03_31_overdue), 0) as total_debet_overdue,
+	    				coalesce(sum(debt_2026_03_31_long_term), 0) as total_debet_long,
 						coalesce(sum(contract_amount), 0) as total_contract_amount,
 						coalesce(sum(paid_amount), 0) as total_paid_amount,
 						coalesce(sum(accepted_amount), 0) as total_accepted_amount
-					from debet
+					from debet_new
 					where source_org_name = $1
 	`*/
 
 	query := `
 		select
 			count(distinct counterparty_inn) as contractors_count,
-			coalesce(sum(debt_2025_12_31_total), 0) as total_debet,
-			coalesce(sum(debt_2025_12_31_overdue), 0) as total_debet_overdue,
+			coalesce(sum(debt_2026_03_31_total), 0) as total_debet,
+			coalesce(sum(debt_2026_03_31_overdue), 0) as total_debet_overdue,
 			coalesce(sum(contract_amount), 0) as total_contract_amount,
 			coalesce(sum(paid_amount), 0) as total_paid_amount,
 			coalesce(sum(accepted_amount), 0) as total_accepted_amount
-		from debet
+		from debet_new
 		where source_org_name = $1
 `
 
@@ -72,17 +70,17 @@ func (r *Repository) FindSummaryByCustomerId(ctx context.Context, id string) (*S
 	return &summary, nil
 }
 
-func (r *Repository) FindTopItemsByCustomerId(ctx context.Context, id string) ([]TopItem, error) {
+func (r *Repository) findTopItemsByCustomerID(ctx context.Context, id string) ([]TopItem, error) {
 	items := make([]TopItem, 0)
 
 	query := `
 		select
 			counterparty_name as name,
-			coalesce(sum(debt_2025_12_31_total), 0) as value
-		from debet
+			coalesce(sum(debt_2026_03_31_total), 0) as value
+		from debet_new
 		where source_org_name = $1
 		group by counterparty_name
-		having coalesce(sum(debt_2025_12_31_total), 0) > 0
+		having coalesce(sum(debt_2026_03_31_total), 0) > 0
 		order by value desc
 		limit 10
 `
@@ -94,17 +92,17 @@ func (r *Repository) FindTopItemsByCustomerId(ctx context.Context, id string) ([
 	return items, nil
 }
 
-func (r *Repository) FindTopItemsOverdueByCustomerId(ctx context.Context, id string) ([]TopItem, error) {
+func (r *Repository) findTopItemsOverdueByCustomerID(ctx context.Context, id string) ([]TopItem, error) {
 	items := make([]TopItem, 0)
 
 	query := `
 		select
 			counterparty_name as name,
-			coalesce(sum(debt_2025_12_31_overdue), 0) as value
-		from debet
+			coalesce(sum(debt_2026_03_31_overdue), 0) as value
+		from debet_new
 		where source_org_name = $1
 		group by counterparty_name
-		having coalesce(sum(debt_2025_12_31_overdue), 0) > 0
+		having coalesce(sum(debt_2026_03_31_overdue), 0) > 0
 		order by value desc
 		limit 10
 `
@@ -116,7 +114,7 @@ func (r *Repository) FindTopItemsOverdueByCustomerId(ctx context.Context, id str
 	return items, nil
 }
 
-func (r *Repository) FindCountBlockFactorsByCustomerId(ctx context.Context, id string) (*BlockFactors, error) {
+func (r *Repository) findCountBlockFactorsByCustomerID(ctx context.Context, id string) (*BlockFactors, error) {
 	var factor BlockFactors
 
 	query := `
@@ -134,7 +132,7 @@ func (r *Repository) FindCountBlockFactorsByCustomerId(ctx context.Context, id s
 			sum(b.srednespisochnaya_chislennost_le_1) as chisl_count
 		from (
 			select distinct counterparty_inn
-			from debet
+			from debet_new
 			where source_org_name = $1
 		) as d
 		inner join blockfactor b on b.kod_nalogoplatelshchika = d.counterparty_inn

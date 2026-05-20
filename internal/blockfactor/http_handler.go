@@ -14,16 +14,16 @@ type Handler struct {
 }
 
 type service interface {
-	GetAllView(ctx context.Context) ([]View, error)
-	GetViewById(ctx context.Context, id string) (*View, error)
+	getAllView(ctx context.Context) ([]View, error)
+	getViewByID(ctx context.Context, id string) (*View, error)
 }
 
 func NewHandler(service service) *Handler {
 	return &Handler{service: service}
 }
 
-func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	factors, err := h.service.GetAllView(r.Context())
+func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
+	factors, err := h.service.getAllView(r.Context())
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -33,10 +33,10 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	slog.Info("Get all factors")
 }
 
-func (h *Handler) GetByID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getByID(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	view, err := h.service.GetViewById(r.Context(), id)
+	view, err := h.service.getViewByID(r.Context(), id)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return

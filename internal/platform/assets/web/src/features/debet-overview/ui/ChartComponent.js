@@ -1,4 +1,4 @@
-import { appState } from '../../../shared/state/appState.js';
+﻿import { appState } from '../../../shared/state/appState.js';
 
 export class ChartComponent {
     constructor(container, metricKey, title) {
@@ -53,8 +53,12 @@ export class ChartComponent {
         const colorMap = {
             '31.12.2024 Текущая дебиторская задолженность': '#81c784',
             '31.12.2024 Просроченная дебиторская задолженность': '#e57373',
-            '31.12.2025 Текущая дебиторская задолженность': '#4caf50',
-            '31.12.2025 Просроченная дебиторская задолженность': '#f44336'
+            '31.03.2025 Текущая дебиторская задолженность': '#64b5f6',
+            '31.03.2025 Просроченная дебиторская задолженность': '#ef5350',
+            '31.12.2025 Текущая дебиторская задолженность': '#ffb74d',
+            '31.12.2025 Просроченная дебиторская задолженность': '#e53935',
+            '31.03.2026 Текущая дебиторская задолженность': '#4caf50',
+            '31.03.2026 Просроченная дебиторская задолженность': '#f44336'
         };
 
         const option = {
@@ -62,11 +66,14 @@ export class ChartComponent {
                 text: this.title,
                 left: 'center'
             },
+            legend: {
+                top: '4%'
+            },
             grid: {
                 containLabel: true,
                 left: '2%',
                 right: '2%',
-                top: '10%',
+                top: '20%',
                 bottom: '2%'
             },
             tooltip: {
@@ -157,3 +164,4 @@ export class ChartComponent {
         this.container.innerHTML = '';
     }
 }
+

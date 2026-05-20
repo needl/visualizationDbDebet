@@ -1,4 +1,4 @@
-const API_URL_DEBETS = '/debets';
+const API_URL_DEBETS = '/debets/with-mip';
 
 async function fetchJson(url) {
     const response = await fetch(url);

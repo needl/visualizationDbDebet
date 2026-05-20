@@ -14,17 +14,17 @@ type Handler struct {
 }
 
 type service interface {
-	GetAll(ctx context.Context) ([]View, error)
-	GetAllWithMIP(ctx context.Context) ([]View, error)
-	GetByOrgName(ctx context.Context, orgName string) (*View, error)
+	getAll(ctx context.Context) ([]View, error)
+	getAllWithMIP(ctx context.Context) ([]View, error)
+	getByOrgName(ctx context.Context, orgName string) (*View, error)
 }
 
 func NewHandler(service service) *Handler {
 	return &Handler{service: service}
 }
 
-func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
-	debets, err := h.service.GetAll(r.Context())
+func (h *Handler) getAll(w http.ResponseWriter, r *http.Request) {
+	debets, err := h.service.getAll(r.Context())
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -34,8 +34,8 @@ func (h *Handler) GetAll(w http.ResponseWriter, r *http.Request) {
 	slog.Info("Get all debets")
 }
 
-func (h *Handler) GetAllWithMIP(w http.ResponseWriter, r *http.Request) {
-	debets, err := h.service.GetAllWithMIP(r.Context())
+func (h *Handler) getAllWithMIP(w http.ResponseWriter, r *http.Request) {
+	debets, err := h.service.getAllWithMIP(r.Context())
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -45,10 +45,10 @@ func (h *Handler) GetAllWithMIP(w http.ResponseWriter, r *http.Request) {
 	slog.Info("Get all debets with MIP")
 }
 
-func (h *Handler) GetByOrgName(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getByOrgName(w http.ResponseWriter, r *http.Request) {
 	orgName := mux.Vars(r)["orgName"]
 
-	view, err := h.service.GetByOrgName(r.Context(), orgName)
+	view, err := h.service.getByOrgName(r.Context(), orgName)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return

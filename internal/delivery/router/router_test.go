@@ -7,6 +7,7 @@ import (
 	"visualizationDbDebet/internal/blockfactor"
 	"visualizationDbDebet/internal/contract"
 	"visualizationDbDebet/internal/contractor"
+	"visualizationDbDebet/internal/contractoranalysis"
 	"visualizationDbDebet/internal/customer"
 	"visualizationDbDebet/internal/debet"
 	"visualizationDbDebet/internal/object"
@@ -24,6 +25,7 @@ func TestNewRouter_RegistersAllFeatureRoutes(t *testing.T) {
 		&customer.Handler{},
 		&contractor.Handler{},
 		&object.Handler{},
+		&contractoranalysis.Handler{},
 	)
 
 	got := make(map[string]struct{})
@@ -68,6 +70,9 @@ func TestNewRouter_RegistersAllFeatureRoutes(t *testing.T) {
 		"GET /objects/search",
 		"GET /objects/{sourceOrgName}",
 		"GET /objects/{sourceOrgName}/{objectName}",
+		"GET /contractor-analytics",
+		"GET /contractor-analytics/{contractorName}",
+		"GET /contractor-analytics/{contractorName}/object-details",
 	}
 
 	for _, route := range want {

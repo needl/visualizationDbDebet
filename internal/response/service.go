@@ -14,8 +14,8 @@ func NewService(repo *Repository) *Service {
 }
 
 // GetResponse получает сводную статистику по дебиторке без МИП
-func (s *Service) GetResponse(ctx context.Context) (*Response, error) {
-	stats, err := s.repo.GetPageDto(ctx)
+func (s *Service) getResponse(ctx context.Context) (*Response, error) {
+	stats, err := s.repo.getPageDTO(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get response stats from repo in response service: %w", err)
 	}
@@ -24,8 +24,8 @@ func (s *Service) GetResponse(ctx context.Context) (*Response, error) {
 }
 
 // GetResponseWithMIP получает сводную статистику по дебиторке с МИП
-func (s *Service) GetResponseWithMIP(ctx context.Context) (*Response, error) {
-	stats, err := s.repo.GetPageDtoWithMIP(ctx)
+func (s *Service) getResponseWithMIP(ctx context.Context) (*Response, error) {
+	stats, err := s.repo.getPageDTOWithMIP(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get response stats from repo in response service: %w", err)
 	}

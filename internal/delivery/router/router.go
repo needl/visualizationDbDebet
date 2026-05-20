@@ -4,6 +4,7 @@ import (
 	"visualizationDbDebet/internal/blockfactor"
 	"visualizationDbDebet/internal/contract"
 	"visualizationDbDebet/internal/contractor"
+	"visualizationDbDebet/internal/contractoranalysis"
 	"visualizationDbDebet/internal/customer"
 	"visualizationDbDebet/internal/debet"
 	"visualizationDbDebet/internal/object"
@@ -21,6 +22,7 @@ func NewRouter(
 	customerHandler *customer.Handler,
 	contractorHandler *contractor.Handler,
 	objectHandler *object.Handler,
+	contractorAnalyticsHandler *contractoranalysis.Handler,
 ) *mux.Router {
 	r := mux.NewRouter()
 
@@ -31,6 +33,7 @@ func NewRouter(
 	customer.RegisterRoutes(r, customerHandler)
 	contractor.RegisterRoutes(r, contractorHandler)
 	object.RegisterRoutes(r, objectHandler)
+	contractoranalysis.RegisterRoutes(r, contractorAnalyticsHandler)
 
 	return r
 }

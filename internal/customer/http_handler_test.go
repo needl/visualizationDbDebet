@@ -11,28 +11,28 @@ import (
 
 type customerServiceStub struct{}
 
-func (s *customerServiceStub) GetCustomers(context.Context) ([]Customer, error) {
+func (s *customerServiceStub) getCustomers(context.Context) ([]Customer, error) {
 	return []Customer{}, nil
 }
-func (s *customerServiceStub) GetSummaryByCustomerId(_ context.Context, id string) (*Summary, error) {
+func (s *customerServiceStub) getSummaryByCustomerID(_ context.Context, id string) (*Summary, error) {
 	if id == "" {
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 	return &Summary{}, nil
 }
-func (s *customerServiceStub) GetTopItemsByCustomerId(_ context.Context, id string) ([]TopItem, error) {
+func (s *customerServiceStub) getTopItemsByCustomerID(_ context.Context, id string) ([]TopItem, error) {
 	if id == "" {
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 	return []TopItem{}, nil
 }
-func (s *customerServiceStub) GetTopItemsOverdueByCustomerId(_ context.Context, id string) ([]TopItem, error) {
+func (s *customerServiceStub) getTopItemsOverdueByCustomerID(_ context.Context, id string) ([]TopItem, error) {
 	if id == "" {
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 	return []TopItem{}, nil
 }
-func (s *customerServiceStub) GetCountBlockFactorsByCustomerId(_ context.Context, id string) (*BlockFactors, error) {
+func (s *customerServiceStub) getCountBlockFactorsByCustomerID(_ context.Context, id string) (*BlockFactors, error) {
 	if id == "" {
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
@@ -46,10 +46,10 @@ func TestHandler_CustomerEndpoints_RequireOrgNameVar(t *testing.T) {
 		name   string
 		target func(http.ResponseWriter, *http.Request)
 	}{
-		{name: "summary", target: h.GetSummaryByCustomerID},
-		{name: "top debtors", target: h.GetTopItemsByCustomerID},
-		{name: "top overdue", target: h.GetTopItemsOverdueByCustomerID},
-		{name: "block factors", target: h.GetCountBlockFactorsByCustomerID},
+		{name: "summary", target: h.getSummaryByCustomerID},
+		{name: "top debtors", target: h.getTopItemsByCustomerID},
+		{name: "top overdue", target: h.getTopItemsOverdueByCustomerID},
+		{name: "block factors", target: h.getCountBlockFactorsByCustomerID},
 	}
 
 	for _, tc := range tests {

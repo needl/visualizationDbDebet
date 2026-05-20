@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	"visualizationDbDebet/internal/domainconst"
-
 	"github.com/jmoiron/sqlx"
 )
 
@@ -15,13 +13,13 @@ type Repository struct {
 	db *sqlx.DB
 }
 
-var ErrColumnNotAllowed = errors.New("column is not allowed")
+var errColumnNotAllowed = errors.New("column is not allowed")
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) FindContractorWithDebt(
+func (r *Repository) findContractorWithDebt(
 	ctx context.Context,
 	sourceOrgName string,
 	counterpartyName string,
@@ -33,14 +31,14 @@ func (r *Repository) FindContractorWithDebt(
 			d.construction_object as object,
 			d.contract_number as number,
 			d.contract_amount as amount,
-			d.debt_2025_12_31_total as debet_total,
-			d.debt_2025_12_31_overdue as debet_overdue,
+			d.debt_2026_03_31_total as debet_total,
+			d.debt_2026_03_31_overdue as debet_overdue,
 			d.contract_date as contract_date,
 			d.work_end_date
-		from debet d
+		from debet_new d
 		where d.source_org_name = $1
 			and d.counterparty_name = $2
-			and d.debt_2025_12_31_total <> 0
+			and d.debt_2026_03_31_total <> 0
 	`
 
 	if err := r.db.SelectContext(ctx, &contractors, query, sourceOrgName, counterpartyName); err != nil {
@@ -50,7 +48,7 @@ func (r *Repository) FindContractorWithDebt(
 	return contractors, nil
 }
 
-func (r *Repository) FindContractorWithOverdue(
+func (r *Repository) findContractorWithOverdue(
 	ctx context.Context,
 	sourceOrgName string,
 	counterpartyName string,
@@ -62,14 +60,14 @@ func (r *Repository) FindContractorWithOverdue(
 			d.construction_object as object,
 			d.contract_number as number,
 			d.contract_amount as amount,
-			d.debt_2025_12_31_total as debet_total,
-			d.debt_2025_12_31_overdue as debet_overdue,
+			d.debt_2026_03_31_total as debet_total,
+			d.debt_2026_03_31_overdue as debet_overdue,
 			d.contract_date as contract_date,
 			d.work_end_date
-		from debet d
+		from debet_new d
 		where d.source_org_name = $1
 			and d.counterparty_name = $2
-			and d.debt_2025_12_31_overdue <> 0
+			and d.debt_2026_03_31_overdue <> 0
 	`
 
 	if err := r.db.SelectContext(ctx, &contractors, query, sourceOrgName, counterpartyName); err != nil {
@@ -79,7 +77,7 @@ func (r *Repository) FindContractorWithOverdue(
 	return contractors, nil
 }
 
-func (r *Repository) FindContractorsWithCurrDebet(ctx context.Context) ([]Debet, error) {
+func (r *Repository) findContractorsWithCurrDebet(ctx context.Context) ([]Debet, error) {
 	var contractors []Debet
 
 	query := `
@@ -88,24 +86,23 @@ func (r *Repository) FindContractorsWithCurrDebet(ctx context.Context) ([]Debet,
 			coalesce(sum(contract_amount), 0.00) as contract_sum,
 			coalesce(sum(paid_amount), 0.00) as paid_sum,
 			coalesce(sum(accepted_amount), 0.00) as accepted_sum,
-			coalesce(sum(debt_2025_12_31_total), 0.00)
-				- coalesce(sum(debt_2025_12_31_overdue), 0.00) as debet_sum
-		from debet
-		where source_org_name != $1
+			coalesce(sum(debt_2026_03_31_total), 0.00)
+				- coalesce(sum(debt_2026_03_31_overdue), 0.00) as debet_sum
+		from debet_new
 		group by counterparty_name
-		having coalesce(sum(debt_2025_12_31_total), 0)
-			- coalesce(sum(debt_2025_12_31_overdue), 0.00) != 0.00
+		having coalesce(sum(debt_2026_03_31_total), 0)
+			- coalesce(sum(debt_2026_03_31_overdue), 0.00) != 0.00
 		order by debet_sum desc
 	`
 
-	if err := r.db.SelectContext(ctx, &contractors, query, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
 		return nil, err
 	}
 
 	return contractors, nil
 }
 
-func (r *Repository) FindContractorsWithOverdueDebet(ctx context.Context) ([]Debet, error) {
+func (r *Repository) findContractorsWithOverdueDebet(ctx context.Context) ([]Debet, error) {
 	var contractors []Debet
 
 	query := `
@@ -114,15 +111,14 @@ func (r *Repository) FindContractorsWithOverdueDebet(ctx context.Context) ([]Deb
 			coalesce(sum(contract_amount), 0.00) as contract_sum,
 			coalesce(sum(paid_amount), 0.00) as paid_sum,
 			coalesce(sum(accepted_amount), 0.00) as accepted_sum,
-			coalesce(sum(debt_2025_12_31_overdue), 0.00) as debet_sum
-		from debet
-		where source_org_name != $1
+			coalesce(sum(debt_2026_03_31_overdue), 0.00) as debet_sum
+		from debet_new
 		group by counterparty_name
-		having coalesce(sum(debt_2025_12_31_overdue), 0) != 0.00
+		having coalesce(sum(debt_2026_03_31_overdue), 0) != 0.00
 		order by debet_sum desc
 `
 
-	if err := r.db.SelectContext(ctx, &contractors, query, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query); err != nil {
 		return nil, err
 	}
 
@@ -131,7 +127,7 @@ func (r *Repository) FindContractorsWithOverdueDebet(ctx context.Context) ([]Deb
 
 // FindContractorsWithBlockFactors возвращает список подрядчиков с блок-факторами
 // по заданному наименованию организации-источника и признаку банкротства
-func (r *Repository) FindContractorsWithBlockFactors(
+func (r *Repository) findContractorsWithBlockFactors(
 	ctx context.Context,
 	sourceOrgName string,
 	columnName string,
@@ -154,16 +150,16 @@ func (r *Repository) FindContractorsWithBlockFactors(
 
 	if !allowedColumns[columnName] {
 		slog.Warn("ColumnName not allowed")
-		return nil, fmt.Errorf("%w: %s", ErrColumnNotAllowed, columnName)
+		return nil, fmt.Errorf("%w: %s", errColumnNotAllowed, columnName)
 	}
 
 	query := fmt.Sprintf(`
 		select
 			min(d.counterparty_name) as name,
 			sum(d.contract_amount) as amount,
-			sum(d.debt_2025_12_31_total) as debet_total,
-			sum(d.debt_2025_12_31_overdue) as debet_overdue
-		from debet d
+			sum(d.debt_2026_03_31_total) as debet_total,
+			sum(d.debt_2026_03_31_overdue) as debet_overdue
+		from debet_new d
 		inner join blockfactor b on d.counterparty_inn = b.kod_nalogoplatelshchika
 		where d.source_org_name = $1
 			and b.%s = 1
@@ -177,7 +173,7 @@ func (r *Repository) FindContractorsWithBlockFactors(
 	return contractors, nil
 }
 
-func (r *Repository) FindContractorForTable(
+func (r *Repository) findContractorForTable(
 	ctx context.Context,
 	counterpartyName string,
 ) ([]Table, error) {
@@ -191,22 +187,20 @@ func (r *Repository) FindContractorForTable(
 			d.contract_number as number,
 			d.contract_amount as amount,
 			d.construction_object as object,
-			d.debt_2025_12_31_total as debet_total,
-			d.debt_2025_12_31_overdue as debet_overdue
-		from debet d
+			d.debt_2026_03_31_total as debet_total,
+			d.debt_2026_03_31_overdue as debet_overdue
+		from debet_new d
 		where d.counterparty_inn = (
 			select d2.counterparty_inn
-			from debet d2
+			from debet_new d2
 			where d2.counterparty_name = $1
-				and d2.source_org_name != $2
 				and d2.counterparty_inn is not null
 			limit 1
 		)
-			and d.source_org_name != $2
 		order by d.source_org_name asc, d.work_start_date asc
 	`
 
-	if err := r.db.SelectContext(ctx, &contractors, query, counterpartyName, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &contractors, query, counterpartyName); err != nil {
 		return nil, err
 	}
 

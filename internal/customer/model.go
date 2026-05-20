@@ -2,7 +2,7 @@ package customer
 
 type Customer struct {
 	//ID   string    `json:"id"`
-	Name string `json:"name"`
+	Name string `db:"name" json:"name"`
 }
 
 type Summary struct {
@@ -13,12 +13,12 @@ type Summary struct {
 	TotalContractAmount float64 `db:"total_contract_amount" json:"total_contract_amount"`
 	TotalPaidAmount     float64 `db:"total_paid_amount" json:"total_paid_amount"`
 	TotalAcceptedAmount float64 `db:"total_accepted_amount" json:"total_accepted_amount"`
-	Percentage          float64 `json:"percentage"`
+	Percentage          float64 `db:"percentage" json:"percentage"`
 }
 
 type TopItem struct {
-	Name  string  `json:"name"`
-	Value float64 `json:"value"`
+	Name  string  `db:"name" json:"name"`
+	Value float64 `db:"value" json:"value"`
 }
 
 type BlockFactors struct {

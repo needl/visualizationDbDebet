@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 	"visualizationDbDebet/internal/contractor"
+	"visualizationDbDebet/internal/contractoranalysis"
 	"visualizationDbDebet/internal/customer"
 	"visualizationDbDebet/internal/object"
 	"visualizationDbDebet/internal/platform/assets"
@@ -78,6 +79,10 @@ func run() error {
 	objectsService := object.NewService(objectsRepo)
 	objectHandler := object.NewHandler(objectsService)
 
+	contractorAnalyticsRepo := contractoranalysis.NewRepository(db)
+	contractorAnalyticsService := contractoranalysis.NewService(contractorAnalyticsRepo)
+	contractorAnalyticsHandler := contractoranalysis.NewHandler(contractorAnalyticsService)
+
 	apiRouter := router.NewRouter(
 		debetHandler,
 		contractHandler,
@@ -86,6 +91,7 @@ func run() error {
 		customerHandler,
 		contractorHandler,
 		objectHandler,
+		contractorAnalyticsHandler,
 	)
 
 	staticFS, err := fs.Sub(assets.FS, "web")

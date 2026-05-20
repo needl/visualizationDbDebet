@@ -16,7 +16,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetViewAll(ctx context.Context) ([]View, error) {
+func (r *Repository) getViewAll(ctx context.Context) ([]View, error) {
 	var blocks []View
 
 	query := `
@@ -32,7 +32,7 @@ func (r *Repository) GetViewAll(ctx context.Context) ([]View, error) {
 			b.administrativnaya_otvetstvennost_19_28,
 			b.blokirovka_schetov,
 			b.srednespisochnaya_chislennost_le_1
-		from debet d
+		from debet_new d
 		left join blockfactor b
 			on b.kod_nalogoplatelshchika = d.counterparty_inn
 		order by b.id
@@ -45,7 +45,7 @@ func (r *Repository) GetViewAll(ctx context.Context) ([]View, error) {
 	return blocks, nil
 }
 
-func (r *Repository) GetViewById(ctx context.Context, id int) (*View, error) {
+func (r *Repository) getViewByID(ctx context.Context, id int) (*View, error) {
 	var block View
 
 	query := `

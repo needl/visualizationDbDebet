@@ -14,19 +14,19 @@ type Handler struct {
 }
 
 type service interface {
-	GetCustomers(ctx context.Context) ([]Customer, error)
-	GetSummaryByCustomerId(ctx context.Context, id string) (*Summary, error)
-	GetTopItemsByCustomerId(ctx context.Context, customerId string) ([]TopItem, error)
-	GetTopItemsOverdueByCustomerId(ctx context.Context, customerId string) ([]TopItem, error)
-	GetCountBlockFactorsByCustomerId(ctx context.Context, customerId string) (*BlockFactors, error)
+	getCustomers(ctx context.Context) ([]Customer, error)
+	getSummaryByCustomerID(ctx context.Context, id string) (*Summary, error)
+	getTopItemsByCustomerID(ctx context.Context, customerID string) ([]TopItem, error)
+	getTopItemsOverdueByCustomerID(ctx context.Context, customerID string) ([]TopItem, error)
+	getCountBlockFactorsByCustomerID(ctx context.Context, customerID string) (*BlockFactors, error)
 }
 
 func NewHandler(service service) *Handler {
 	return &Handler{service: service}
 }
 
-func (h *Handler) GetCustomers(w http.ResponseWriter, r *http.Request) {
-	customers, err := h.service.GetCustomers(r.Context())
+func (h *Handler) getCustomers(w http.ResponseWriter, r *http.Request) {
+	customers, err := h.service.getCustomers(r.Context())
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -36,10 +36,10 @@ func (h *Handler) GetCustomers(w http.ResponseWriter, r *http.Request) {
 	slog.Info("Get all customer", "customer", customers)
 }
 
-func (h *Handler) GetSummaryByCustomerID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getSummaryByCustomerID(w http.ResponseWriter, r *http.Request) {
 	customerID := mux.Vars(r)["orgName"]
 
-	summary, err := h.service.GetSummaryByCustomerId(r.Context(), customerID)
+	summary, err := h.service.getSummaryByCustomerID(r.Context(), customerID)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -49,10 +49,10 @@ func (h *Handler) GetSummaryByCustomerID(w http.ResponseWriter, r *http.Request)
 	slog.Info("Get summary by customer id", "customer", customerID)
 }
 
-func (h *Handler) GetTopItemsByCustomerID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getTopItemsByCustomerID(w http.ResponseWriter, r *http.Request) {
 	customerID := mux.Vars(r)["orgName"]
 
-	topItems, err := h.service.GetTopItemsByCustomerId(r.Context(), customerID)
+	topItems, err := h.service.getTopItemsByCustomerID(r.Context(), customerID)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -62,10 +62,10 @@ func (h *Handler) GetTopItemsByCustomerID(w http.ResponseWriter, r *http.Request
 	slog.Info("Get top items by customer id", "customer", customerID, "topItems", topItems)
 }
 
-func (h *Handler) GetTopItemsOverdueByCustomerID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getTopItemsOverdueByCustomerID(w http.ResponseWriter, r *http.Request) {
 	customerID := mux.Vars(r)["orgName"]
 
-	topItems, err := h.service.GetTopItemsOverdueByCustomerId(r.Context(), customerID)
+	topItems, err := h.service.getTopItemsOverdueByCustomerID(r.Context(), customerID)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
@@ -75,10 +75,10 @@ func (h *Handler) GetTopItemsOverdueByCustomerID(w http.ResponseWriter, r *http.
 	slog.Info("Get top items overdue by customer id", "customer", customerID, "topItems", topItems)
 }
 
-func (h *Handler) GetCountBlockFactorsByCustomerID(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) getCountBlockFactorsByCustomerID(w http.ResponseWriter, r *http.Request) {
 	customerID := mux.Vars(r)["orgName"]
 
-	factors, err := h.service.GetCountBlockFactorsByCustomerId(r.Context(), customerID)
+	factors, err := h.service.getCountBlockFactorsByCustomerID(r.Context(), customerID)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return

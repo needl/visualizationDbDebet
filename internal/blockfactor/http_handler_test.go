@@ -16,15 +16,15 @@ type blockfactorServiceStub struct {
 	getByIDFn func(context.Context, string) (*View, error)
 }
 
-func (s *blockfactorServiceStub) GetAllView(ctx context.Context) ([]View, error) {
+func (s *blockfactorServiceStub) getAllView(ctx context.Context) ([]View, error) {
 	return s.getAllFn(ctx)
 }
 
-func (s *blockfactorServiceStub) GetViewById(ctx context.Context, id string) (*View, error) {
+func (s *blockfactorServiceStub) getViewByID(ctx context.Context, id string) (*View, error) {
 	return s.getByIDFn(ctx, id)
 }
 
-func TestHandler_GetByID_BadRequest(t *testing.T) {
+func TestHandler_getByID_BadRequest(t *testing.T) {
 	h := NewHandler(&blockfactorServiceStub{
 		getByIDFn: func(_ context.Context, id string) (*View, error) {
 			if id == "" {
@@ -36,7 +36,7 @@ func TestHandler_GetByID_BadRequest(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodGet, "/blockFactor/", nil)
 	rec := httptest.NewRecorder()
-	h.GetByID(rec, req)
+	h.getByID(rec, req)
 
 	if rec.Code != http.StatusBadRequest {
 		t.Fatalf("expected status 400, got %d", rec.Code)
@@ -46,7 +46,7 @@ func TestHandler_GetByID_BadRequest(t *testing.T) {
 	}
 }
 
-func TestHandler_GetByID_UsesPathVar(t *testing.T) {
+func TestHandler_getByID_UsesPathVar(t *testing.T) {
 	var captured string
 	h := NewHandler(&blockfactorServiceStub{
 		getByIDFn: func(_ context.Context, id string) (*View, error) {
@@ -58,7 +58,7 @@ func TestHandler_GetByID_UsesPathVar(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/blockFactor/7", nil)
 	req = mux.SetURLVars(req, map[string]string{"id": "7"})
 	rec := httptest.NewRecorder()
-	h.GetByID(rec, req)
+	h.getByID(rec, req)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("expected status 200, got %d", rec.Code)

@@ -15,8 +15,8 @@ func NewService(repo *Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) GetContractorsWithCurrDeb(ctx context.Context) ([]Debet, error) {
-	contractors, err := s.repo.FindContractorsWithCurrDebet(ctx)
+func (s *Service) getContractorsWithCurrDeb(ctx context.Context) ([]Debet, error) {
+	contractors, err := s.repo.findContractorsWithCurrDebet(ctx)
 	if err != nil {
 		slog.Error("FindContractorsWithCurrDebet err:", "err", err)
 		return nil, err
@@ -29,8 +29,8 @@ func (s *Service) GetContractorsWithCurrDeb(ctx context.Context) ([]Debet, error
 	return contractors, nil
 }
 
-func (s *Service) GetContractorsWithOverdueDeb(ctx context.Context) ([]Debet, error) {
-	contractors, err := s.repo.FindContractorsWithOverdueDebet(ctx)
+func (s *Service) getContractorsWithOverdueDeb(ctx context.Context) ([]Debet, error) {
+	contractors, err := s.repo.findContractorsWithOverdueDebet(ctx)
 	if err != nil {
 		slog.Error("FindContractorsWithOverdueDebet err:", "err", err)
 		return nil, err
@@ -43,7 +43,7 @@ func (s *Service) GetContractorsWithOverdueDeb(ctx context.Context) ([]Debet, er
 	return contractors, nil
 }
 
-func (s *Service) GetContractorsWithBlockFactors(
+func (s *Service) getContractorsWithBlockFactors(
 	ctx context.Context,
 	sourceOrgName string,
 	columnName string,
@@ -59,10 +59,10 @@ func (s *Service) GetContractorsWithBlockFactors(
 		return nil, apperr.NewInvalidArgument("columnName is required")
 	}
 
-	contractors, err := s.repo.FindContractorsWithBlockFactors(ctx, sourceOrgName, columnName)
+	contractors, err := s.repo.findContractorsWithBlockFactors(ctx, sourceOrgName, columnName)
 	if err != nil {
 		slog.Error("FindContractorsWithBlockFactors err:", "err", err)
-		if errors.Is(err, ErrColumnNotAllowed) {
+		if errors.Is(err, errColumnNotAllowed) {
 			return nil, apperr.NewInvalidArgument(err.Error())
 		}
 		return nil, err
@@ -71,7 +71,7 @@ func (s *Service) GetContractorsWithBlockFactors(
 	return contractors, nil
 }
 
-func (s *Service) GetContractorsWithDebt(
+func (s *Service) getContractorsWithDebt(
 	ctx context.Context,
 	sourceOrgName string,
 	counterpartyName string,
@@ -87,7 +87,7 @@ func (s *Service) GetContractorsWithDebt(
 		return nil, apperr.NewInvalidArgument("counterpartyName is required")
 	}
 
-	contractors, err := s.repo.FindContractorWithDebt(ctx, sourceOrgName, counterpartyName)
+	contractors, err := s.repo.findContractorWithDebt(ctx, sourceOrgName, counterpartyName)
 	if err != nil {
 		slog.Error("FindContractorWithDebt err:", "err", err)
 		return nil, err
@@ -96,7 +96,7 @@ func (s *Service) GetContractorsWithDebt(
 	return contractors, nil
 }
 
-func (s *Service) GetContractorsWithOverdue(
+func (s *Service) getContractorsWithOverdue(
 	ctx context.Context,
 	sourceOrgName string,
 	counterpartyName string,
@@ -112,7 +112,7 @@ func (s *Service) GetContractorsWithOverdue(
 		return nil, apperr.NewInvalidArgument("counterpartyName is required")
 	}
 
-	contractors, err := s.repo.FindContractorWithOverdue(ctx, sourceOrgName, counterpartyName)
+	contractors, err := s.repo.findContractorWithOverdue(ctx, sourceOrgName, counterpartyName)
 	if err != nil {
 		slog.Error("FindContractorWithOverdue err:", "err", err)
 		return nil, err
@@ -121,7 +121,7 @@ func (s *Service) GetContractorsWithOverdue(
 	return contractors, nil
 }
 
-func (s *Service) GetContractorForTable(
+func (s *Service) getContractorForTable(
 	ctx context.Context,
 	counterpartyName string,
 ) ([]Table, error) {
@@ -131,7 +131,7 @@ func (s *Service) GetContractorForTable(
 		return nil, apperr.NewInvalidArgument("counterpartyName is required")
 	}
 
-	contractors, err := s.repo.FindContractorForTable(ctx, counterpartyName)
+	contractors, err := s.repo.findContractorForTable(ctx, counterpartyName)
 	if err != nil {
 		slog.Error("FindContractorForTable err:", "err", err)
 		return nil, err

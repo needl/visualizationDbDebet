@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"visualizationDbDebet/internal/domainconst"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -23,7 +22,7 @@ func NewRepository(db *sqlx.DB) *Repository {
 // GetAllView отвечает за обращение к базе для получения списка
 // всех сущностей debet без учёта Мосинжпроекта
 // ctx используется для отмены, таймаутов и тп
-func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
+func (r *Repository) getAllView(ctx context.Context) ([]View, error) {
 	var debets []View
 
 	query := `
@@ -35,17 +34,20 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 			contract_date,
 			contract_amount,
 			construction_object,
+			debt_2026_03_31_total,
 			debt_2025_12_31_total,
+			debt_2025_03_31_total,
 			debt_2024_12_31_total,
 			debt_2025_12_31_overdue,
+			debt_2025_03_31_overdue,
+			debt_2026_03_31_overdue,
 			debt_2024_12_31_overdue,
 			construction_title
-		from debet
-		where source_org_name != $1
+		from debet_new
 		order by id
 	`
 
-	if err := r.db.SelectContext(ctx, &debets, query, domainconst.ExcludedSourceOrgName); err != nil {
+	if err := r.db.SelectContext(ctx, &debets, query); err != nil {
 		// Непредвиденная ошибка при обращении к базе
 		return nil, err
 	}
@@ -54,7 +56,7 @@ func (r *Repository) GetAllView(ctx context.Context) ([]View, error) {
 
 }
 
-func (r *Repository) GetAllViewWithMIP(ctx context.Context) ([]View, error) {
+func (r *Repository) getAllViewWithMIP(ctx context.Context) ([]View, error) {
 	var debets []View
 
 	query := `
@@ -66,10 +68,16 @@ func (r *Repository) GetAllViewWithMIP(ctx context.Context) ([]View, error) {
 			contract_date,
 			contract_amount,
 			construction_object,
+			debt_2026_03_31_total,
 			debt_2025_12_31_total,
+			debt_2025_03_31_total,
+			debt_2024_12_31_total,
 			debt_2025_12_31_overdue,
+			debt_2025_03_31_overdue,
+			debt_2026_03_31_overdue,
+			debt_2024_12_31_overdue,
 			construction_title
-		from debet
+		from debet_new
 		order by id
 	`
 
@@ -85,7 +93,7 @@ func (r *Repository) GetAllViewWithMIP(ctx context.Context) ([]View, error) {
 // GetViewByOrgName отвечает за обращение к базе для получения конкретной
 // сущности debet по его названию(orgName)
 // ctx используется для отмены, таймаутов и тп
-func (r *Repository) GetViewByOrgName(ctx context.Context, orgName string) (*View, error) {
+func (r *Repository) getViewByOrgName(ctx context.Context, orgName string) (*View, error) {
 	var debet View
 
 	query := `
@@ -96,10 +104,16 @@ func (r *Repository) GetViewByOrgName(ctx context.Context, orgName string) (*Vie
 			contract_date,
 			contract_amount,
 			construction_object,
+			debt_2026_03_31_total,
 			debt_2025_12_31_total,
+			debt_2025_03_31_total,
+			debt_2024_12_31_total,
 			debt_2025_12_31_overdue,
+			debt_2025_03_31_overdue,
+			debt_2026_03_31_overdue,
+			debt_2024_12_31_overdue,
 			construction_title
-		from debet
+		from debet_new
 		where source_org_name = $1
 	`
 

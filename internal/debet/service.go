@@ -16,8 +16,8 @@ func NewService(repo *Repository) *Service {
 }
 
 // GetAll возвращает все записи View debet (за исключением "Мосинж")
-func (s *Service) GetAll(ctx context.Context) ([]View, error) {
-	debets, err := s.repo.GetAllView(ctx)
+func (s *Service) getAll(ctx context.Context) ([]View, error) {
+	debets, err := s.repo.getAllView(ctx)
 	if err != nil {
 		slog.Error("Failed to get debets", "error", err)
 		return nil, err
@@ -32,8 +32,8 @@ func (s *Service) GetAll(ctx context.Context) ([]View, error) {
 }
 
 // GetAllWithMIP возвращает все записи View debet
-func (s *Service) GetAllWithMIP(ctx context.Context) ([]View, error) {
-	debets, err := s.repo.GetAllViewWithMIP(ctx)
+func (s *Service) getAllWithMIP(ctx context.Context) ([]View, error) {
+	debets, err := s.repo.getAllViewWithMIP(ctx)
 	if err != nil {
 		slog.Error("Failed to get debets", "error", err)
 		return nil, err
@@ -48,13 +48,13 @@ func (s *Service) GetAllWithMIP(ctx context.Context) ([]View, error) {
 }
 
 // GetByOrgName возвращается запись из таблицы debet по названию организации
-func (s *Service) GetByOrgName(ctx context.Context, orgName string) (*View, error) {
+func (s *Service) getByOrgName(ctx context.Context, orgName string) (*View, error) {
 	if orgName == "" {
 		slog.Warn("OrgName is empty")
 		return nil, apperr.NewInvalidArgument("orgName is required")
 	}
 
-	debet, err := s.repo.GetViewByOrgName(ctx, orgName)
+	debet, err := s.repo.getViewByOrgName(ctx, orgName)
 	if err != nil {
 		slog.Warn("Failed to get debet by orgName", "error", err)
 		return nil, err
