@@ -47,9 +47,11 @@ func (r *Repository) findContractorNames(ctx context.Context) ([]string, error) 
 	var contractors []string
 
 	query := `
-		select distinct counterparty_name
+		select counterparty_name
 		from debet_new
 		where coalesce(counterparty_name, '') <> ''
+		group by counterparty_name
+		having count(distinct nullif(btrim(source_org_name), '')) >= 2
 		order by counterparty_name
 	`
 

@@ -240,7 +240,7 @@ export class DebtStructure {
         fetchFn(orgName, contractorName)
             .then((data) => {
                 const body = modal.querySelector('.modal-body');
-                renderContractorTable(body, data, (objectName) => this.showObjectModal(objectName));
+                renderContractorTable(body, data, (objectName) => this.showObjectModal(objectName, contractorName));
             })
             .catch((err) => {
                 const message = getUserFriendlyError(err, 'Не удалось загрузить контракты подрядчика');
@@ -267,7 +267,7 @@ export class DebtStructure {
         }
     }
 
-    async showObjectModal(objectName) {
+    async showObjectModal(objectName, counterpartyName = '') {
         this.closeObjectModal();
 
         const overlay = document.createElement('div');
@@ -303,7 +303,7 @@ export class DebtStructure {
         this.objectModal = overlay;
 
         try {
-            const rawData = await fetchObjectData(objectName);
+            const rawData = await fetchObjectData(objectName, counterpartyName);
             this.renderObjectAnalytics(body, rawData || []);
         } catch (err) {
             const message = getUserFriendlyError(err, 'Не удалось загрузить аналитику по объекту');

@@ -11,6 +11,7 @@ export class BlockFactorFilter {
         this.container = container;
         this._unsubscribe = null;
         this._lastCustomer = null;
+        this._currentContractorName = '';
 
         this.contractorTableModal = null;
         this.objectModal = null;
@@ -200,6 +201,7 @@ export class BlockFactorFilter {
 
     closeContractorTableModal() {
         this.closeObjectModal();
+        this._currentContractorName = '';
         if (!this.contractorTableModal) return;
         document.body.removeChild(this.contractorTableModal);
         this.contractorTableModal = null;
@@ -207,6 +209,7 @@ export class BlockFactorFilter {
 
     async showContractorTableModal(contractorName) {
         this.closeContractorTableModal();
+        this._currentContractorName = contractorName;
 
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
@@ -319,7 +322,7 @@ export class BlockFactorFilter {
             button.addEventListener('click', () => {
                 const objectName = button.dataset.object;
                 if (!objectName) return;
-                this.showObjectModal(objectName);
+                this.showObjectModal(objectName, this._currentContractorName || '');
             });
         });
     }
@@ -335,7 +338,7 @@ export class BlockFactorFilter {
         }
     }
 
-    async showObjectModal(objectName) {
+    async showObjectModal(objectName, counterpartyName = '') {
         this.closeObjectModal();
 
         const overlay = document.createElement('div');
@@ -372,7 +375,7 @@ export class BlockFactorFilter {
         this.objectModal = overlay;
 
         try {
-            const rawData = await fetchObjectData(objectName);
+            const rawData = await fetchObjectData(objectName, counterpartyName);
             this.renderObjectAnalytics(body, rawData || []);
         } catch (err) {
             const message = getUserFriendlyError(err, 'Не удалось загрузить аналитику по объекту');

@@ -87,6 +87,10 @@ export class ContractorAnalytics {
         this.loadingContractors = false;
         this.error = null;
         this.requestToken = 0;
+        this.connectionFrame = 0;
+        this.connectionMarkerSeq = 0;
+        this.handleResize = () => this.scheduleConnectionsRender();
+        window.addEventListener('resize', this.handleResize);
         this.init();
     }
 
@@ -170,6 +174,87 @@ export class ContractorAnalytics {
         }
     }
 
+    scheduleConnectionsRender() {
+        if (this.connectionFrame) {
+            cancelAnimationFrame(this.connectionFrame);
+        }
+
+        this.connectionFrame = requestAnimationFrame(() => {
+            this.connectionFrame = 0;
+            this.renderConnections();
+        });
+    }
+
+    renderConnections() {
+        const groups = this.container.querySelectorAll('[data-ca-group]');
+        if (groups.length === 0) return;
+
+        const namespace = 'http://www.w3.org/2000/svg';
+        groups.forEach((group) => {
+            const linksLayer = group.querySelector('[data-ca-links]');
+            const customerNode = group.querySelector('[data-ca-customer-node]');
+            const objectNodes = group.querySelectorAll('[data-ca-object-node]');
+
+            if (!linksLayer || !customerNode || objectNodes.length === 0) {
+                if (linksLayer) linksLayer.textContent = '';
+                return;
+            }
+
+            const groupRect = group.getBoundingClientRect();
+            const customerRect = customerNode.getBoundingClientRect();
+            const width = Math.max(1, Math.ceil(groupRect.width));
+            const height = Math.max(1, Math.ceil(groupRect.height));
+
+            linksLayer.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            linksLayer.setAttribute('width', String(width));
+            linksLayer.setAttribute('height', String(height));
+            linksLayer.textContent = '';
+
+            const markerID = `ca-link-arrow-${this.connectionMarkerSeq++}`;
+            const arrowSize = 5.4;
+            const defs = document.createElementNS(namespace, 'defs');
+            const marker = document.createElementNS(namespace, 'marker');
+            marker.setAttribute('id', markerID);
+            marker.setAttribute('markerWidth', String(arrowSize));
+            marker.setAttribute('markerHeight', String(arrowSize));
+            marker.setAttribute('refX', String(arrowSize - 0.2));
+            marker.setAttribute('refY', String(arrowSize / 2));
+            marker.setAttribute('orient', 'auto');
+            marker.setAttribute('markerUnits', 'strokeWidth');
+
+            const markerPath = document.createElementNS(namespace, 'path');
+            markerPath.setAttribute('d', `M0,0 L${arrowSize},${arrowSize / 2} L0,${arrowSize} z`);
+            markerPath.setAttribute('fill', '#60a5fa');
+            marker.appendChild(markerPath);
+            defs.appendChild(marker);
+            linksLayer.appendChild(defs);
+
+            const startXBase = customerRect.right - groupRect.left;
+            const startYBase = customerRect.top - groupRect.top + customerRect.height / 2;
+
+            objectNodes.forEach((objectNode) => {
+                const objectRect = objectNode.getBoundingClientRect();
+                const startX = startXBase;
+                const startY = startYBase;
+                const endX = objectRect.left - groupRect.left;
+                const endY = objectRect.top - groupRect.top + objectRect.height / 2;
+                const deltaX = endX - startX;
+                const bend = Math.max(24, Math.abs(deltaX) * 0.45);
+
+                const control1X = startX + bend;
+                const control1Y = startY;
+                const control2X = deltaX >= 0 ? endX - bend : endX + bend;
+                const control2Y = endY;
+
+                const path = document.createElementNS(namespace, 'path');
+                path.setAttribute('d', `M ${startX} ${startY} C ${control1X} ${control1Y}, ${control2X} ${control2Y}, ${endX} ${endY}`);
+                path.setAttribute('class', 'ca-link-path');
+                path.setAttribute('marker-end', `url(#${markerID})`);
+                linksLayer.appendChild(path);
+            });
+        });
+    }
+
     bindEvents() {
         const select = this.container.querySelector('[data-ca-select]');
         if (select) {
@@ -235,8 +320,9 @@ export class ContractorAnalytics {
             <div class="ca-tree-root-node">${escapeHtml(this.analytics.contractor_name || this.selectedContractor)}</div>
             <div class="ca-customers">
                 ${customers.map((customer) => `
-                    <section class="ca-customer-group">
-                        <div class="ca-customer-node">
+                    <section class="ca-customer-group" data-ca-group>
+                        <svg class="ca-links-layer" data-ca-links aria-hidden="true"></svg>
+                        <div class="ca-customer-node" data-ca-customer-node>
                             <div class="ca-customer-name">${escapeHtml(customer.customer_name || 'Без названия')}</div>
                             <div class="ca-customer-meta">${customer.objects_count || 0} объекта</div>
                         </div>
@@ -251,12 +337,12 @@ export class ContractorAnalytics {
 
         return `
                                     <div class="ca-object-row">
-                                        <span class="ca-link-connector" aria-hidden="true"></span>
                                         <button
                                             type="button"
                                             class="ca-object-node${selectedClass}${overdueClass}"
                                             data-ca-customer="${escapeHtml(object.customer_name || customer.customer_name || '')}"
                                             data-ca-object="${escapeHtml(object.object_name || '')}"
+                                            data-ca-object-node
                                         >
                                             <span class="ca-object-dot ${riskClass(object.risk_level)}"></span>
                                             <span class="ca-object-content">
@@ -371,5 +457,6 @@ export class ContractorAnalytics {
         `;
 
         this.bindEvents();
+        this.scheduleConnectionsRender();
     }
 }

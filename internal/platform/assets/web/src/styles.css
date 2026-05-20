@@ -779,6 +779,12 @@ body {
     border-radius: 0.5rem;
     background: #ffffff;
     color: #0f172a;
+    text-align: center;
+    text-align-last: center;
+}
+
+.ca-toolbar select option {
+    text-align: center;
 }
 
 .ca-summary-grid {
@@ -792,6 +798,7 @@ body {
     border: 1px solid #e2e8f0;
     border-radius: 0.75rem;
     padding: 0.75rem 1rem;
+    text-align: center;
 }
 
 .ca-summary-label {
@@ -847,6 +854,7 @@ body {
     grid-template-columns: minmax(180px, 0.75fr) minmax(0, 2.75fr);
     gap: 0.75rem;
     align-items: stretch;
+    position: relative;
 }
 
 .ca-customer-node {
@@ -856,6 +864,10 @@ body {
     padding: 0.65rem 0.75rem;
     width: 65%;
     align-self: center;
+    justify-self: start;
+    position: relative;
+    z-index: 1;
+    text-align: center;
 }
 
 .ca-customer-name {
@@ -873,50 +885,46 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
+    position: relative;
+    z-index: 1;
+}
+
+.ca-links-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 0;
+}
+
+.ca-link-path {
+    fill: none;
+    stroke: #60a5fa;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.95;
 }
 
 .ca-object-row {
-    display: grid;
-    grid-template-columns: 86px minmax(0, 1fr);
-    align-items: center;
-    gap: 0.45rem;
-    min-height: 46px;
-}
-
-.ca-link-connector {
-    position: relative;
     display: block;
-    width: 100%;
-    height: 2px;
-    background: #60a5fa;
-    border-radius: 999px;
-    margin-left: -8px;
-}
-
-.ca-link-connector::after {
-    content: '';
-    position: absolute;
-    right: -1px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 8px solid #60a5fa;
+    min-height: 54px;
 }
 
 .ca-object-node {
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.65rem;
     border: 1px solid #e2e8f0;
     border-radius: 0.65rem;
     padding: 0.65rem 0.75rem;
     background: #ffffff;
     color: #0f172a;
-    text-align: left;
+    text-align: center;
     cursor: pointer;
     transition: border-color 0.15s ease, transform 0.15s ease;
 }
@@ -962,7 +970,9 @@ body {
 .ca-object-content {
     display: flex;
     flex-direction: column;
+    align-items: center;
     min-width: 0;
+    text-align: center;
 }
 
 .ca-object-name {
@@ -1180,7 +1190,7 @@ body {
     }
 
     .ca-object-row {
-        grid-template-columns: 56px minmax(0, 1fr);
+        min-height: 48px;
     }
 }
 

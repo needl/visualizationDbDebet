@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
+	"visualizationDbDebet/internal/apperr"
 	"visualizationDbDebet/internal/httpx"
 
 	"github.com/gorilla/mux"
@@ -17,6 +18,7 @@ type service interface {
 	getObjectsNameByOrgName(ctx context.Context, orgName string) ([]string, error)
 	getObjectByObjectName(ctx context.Context, objectName string) ([]Object, error)
 	getObjectsByOrgNameAndObjectName(ctx context.Context, orgName string, objectName string) ([]Object, error)
+	getObjectsByCounterpartyNameAndObjectName(ctx context.Context, counterpartyName string, objectName string) ([]Object, error)
 }
 
 func NewHandler(service service) *Handler {
@@ -38,15 +40,21 @@ func (h *Handler) getAllObjectsNamesByOrgName(w http.ResponseWriter, r *http.Req
 
 func (h *Handler) getObjectByName(w http.ResponseWriter, r *http.Request) {
 	objectName := r.URL.Query().Get("objectName")
+	counterpartyName := r.URL.Query().Get("counterpartyName")
 
-	objects, err := h.service.getObjectByObjectName(r.Context(), objectName)
+	if counterpartyName == "" {
+		httpx.RespondError(w, apperr.NewInvalidArgument("counterpartyName is required"), "internal server error")
+		return
+	}
+
+	objects, err := h.service.getObjectsByCounterpartyNameAndObjectName(r.Context(), counterpartyName, objectName)
 	if err != nil {
 		httpx.RespondError(w, err, "internal server error")
 		return
 	}
 
 	httpx.RespondJSON(w, objects)
-	slog.Info("GetObjectByName", "objectName", objectName)
+	slog.Info("GetObjectByName", "objectName", objectName, "counterpartyName", counterpartyName)
 }
 
 func (h *Handler) getAllObjectsByOrgNameAndObjectName(w http.ResponseWriter, r *http.Request) {
