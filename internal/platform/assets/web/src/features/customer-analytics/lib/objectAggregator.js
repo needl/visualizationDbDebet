@@ -54,6 +54,12 @@ function toStatusBool(value) {
     return !['нет', 'false', '0', 'null', 'не получено', '-'].includes(normalized);
 }
 
+function toTextOrNull(value) {
+    if (value === null || value === undefined) return null;
+    const text = String(value).trim();
+    return text === '' ? null : text;
+}
+
 export function aggregateObjectMetrics(rawData) {
     if (!rawData || rawData.length === 0) {
         return null;
@@ -76,7 +82,7 @@ export function aggregateObjectMetrics(rawData) {
     });
 
     const contractorName = maxObj?.counterparty_name || '—';
-    const buildReady = maxObj?.build_ready_percent ?? null;
+    const buildReady = toTextOrNull(maxObj?.build_ready_percent);
     const permission = toStatusBool(maxObj?.permission_to_enter);
     const conclusion = toStatusBool(maxObj?.conclusion);
 

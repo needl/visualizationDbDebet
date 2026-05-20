@@ -47,7 +47,7 @@ func (r *Repository) findObjectByName(ctx context.Context, name string) ([]Objec
 			debt_2024_12_31_overdue,
 			debt_2026_03_31_total,
 			debt_2026_03_31_overdue,
-			construction_readiness_percent as build_ready_percent,
+			construction_readiness_percent::text as build_ready_percent,
 			coalesce(
 				nullif(btrim(mge_status::text), '') is not null
 				and lower(btrim(mge_status::text)) not in ('нет', 'false', '0', 'null', 'не получено', '-'),
@@ -89,7 +89,7 @@ func (r *Repository) findObjectsByOrgNameAndObjectName(ctx context.Context,
 			debt_2024_12_31_overdue,
 			debt_2026_03_31_total,
 			debt_2026_03_31_overdue,
-			construction_readiness_percent as build_ready_percent,
+			construction_readiness_percent::text as build_ready_percent,
 			coalesce(
 				nullif(btrim(mge_status::text), '') is not null
 				and lower(btrim(mge_status::text)) not in ('нет', 'false', '0', 'null', 'не получено', '-'),

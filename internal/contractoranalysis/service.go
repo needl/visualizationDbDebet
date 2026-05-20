@@ -6,11 +6,16 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"regexp"
+	"strconv"
+	"strings"
 	"time"
 	"visualizationDbDebet/internal/apperr"
 )
 
 var errContractorHasNoObjects = errors.New("contractor has no objects")
+
+var readinessNumberPattern = regexp.MustCompile(`[-+]?\d+(?:[.,]\d+)?`)
 
 type Service struct {
 	repo *Repository
@@ -121,7 +126,8 @@ func (s *Service) getObjectDetails(
 	}
 
 	if row.ReadinessPercent.Valid {
-		details.ReadinessPercent = new(row.ReadinessPercent.Float64)
+		value := row.ReadinessPercent.String
+		details.ReadinessPercent = &value
 	}
 
 	if row.ContractSum > 0 {
@@ -162,27 +168,54 @@ func buildCustomerTree(rows []treeRow) []CustomerNode {
 	return result
 }
 
-func riskLevel(readiness *float64) string {
+func riskLevel(readiness *string) string {
 	if readiness == nil {
 		return "no_data"
 	}
 
+	numericReadiness, ok := parseReadinessValue(*readiness)
+	if !ok {
+		return "no_data"
+	}
+
 	switch {
-	case *readiness < 30:
+	case numericReadiness < 30:
 		return "critical"
-	case *readiness < 70:
+	case numericReadiness < 70:
 		return "risk"
 	default:
 		return "ok"
 	}
 }
 
-func nullableReadiness(value sql.NullFloat64) *float64 {
+func nullableReadiness(value sql.NullString) *string {
 	if !value.Valid {
 		return nil
 	}
 
-	return new(value.Float64)
+	readiness := value.String
+	return &readiness
+}
+
+func parseReadinessValue(value string) (float64, bool) {
+	trimmed := strings.TrimSpace(value)
+	if trimmed == "" {
+		return 0, false
+	}
+
+	numberMatch := readinessNumberPattern.FindString(trimmed)
+	if numberMatch == "" {
+		return 0, false
+	}
+
+	normalized := strings.ReplaceAll(numberMatch, ",", ".")
+
+	parsed, err := strconv.ParseFloat(normalized, 64)
+	if err != nil {
+		return 0, false
+	}
+
+	return parsed, true
 }
 
 func statusFromMetrics(overdueDebtSum float64, workEnd sql.NullTime) string {
@@ -197,5 +230,6 @@ func nullableTime(value sql.NullTime) *time.Time {
 		return nil
 	}
 
-	return new(value.Time)
+	t := value.Time
+	return &t
 }

@@ -13,31 +13,30 @@ type Repository struct {
 }
 
 type summaryRow struct {
-	ContractsSum        float64         `db:"contracts_sum"`
-	ObjectsCount        int             `db:"objects_count"`
-	AvgReadinessPercent sql.NullFloat64 `db:"avg_readiness_percent"`
-	OverdueObjectsCount int             `db:"overdue_objects_count"`
+	ContractsSum        float64 `db:"contracts_sum"`
+	ObjectsCount        int     `db:"objects_count"`
+	OverdueObjectsCount int     `db:"overdue_objects_count"`
 }
 
 type treeRow struct {
-	CustomerName     string          `db:"customer_name"`
-	ObjectName       string          `db:"object_name"`
-	ContractSum      float64         `db:"contract_sum"`
-	ReadinessPercent sql.NullFloat64 `db:"readiness_percent"`
-	OverdueDebtSum   float64         `db:"overdue_debt_sum"`
+	CustomerName     string         `db:"customer_name"`
+	ObjectName       string         `db:"object_name"`
+	ContractSum      float64        `db:"contract_sum"`
+	ReadinessPercent sql.NullString `db:"readiness_percent"`
+	OverdueDebtSum   float64        `db:"overdue_debt_sum"`
 }
 
 type objectDetailsRow struct {
-	ContractSum      float64         `db:"contract_sum"`
-	PaidSum          float64         `db:"paid_sum"`
-	AcceptedSum      float64         `db:"accepted_sum"`
-	TDCSum           float64         `db:"tdc_sum"`
-	DebetSum         float64         `db:"debet_sum"`
-	OverdueDebtSum   float64         `db:"overdue_debt_sum"`
-	RVExists         bool            `db:"rv_exists"`
-	ReadinessPercent sql.NullFloat64 `db:"readiness_percent"`
-	WorkStartDate    sql.NullTime    `db:"work_start_date"`
-	WorkEndDate      sql.NullTime    `db:"work_end_date"`
+	ContractSum      float64        `db:"contract_sum"`
+	PaidSum          float64        `db:"paid_sum"`
+	AcceptedSum      float64        `db:"accepted_sum"`
+	TDCSum           float64        `db:"tdc_sum"`
+	DebetSum         float64        `db:"debet_sum"`
+	OverdueDebtSum   float64        `db:"overdue_debt_sum"`
+	RVExists         bool           `db:"rv_exists"`
+	ReadinessPercent sql.NullString `db:"readiness_percent"`
+	WorkStartDate    sql.NullTime   `db:"work_start_date"`
+	WorkEndDate      sql.NullTime   `db:"work_end_date"`
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -68,7 +67,6 @@ func (r *Repository) findSummaryByContractorName(ctx context.Context, contractor
 		select
 			coalesce(sum(contract_amount), 0.0) as contracts_sum,
 			count(distinct nullif(construction_object, '')) as objects_count,
-			avg(construction_readiness_percent)::float8 as avg_readiness_percent,
 			count(distinct case
 				when coalesce(debt_2026_03_31_overdue, 0.0) > 0.0
 					then nullif(construction_object, '')
@@ -85,10 +83,6 @@ func (r *Repository) findSummaryByContractorName(ctx context.Context, contractor
 		ContractsSum:        row.ContractsSum,
 		ObjectsCount:        row.ObjectsCount,
 		OverdueObjectsCount: row.OverdueObjectsCount,
-	}
-
-	if row.AvgReadinessPercent.Valid {
-		summary.AvgReadinessPercent = new(row.AvgReadinessPercent.Float64)
 	}
 
 	return summary, nil
@@ -120,7 +114,10 @@ func (r *Repository) findTreeByContractorName(ctx context.Context, contractorNam
 			coalesce(source_org_name, '') as customer_name,
 			construction_object as object_name,
 			coalesce(sum(contract_amount), 0.0) as contract_sum,
-			avg(construction_readiness_percent)::float8 as readiness_percent,
+			string_agg(
+				distinct nullif(btrim(construction_readiness_percent::text), ''),
+				', '
+			) as readiness_percent,
 			coalesce(sum(debt_2026_03_31_overdue), 0.0) as overdue_debt_sum
 		from debet_new
 		where counterparty_name = $1
@@ -159,7 +156,10 @@ func (r *Repository) findObjectDetails(
 				),
 				false
 			) as rv_exists,
-			avg(construction_readiness_percent)::float8 as readiness_percent,
+			string_agg(
+				distinct nullif(btrim(construction_readiness_percent::text), ''),
+				', '
+			) as readiness_percent,
 			min(work_start_date) as work_start_date,
 			max(work_end_date) as work_end_date
 		from debet_new

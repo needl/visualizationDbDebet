@@ -15,9 +15,7 @@ function escapeHtml(value) {
 
 function formatMoney(value) {
     const amount = Number(value) || 0;
-    return new Intl.NumberFormat('ru-RU', {
-        maximumFractionDigits: 0
-    }).format(amount) + ' ₽';
+    return `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(amount)} ₽`;
 }
 
 function formatPercent(value, fractionDigits = 0) {
@@ -34,6 +32,23 @@ function formatDate(value) {
     return date.toLocaleDateString('ru-RU');
 }
 
+function formatReadiness(value) {
+    if (value === null || value === undefined) return 'Нет данных';
+    const text = String(value).trim();
+    return text === '' ? 'Нет данных' : text;
+}
+
+function parseReadinessToPercent(value) {
+    if (value === null || value === undefined) return null;
+    const normalized = String(value).trim().replaceAll(',', '.').replaceAll('%', '');
+    if (!normalized) return null;
+
+    const parsed = Number(normalized);
+    if (Number.isNaN(parsed)) return null;
+
+    return Math.max(0, Math.min(100, parsed));
+}
+
 function riskClass(level) {
     switch (level) {
     case 'ok':
@@ -48,9 +63,16 @@ function riskClass(level) {
 }
 
 function statusMeta(details) {
+    const overdueDebt = Number(details?.overdue_debt_amount) || 0;
+    const endDate = details?.work_end_date ? new Date(details.work_end_date) : null;
+    const isOverdueByDates = overdueDebt > 0 && endDate && !Number.isNaN(endDate.getTime()) && endDate < new Date();
+    if (isOverdueByDates) {
+        return { text: 'Просрочен', className: 'ca-status-overdue' };
+    }
+
     const raw = String(details?.status || '').toLowerCase();
-    if (raw.includes('проср')) return { text: 'Просрочен', className: 'ca-status-overdue' };
-    if (raw.includes('работ')) return { text: 'В работе', className: 'ca-status-active' };
+    if (raw.includes('проср') || raw.includes('рїс')) return { text: 'Просрочен', className: 'ca-status-overdue' };
+    if (raw.includes('работ') || raw.includes('сђр°р±')) return { text: 'В работе', className: 'ca-status-active' };
     return { text: 'Нет данных', className: 'ca-status-unknown' };
 }
 
@@ -97,7 +119,6 @@ export class ContractorAnalytics {
             const data = await fetchContractorAnalytics(contractorName);
             if (token !== this.requestToken) return;
 
-            // Детальную карточку справа показываем только после явного клика по объекту.
             this.analytics = {
                 ...data,
                 selected_object: null
@@ -106,19 +127,14 @@ export class ContractorAnalytics {
         } catch (err) {
             if (token !== this.requestToken) return;
             const message = String(err?.message || '');
-            this.emptyStateMessage = '';
+
             if (message.includes('contractor has no objects')) {
                 this.emptyStateMessage = 'По выбранному подрядчику нет объектов (construction_object).';
                 this.error = null;
                 this.analytics = null;
                 return;
             }
-            this.error = `Не удалось загрузить аналитику: ${message}`;
-            if (false) {
-                this.error = 'По выбранному подрядчику нет объектов (construction_object).';
-            } else {
-                this.error = `Не удалось загрузить аналитику: ${message}`;
-            }
+
             this.error = `Не удалось загрузить аналитику: ${message}`;
             this.analytics = null;
         } finally {
@@ -169,6 +185,7 @@ export class ContractorAnalytics {
                     this.render();
                     return;
                 }
+
                 this.loadAnalytics(contractorName);
             });
         }
@@ -196,10 +213,6 @@ export class ContractorAnalytics {
                 <div class="ca-summary-card">
                     <div class="ca-summary-label">Объектов</div>
                     <div class="ca-summary-value">${summary.objects_count ?? 0}</div>
-                </div>
-                <div class="ca-summary-card">
-                    <div class="ca-summary-label">Средняя готовность</div>
-                    <div class="ca-summary-value">${formatPercent(summary.avg_readiness_percent)}</div>
                 </div>
                 <div class="ca-summary-card">
                     <div class="ca-summary-label">Просроченные объекты</div>
@@ -234,9 +247,7 @@ export class ContractorAnalytics {
         const overdueAmount = Number(object.overdue_debt_amount);
         const isOverdueObject = Number.isFinite(overdueAmount) && overdueAmount > 0;
         const overdueClass = isOverdueObject ? ' ca-object-overdue' : '';
-        const readiness = object.readiness_percent === null || object.readiness_percent === undefined
-            ? 'нет данных'
-            : formatPercent(object.readiness_percent);
+        const readiness = formatReadiness(object.readiness_percent);
 
         return `
                                     <div class="ca-object-row">
@@ -272,8 +283,9 @@ export class ContractorAnalytics {
         }
 
         const status = statusMeta(details);
-        const readiness = Number(details.readiness_percent);
-        const progress = Number.isNaN(readiness) ? 0 : Math.max(0, Math.min(100, readiness));
+        const readinessText = formatReadiness(details.readiness_percent);
+        const readinessPercent = parseReadinessToPercent(details.readiness_percent);
+        const progress = readinessPercent === null ? 0 : readinessPercent;
 
         return `
             <div class="ca-details">
@@ -287,7 +299,7 @@ export class ContractorAnalytics {
                     <div class="ca-detail-row"><span>Подрядчик</span><strong>${escapeHtml(details.contractor_name || '—')}</strong></div>
                     <div class="ca-detail-row"><span>Сумма контракта</span><strong>${formatMoney(details.contract_sum)}</strong></div>
                     <div class="ca-detail-row"><span>Перечислено</span><strong>${formatMoney(details.paid_sum)}</strong></div>
-                    <div class="ca-detail-row"><span>Процент готовности</span><strong>${formatPercent(details.readiness_percent)}</strong></div>
+                    <div class="ca-detail-row"><span>Процент готовности</span><strong>${escapeHtml(readinessText)}</strong></div>
                     <div class="ca-detail-row"><span>ТДЦ</span><strong>${formatMoney(details.tdc_sum)}</strong></div>
                     <div class="ca-detail-row"><span>РВ</span><strong>${details.rv_exists ? 'Да' : 'Нет'}</strong></div>
                     <div class="ca-detail-row"><span>Дебиторская задолженность</span><strong>${formatMoney(details.debet_sum)}</strong></div>
@@ -298,7 +310,7 @@ export class ContractorAnalytics {
                 <div class="ca-progress-section">
                     <div class="ca-progress-header">
                         <span>Прогресс работ</span>
-                        <strong>${formatPercent(details.readiness_percent)}</strong>
+                        <strong>${escapeHtml(readinessText)}</strong>
                     </div>
                     <div class="ca-progress-track">
                         <div class="ca-progress-fill" style="width:${progress}%;"></div>
@@ -352,7 +364,7 @@ export class ContractorAnalytics {
                         <span><i class="ca-object-dot ca-risk-ok"></i>(>=70%)</span>
                         <span><i class="ca-object-dot ca-risk-risk"></i>(30-70%)</span>
                         <span><i class="ca-object-dot ca-risk-critical"></i>(<30%)</span>
-                        <span><i class="ca-object-dot ca-risk-no-data"></i> Нет данных</span>
+                        <span><i class="ca-object-dot ca-risk-no-data"></i>Нет данных</span>
                     </div>
                 ` : ''}
             </div>

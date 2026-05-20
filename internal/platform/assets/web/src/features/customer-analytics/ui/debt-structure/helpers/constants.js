@@ -17,7 +17,7 @@ export const OBJECT_METRIC_DEFS = [
     { label: 'Подрядчик', key: 'contractorName', format: 'string' },
     { label: 'Дата начала работ', key: 'workStartDate', format: 'date' },
     { label: 'Дата окончания работ', key: 'workEndDate', format: 'date' },
-    { label: 'Строительная готовность', key: 'buildReadyPercent', format: 'boolean' },
+    { label: 'Строительная готовность', key: 'buildReadyPercent', format: 'string' },
     { label: 'Разрешение на ввод', key: 'permissionToEnter', format: 'boolean' },
     { label: 'Заключение МКЭ', key: 'conclusionMke', format: 'boolean' },
     { label: 'Твёрдая договорная цена', key: 'hardContractPrice', format: 'money' },
