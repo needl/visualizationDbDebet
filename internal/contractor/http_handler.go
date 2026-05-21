@@ -24,7 +24,7 @@ func (h *Handler) getContractorsWithCurrDebet(w http.ResponseWriter, r *http.Req
 	}
 
 	httpx.RespondJSON(w, contractors)
-	slog.Info("Get contractors with current debet", "contractors", contractors)
+	slog.Info("Get contractors with current debet", "contractors_count", len(contractors))
 }
 
 func (h *Handler) getContractorsWithOverdueDebet(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +35,7 @@ func (h *Handler) getContractorsWithOverdueDebet(w http.ResponseWriter, r *http.
 	}
 
 	httpx.RespondJSON(w, contractors)
-	slog.Info("Get contractors with overdue debet", "contractors", contractors)
+	slog.Info("Get contractors with overdue debet", "contractors_count", len(contractors))
 }
 
 func (h *Handler) getContractorsWithBlockFactors(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +49,15 @@ func (h *Handler) getContractorsWithBlockFactors(w http.ResponseWriter, r *http.
 	}
 
 	httpx.RespondJSON(w, contractors)
-	slog.Info("Get contractors with block factors", "contractors", contractors)
+	slog.Info(
+		"Get contractors with block factors",
+		"source_org_name",
+		sourceOrgName,
+		"column_name",
+		columnName,
+		"contractors_count",
+		len(contractors),
+	)
 }
 
 func (h *Handler) getContractorsWithDebt(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +71,15 @@ func (h *Handler) getContractorsWithDebt(w http.ResponseWriter, r *http.Request)
 	}
 
 	httpx.RespondJSON(w, contractors)
-	slog.Info("Get contractors for debt", "contractors", contractors)
+	slog.Info(
+		"Get contractors for debt",
+		"source_org_name",
+		sourceOrgName,
+		"counterparty_name",
+		counterpartyName,
+		"contractors_count",
+		len(contractors),
+	)
 }
 
 func (h *Handler) getContractorsWithOverdue(w http.ResponseWriter, r *http.Request) {
@@ -77,7 +93,15 @@ func (h *Handler) getContractorsWithOverdue(w http.ResponseWriter, r *http.Reque
 	}
 
 	httpx.RespondJSON(w, contractors)
-	slog.Info("Get contractors for overdue", "contractors", contractors)
+	slog.Info(
+		"Get contractors for overdue",
+		"source_org_name",
+		sourceOrgName,
+		"counterparty_name",
+		counterpartyName,
+		"contractors_count",
+		len(contractors),
+	)
 }
 
 func (h *Handler) getContractorForTable(w http.ResponseWriter, r *http.Request) {
@@ -90,5 +114,11 @@ func (h *Handler) getContractorForTable(w http.ResponseWriter, r *http.Request) 
 	}
 
 	httpx.RespondJSON(w, contractors)
-	slog.Info("Get contractors for table", "contractors", contractors)
+	slog.Info(
+		"Get contractors for table",
+		"counterparty_name",
+		counterpartyName,
+		"contractors_count",
+		len(contractors),
+	)
 }

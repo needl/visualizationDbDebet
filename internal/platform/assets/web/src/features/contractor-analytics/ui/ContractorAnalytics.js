@@ -383,7 +383,7 @@ export class ContractorAnalytics {
                 <div class="ca-details-grid">
                     <div class="ca-detail-row"><span>Заказчик</span><strong>${escapeHtml(details.customer_name || '—')}</strong></div>
                     <div class="ca-detail-row"><span>Подрядчик</span><strong>${escapeHtml(details.contractor_name || '—')}</strong></div>
-                    <div class="ca-detail-row"><span>Сумма контракта</span><strong>${formatMoney(details.contract_sum)}</strong></div>
+                    <div class="ca-detail-row"><span>Цена контракта</span><strong>${formatMoney(details.contract_sum)}</strong></div>
                     <div class="ca-detail-row"><span>Перечислено</span><strong>${formatMoney(details.paid_sum)}</strong></div>
                     <div class="ca-detail-row"><span>Процент готовности</span><strong>${escapeHtml(readinessText)}</strong></div>
                     <div class="ca-detail-row"><span>ТДЦ</span><strong>${formatMoney(details.tdc_sum)}</strong></div>

@@ -33,7 +33,7 @@ func (h *Handler) getCustomers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpx.RespondJSON(w, customers)
-	slog.Info("Get all customer", "customer", customers)
+	slog.Info("Get all customer", "customers_count", len(customers))
 }
 
 func (h *Handler) getSummaryByCustomerID(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +59,7 @@ func (h *Handler) getTopItemsByCustomerID(w http.ResponseWriter, r *http.Request
 	}
 
 	httpx.RespondJSON(w, topItems)
-	slog.Info("Get top items by customer id", "customer", customerID, "topItems", topItems)
+	slog.Info("Get top items by customer id", "customer", customerID, "top_items_count", len(topItems))
 }
 
 func (h *Handler) getTopItemsOverdueByCustomerID(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +72,7 @@ func (h *Handler) getTopItemsOverdueByCustomerID(w http.ResponseWriter, r *http.
 	}
 
 	httpx.RespondJSON(w, topItems)
-	slog.Info("Get top items overdue by customer id", "customer", customerID, "topItems", topItems)
+	slog.Info("Get top items overdue by customer id", "customer", customerID, "top_items_count", len(topItems))
 }
 
 func (h *Handler) getCountBlockFactorsByCustomerID(w http.ResponseWriter, r *http.Request) {
@@ -85,5 +85,34 @@ func (h *Handler) getCountBlockFactorsByCustomerID(w http.ResponseWriter, r *htt
 	}
 
 	httpx.RespondJSON(w, factors)
-	slog.Info("Get blockFactors by customer id", "customer", customerID, "blockFactors", factors)
+	slog.Info("Get blockFactors by customer id", "customer", customerID, blockFactorsLogAttr(factors))
+}
+
+func blockFactorsLogAttr(factors *BlockFactors) slog.Attr {
+	if factors == nil {
+		return slog.Group("block_factors", "present", false)
+	}
+
+	return slog.Group(
+		"block_factors",
+		"present", true,
+		"bankruptcy_count", intPtrValue(factors.BankruptcyCount),
+		"liquidation_count", intPtrValue(factors.LiquidationCount),
+		"unreliability_count", intPtrValue(factors.UnreliabilityCount),
+		"excluded_count", intPtrValue(factors.ExcludedCount),
+		"foreign_agent_count", intPtrValue(factors.ForeignAgentCount),
+		"extreme_terr_count", intPtrValue(factors.ExtremeTerrCount),
+		"registry_of_unscrupulous", intPtrValue(factors.RegistryOfUnscrupulous),
+		"administrative_responsibility", intPtrValue(factors.AdministrativeResponsibility),
+		"intention_bankrupt", intPtrValue(factors.IntentionBankrupt),
+		"account_blocking_count", intPtrValue(factors.AccountBlockingCount),
+		"avg_workers_list_less_than_one_count", intPtrValue(factors.AvgWorkersListLessThanOneCount),
+	)
+}
+
+func intPtrValue(value *int) any {
+	if value == nil {
+		return nil
+	}
+	return *value
 }

@@ -282,7 +282,7 @@ export class DebtStructure {
         const header = document.createElement('div');
         header.className = 'modal-header';
         const title = document.createElement('h3');
-        title.textContent = `Аналитика объекта: ${objectName}`;
+        title.textContent = `Объект: ${objectName}`;
 
         const closeBtn = document.createElement('button');
         closeBtn.className = 'modal-close';

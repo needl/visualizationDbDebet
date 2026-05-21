@@ -155,8 +155,8 @@ export class BlockFactorFilter {
         };
         const headerMap = {
             name: 'Наименование подрядчика',
-            amount: 'Сумма контракта, млн ₽',
-            debet_total: 'Общая задолженность, млн ₽',
+            amount: 'Цена контракта, млн ₽',
+            debet_total: 'Дебиторская задолженность, млн ₽',
             debet_overdue: 'Просроченная задолженность, млн ₽'
         };
 
@@ -261,8 +261,8 @@ export class BlockFactorFilter {
             number: 'Номер контракта',
             work_start_date: 'Дата начала работ',
             work_end_date: 'Дата окончания работ',
-            amount: 'Сумма контракта, млн ₽',
-            debet_total: 'Общая задолженность, млн ₽',
+            amount: 'Цена контракта, млн ₽',
+            debet_total: 'Дебиторская задолженность, млн ₽',
             debet_overdue: 'Просроченная задолженность, млн ₽'
         };
 
@@ -353,7 +353,7 @@ export class BlockFactorFilter {
         const header = document.createElement('div');
         header.className = 'modal-header';
         const title = document.createElement('h3');
-        title.textContent = `Аналитика объекта: ${objectName}`;
+        title.textContent = `Объект: ${objectName}`;
 
         const closeButton = document.createElement('button');
         closeButton.type = 'button';

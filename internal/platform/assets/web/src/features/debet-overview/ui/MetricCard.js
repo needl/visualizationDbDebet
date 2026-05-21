@@ -19,7 +19,7 @@ export class MetricCard {
             } else if (this.format === 'currency') {
                 const inBillions = value / 1_000_000_000;
                 const rounded = Math.round(inBillions * 10) / 10;
-                formattedValue = rounded.toLocaleString('ru-RU').replace('.', ',') + ' млрд ₽';
+                formattedValue = rounded.toLocaleString('ru-RU') + ' млрд ₽';
             } else {
                 formattedValue = value;
             }
