@@ -157,7 +157,13 @@ func (r *Repository) findObjectsByCounterpartyNameAndObjectName(
 			) as permission_to_enter,
 			fixed_contract_price as hard_contract_price
 		from debet_new
-		where counterparty_name = $1 and construction_object = $2
+		where counterparty_inn in (
+			select distinct d2.counterparty_inn
+			from debet_new d2
+			where d2.counterparty_name = $1
+				and d2.counterparty_inn is not null
+		)
+			and construction_object = $2
 	`
 
 	if err := r.db.SelectContext(ctx, &objects, query, counterpartyName, objectName); err != nil {

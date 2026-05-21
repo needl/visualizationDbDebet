@@ -840,14 +840,18 @@ Notes:
 
 ## File Link Format (Windows)
 
-When referencing local files in responses, always use clickable Markdown links with an absolute path and optional line:
+When referencing local files in responses, use clickable Markdown links that open the file path directly.
 
-- Correct: `[repository.go](/C:/goProjects/visualizationDbDebet/internal/contractoranalysis/repository.go:49)`
+Use this format:
+
+- `[repository.go](/C:/goProjects/visualizationDbDebet/internal/object/repository.go)` (line 160)
 - If path contains spaces, wrap target in angle brackets:
-  - `[My File.go](</C:/goProjects/visualizationDbDebet/some dir/My File.go:10>)`
+  - `[My File.go](</C:/goProjects/visualizationDbDebet/some dir/My File.go>)` (line 10)
 
 Rules:
 
+- Do **not** append `:line` to the link target (for example `.../file.go:160`), because some clients treat it as a missing file path.
+- Put line number outside the link in plain text: `(line N)`.
 - Use forward slashes `/` in the link target, not backslashes `\`.
 - Use project-absolute target starting with `/C:/...`.
 - Do not output plain text like `File C:\...` when a clickable link is intended.
