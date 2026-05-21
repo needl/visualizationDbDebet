@@ -342,7 +342,7 @@ export class DebtStructure {
         this.objectModalChart = echarts.init(chartContainer);
 
         const option = {
-            title: { text: 'График задолженности по годам', left: 'center' },
+            title: { text: 'График задолженности по периодам', left: 'center' },
             tooltip: { trigger: 'axis' },
             legend: { data: chartData.series.map((series) => series.name), bottom: 0 },
             xAxis: { type: 'category', data: chartData.categories },

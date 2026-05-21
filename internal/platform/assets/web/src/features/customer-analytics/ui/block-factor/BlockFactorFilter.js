@@ -413,7 +413,7 @@ export class BlockFactorFilter {
         this.objectModalChart = echarts.init(chartContainer);
 
         const option = {
-            title: { text: 'График задолженности по годам', left: 'center' },
+            title: { text: 'График задолженности по периодам', left: 'center' },
             tooltip: { trigger: 'axis' },
             legend: {
                 data: chartData.series.map((series) => series.name),
