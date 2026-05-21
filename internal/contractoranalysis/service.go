@@ -157,6 +157,7 @@ func buildCustomerTree(rows []treeRow) []CustomerNode {
 		result[idx].Objects = append(result[idx].Objects, ObjectNode{
 			ObjectName:        row.ObjectName,
 			ContractSum:       row.ContractSum,
+			DebetSum:          row.DebetSum,
 			ReadinessPercent:  readiness,
 			RiskLevel:         riskLevel(readiness),
 			CustomerName:      row.CustomerName,
