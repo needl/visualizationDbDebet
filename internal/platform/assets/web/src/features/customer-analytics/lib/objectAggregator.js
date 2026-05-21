@@ -130,12 +130,14 @@ export function prepareChartData(rawData) {
             {
                 name: 'Дебиторская задолженность',
                 type: 'line',
+                smooth: true,
                 data: [total2024, total202503, total202512, total2026],
                 itemStyle: { color: '#3b82f6' }
             },
             {
                 name: 'Просроченная задолженность',
                 type: 'line',
+                smooth: true,
                 data: [overdue2024, overdue202503, overdue202512, overdue2026],
                 itemStyle: { color: '#ef4444' }
             }
