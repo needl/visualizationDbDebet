@@ -22,6 +22,6 @@ export const OBJECT_METRIC_DEFS = [
     { label: 'Заключение МКЭ', key: 'conclusionMke', format: 'boolean' },
     { label: 'Твёрдая договорная цена', key: 'hardContractPrice', format: 'money' },
     { label: 'Цена контракта', key: 'contractAmount', format: 'money' },
-    { label: 'Перечислено', key: 'paidAmount', format: 'money' },
-    { label: 'Принято', key: 'acceptedAmount', format: 'money' }
+    { label: 'Кассовые расходы', key: 'paidAmount', format: 'money' },
+    { label: 'Объём принятых работ', key: 'acceptedAmount', format: 'money' }
 ];

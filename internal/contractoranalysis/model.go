@@ -11,6 +11,7 @@ type Summary struct {
 type ObjectNode struct {
 	ObjectName        string  `db:"object_name" json:"object_name"`
 	ContractSum       float64 `db:"contract_sum" json:"contract_sum"`
+	DebetSum          float64 `db:"debet_sum" json:"debet_sum"`
 	ReadinessPercent  *string `db:"readiness_percent" json:"readiness_percent"`
 	RiskLevel         string  `db:"risk_level" json:"risk_level"`
 	CustomerName      string  `db:"customer_name" json:"customer_name"`

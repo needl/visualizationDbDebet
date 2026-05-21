@@ -22,6 +22,7 @@ type treeRow struct {
 	CustomerName     string         `db:"customer_name"`
 	ObjectName       string         `db:"object_name"`
 	ContractSum      float64        `db:"contract_sum"`
+	DebetSum         float64        `db:"debet_sum"`
 	ReadinessPercent sql.NullString `db:"readiness_percent"`
 	OverdueDebtSum   float64        `db:"overdue_debt_sum"`
 }
@@ -116,6 +117,7 @@ func (r *Repository) findTreeByContractorName(ctx context.Context, contractorNam
 			coalesce(source_org_name, '') as customer_name,
 			construction_object as object_name,
 			coalesce(sum(contract_amount), 0.0) as contract_sum,
+			coalesce(sum(debt_2026_03_31_total), 0.0) as debet_sum,
 			string_agg(
 				distinct nullif(btrim(construction_readiness_percent::text), ''),
 				', '

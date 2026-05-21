@@ -292,7 +292,7 @@ export class ContractorAnalytics {
         return `
             <div class="ca-summary-grid">
                 <div class="ca-summary-card">
-                    <div class="ca-summary-label">Сумма контрактов</div>
+                    <div class="ca-summary-label">Цена контрактов</div>
                     <div class="ca-summary-value">${formatMoney(summary.contracts_sum)}</div>
                 </div>
                 <div class="ca-summary-card">
@@ -333,7 +333,6 @@ export class ContractorAnalytics {
         const overdueAmount = Number(object.overdue_debt_amount);
         const isOverdueObject = Number.isFinite(overdueAmount) && overdueAmount > 0;
         const overdueClass = isOverdueObject ? ' ca-object-overdue' : '';
-        const readiness = formatReadiness(object.readiness_percent);
 
         return `
                                     <div class="ca-object-row">
@@ -348,7 +347,7 @@ export class ContractorAnalytics {
                                             <span class="ca-object-content">
                                                 <span class="ca-object-name">${escapeHtml(object.object_name || 'Без названия')}</span>
                                                 <span class="ca-object-meta">
-                                                    ${formatMoney(object.contract_sum)} · ${escapeHtml(readiness)}${isOverdueObject ? ' · Просрочка' : ''}
+                                                    ${formatMoney(object.debet_sum)}
                                                 </span>
                                             </span>
                                         </button>
@@ -384,13 +383,13 @@ export class ContractorAnalytics {
                     <div class="ca-detail-row"><span>Заказчик</span><strong>${escapeHtml(details.customer_name || '—')}</strong></div>
                     <div class="ca-detail-row"><span>Подрядчик</span><strong>${escapeHtml(details.contractor_name || '—')}</strong></div>
                     <div class="ca-detail-row"><span>Цена контракта</span><strong>${formatMoney(details.contract_sum)}</strong></div>
-                    <div class="ca-detail-row"><span>Перечислено</span><strong>${formatMoney(details.paid_sum)}</strong></div>
+                    <div class="ca-detail-row"><span>Кассовые расходы</span><strong>${formatMoney(details.paid_sum)}</strong></div>
                     <div class="ca-detail-row"><span>Процент готовности</span><strong>${escapeHtml(readinessText)}</strong></div>
                     <div class="ca-detail-row"><span>ТДЦ</span><strong>${formatMoney(details.tdc_sum)}</strong></div>
                     <div class="ca-detail-row"><span>РВ</span><strong>${details.rv_exists ? 'Да' : 'Нет'}</strong></div>
                     <div class="ca-detail-row"><span>Дебиторская задолженность</span><strong>${formatMoney(details.debet_sum)}</strong></div>
                     <div class="ca-detail-row"><span>Просроченная задолженность</span><strong class="ca-overdue-value">${formatMoney(details.overdue_debt_amount)}</strong></div>
-                    <div class="ca-detail-row"><span>Принято</span><strong>${formatPercent(details.accepted_percent, 1)}</strong></div>
+                    <div class="ca-detail-row"><span>Объём принятых работ</span><strong>${formatPercent(details.accepted_percent, 1)}</strong></div>
                 </div>
 
                 <div class="ca-progress-section">
@@ -447,6 +446,7 @@ export class ContractorAnalytics {
                         <div class="ca-details-pane">${this.renderDetails()}</div>
                     </div>
                     <div class="ca-legend">
+                        <span><i class="text"></i>Степень готовности объекта: </span>
                         <span><i class="ca-object-dot ca-risk-ok"></i>(>=70%)</span>
                         <span><i class="ca-object-dot ca-risk-risk"></i>(30-70%)</span>
                         <span><i class="ca-object-dot ca-risk-critical"></i>(<30%)</span>
