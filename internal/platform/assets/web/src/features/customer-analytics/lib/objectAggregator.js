@@ -54,6 +54,12 @@ function toStatusBool(value) {
     return !['нет', 'false', '0', 'null', 'не получено', '-'].includes(normalized);
 }
 
+function toTextOrNull(value) {
+    if (value === null || value === undefined) return null;
+    const text = String(value).trim();
+    return text === '' ? null : text;
+}
+
 export function aggregateObjectMetrics(rawData) {
     if (!rawData || rawData.length === 0) {
         return null;
@@ -76,7 +82,7 @@ export function aggregateObjectMetrics(rawData) {
     });
 
     const contractorName = maxObj?.counterparty_name || '—';
-    const buildReady = maxObj?.build_ready_percent ?? null;
+    const buildReady = toTextOrNull(maxObj?.build_ready_percent);
     const permission = toStatusBool(maxObj?.permission_to_enter);
     const conclusion = toStatusBool(maxObj?.conclusion);
 
@@ -100,29 +106,39 @@ export function aggregateObjectMetrics(rawData) {
 export function prepareChartData(rawData) {
     let total2024 = 0;
     let overdue2024 = 0;
+    let total202503 = 0;
+    let overdue202503 = 0;
+    let total202512 = 0;
+    let overdue202512 = 0;
     let total2026 = 0;
     let overdue2026 = 0;
 
     rawData.forEach((item) => {
         total2024 += item.debt_2024_12_31_total || 0;
         overdue2024 += item.debt_2024_12_31_overdue || 0;
+        total202503 += item.debt_2025_03_31_total || 0;
+        overdue202503 += item.debt_2025_03_31_overdue || 0;
+        total202512 += item.debt_2025_12_31_total || 0;
+        overdue202512 += item.debt_2025_12_31_overdue || 0;
         total2026 += item.debt_2026_03_31_total || 0;
         overdue2026 += item.debt_2026_03_31_overdue || 0;
     });
 
     return {
-        categories: ['31.12.2024', '31.03.2026'],
+        categories: ['31.12.2024', '31.03.2025', '31.12.2025', '31.03.2026'],
         series: [
             {
                 name: 'Дебиторская задолженность',
                 type: 'line',
-                data: [total2024, total2026],
+                smooth: true,
+                data: [total2024, total202503, total202512, total2026],
                 itemStyle: { color: '#3b82f6' }
             },
             {
                 name: 'Просроченная задолженность',
                 type: 'line',
-                data: [overdue2024, overdue2026],
+                smooth: true,
+                data: [overdue2024, overdue202503, overdue202512, overdue2026],
                 itemStyle: { color: '#ef4444' }
             }
         ]

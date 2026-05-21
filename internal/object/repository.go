@@ -45,9 +45,13 @@ func (r *Repository) findObjectByName(ctx context.Context, name string) ([]Objec
 			accepted_amount,
 			debt_2024_12_31_total,
 			debt_2024_12_31_overdue,
+			debt_2025_03_31_total,
+			debt_2025_03_31_overdue,
+			debt_2025_12_31_total,
+			debt_2025_12_31_overdue,
 			debt_2026_03_31_total,
 			debt_2026_03_31_overdue,
-			construction_readiness_percent as build_ready_percent,
+			construction_readiness_percent::text as build_ready_percent,
 			coalesce(
 				nullif(btrim(mge_status::text), '') is not null
 				and lower(btrim(mge_status::text)) not in ('нет', 'false', '0', 'null', 'не получено', '-'),
@@ -87,9 +91,13 @@ func (r *Repository) findObjectsByOrgNameAndObjectName(ctx context.Context,
 			accepted_amount,
 			debt_2024_12_31_total,
 			debt_2024_12_31_overdue,
+			debt_2025_03_31_total,
+			debt_2025_03_31_overdue,
+			debt_2025_12_31_total,
+			debt_2025_12_31_overdue,
 			debt_2026_03_31_total,
 			debt_2026_03_31_overdue,
-			construction_readiness_percent as build_ready_percent,
+			construction_readiness_percent::text as build_ready_percent,
 			coalesce(
 				nullif(btrim(mge_status::text), '') is not null
 				and lower(btrim(mge_status::text)) not in ('нет', 'false', '0', 'null', 'не получено', '-'),
@@ -106,6 +114,59 @@ func (r *Repository) findObjectsByOrgNameAndObjectName(ctx context.Context,
 	`
 
 	if err := r.db.SelectContext(ctx, &objects, query, orgName, objectName); err != nil {
+		return nil, err
+	}
+
+	return objects, nil
+}
+
+func (r *Repository) findObjectsByCounterpartyNameAndObjectName(
+	ctx context.Context,
+	counterpartyName string,
+	objectName string,
+) ([]Object, error) {
+	var objects []Object
+
+	query := `
+		select
+			construction_object,
+			contract_amount,
+			counterparty_name,
+			work_start_date,
+			work_end_date,
+			paid_amount,
+			accepted_amount,
+			debt_2024_12_31_total,
+			debt_2024_12_31_overdue,
+			debt_2025_03_31_total,
+			debt_2025_03_31_overdue,
+			debt_2025_12_31_total,
+			debt_2025_12_31_overdue,
+			debt_2026_03_31_total,
+			debt_2026_03_31_overdue,
+			construction_readiness_percent::text as build_ready_percent,
+			coalesce(
+				nullif(btrim(mge_status::text), '') is not null
+				and lower(btrim(mge_status::text)) not in ('РЅРµС‚', 'false', '0', 'null', 'РЅРµ РїРѕР»СѓС‡РµРЅРѕ', '-'),
+				false
+			) as conclusion,
+			coalesce(
+				nullif(btrim(rv_status::text), '') is not null
+				and lower(btrim(rv_status::text)) not in ('РЅРµС‚', 'false', '0', 'null', 'РЅРµ РїРѕР»СѓС‡РµРЅРѕ', '-'),
+				false
+			) as permission_to_enter,
+			fixed_contract_price as hard_contract_price
+		from debet_new
+		where counterparty_inn in (
+			select distinct d2.counterparty_inn
+			from debet_new d2
+			where d2.counterparty_name = $1
+				and d2.counterparty_inn is not null
+		)
+			and construction_object = $2
+	`
+
+	if err := r.db.SelectContext(ctx, &objects, query, counterpartyName, objectName); err != nil {
 		return nil, err
 	}
 

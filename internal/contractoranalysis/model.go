@@ -3,19 +3,18 @@ package contractoranalysis
 import "time"
 
 type Summary struct {
-	ContractsSum        float64  `db:"contracts_sum" json:"contracts_sum"`
-	ObjectsCount        int      `db:"objects_count" json:"objects_count"`
-	AvgReadinessPercent *float64 `db:"avg_readiness_percent" json:"avg_readiness_percent"`
-	OverdueObjectsCount int      `db:"overdue_objects_count" json:"overdue_objects_count"`
+	ContractsSum        float64 `db:"contracts_sum" json:"contracts_sum"`
+	ObjectsCount        int     `db:"objects_count" json:"objects_count"`
+	OverdueObjectsCount int     `db:"overdue_objects_count" json:"overdue_objects_count"`
 }
 
 type ObjectNode struct {
-	ObjectName        string   `db:"object_name" json:"object_name"`
-	ContractSum       float64  `db:"contract_sum" json:"contract_sum"`
-	ReadinessPercent  *float64 `db:"readiness_percent" json:"readiness_percent"`
-	RiskLevel         string   `db:"risk_level" json:"risk_level"`
-	CustomerName      string   `db:"customer_name" json:"customer_name"`
-	OverdueDebtAmount float64  `db:"overdue_debt_amount" json:"overdue_debt_amount"`
+	ObjectName        string  `db:"object_name" json:"object_name"`
+	ContractSum       float64 `db:"contract_sum" json:"contract_sum"`
+	ReadinessPercent  *string `db:"readiness_percent" json:"readiness_percent"`
+	RiskLevel         string  `db:"risk_level" json:"risk_level"`
+	CustomerName      string  `db:"customer_name" json:"customer_name"`
+	OverdueDebtAmount float64 `db:"overdue_debt_amount" json:"overdue_debt_amount"`
 }
 
 type CustomerNode struct {
@@ -31,7 +30,7 @@ type ObjectDetails struct {
 	ObjectName        string     `db:"object_name" json:"object_name"`
 	ContractSum       float64    `db:"contract_sum" json:"contract_sum"`
 	PaidSum           float64    `db:"paid_sum" json:"paid_sum"`
-	ReadinessPercent  *float64   `db:"readiness_percent" json:"readiness_percent"`
+	ReadinessPercent  *string    `db:"readiness_percent" json:"readiness_percent"`
 	TDCSum            float64    `db:"tdc_sum" json:"tdc_sum"`
 	RVExists          bool       `db:"rv_exists" json:"rv_exists"`
 	DebetSum          float64    `db:"debet_sum" json:"debet_sum"`

@@ -90,3 +90,31 @@ func (s *Service) getObjectsByOrgNameAndObjectName(ctx context.Context, orgName 
 
 	return objects, nil
 }
+
+func (s *Service) getObjectsByCounterpartyNameAndObjectName(
+	ctx context.Context,
+	counterpartyName string,
+	objectName string,
+) ([]Object, error) {
+	if counterpartyName == "" {
+		slog.Warn("counterpartyName is empty")
+		return nil, apperr.NewInvalidArgument("counterpartyName is required")
+	}
+
+	if objectName == "" {
+		slog.Warn("objectName is empty")
+		return nil, apperr.NewInvalidArgument("objectName is required")
+	}
+
+	objects, err := s.repo.findObjectsByCounterpartyNameAndObjectName(ctx, counterpartyName, objectName)
+	if err != nil {
+		slog.Error("FindObjectsByCounterpartyNameAndObjectName err", "err", err)
+		return nil, err
+	}
+
+	if len(objects) == 0 {
+		return nil, apperr.NewNotFound("objects not found")
+	}
+
+	return objects, nil
+}

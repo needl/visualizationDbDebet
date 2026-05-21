@@ -1,6 +1,6 @@
 export const dashboardConfig = [
     {
-        title: 'Общая статистика',
+        title: 'Общие сведения по дебиторской задолженности по состоянию на 31.03.2026',
         type: 'stats',
         metrics: [
             { key: 'count_source_org', label: 'Количество заказчиков', format: 'number' },
@@ -12,24 +12,24 @@ export const dashboardConfig = [
         table: true,
         chart: {
             metric: 'debetByYear',
-            title: 'Динамика дебиторской задолженности'
+            title: 'Динамика дебиторской задолженности за 2024 – 2026'
         }
     },
     {
-        title: 'Дебиторская задолженность по заказчикам на 31.03.2026',
+        title: 'Дебиторская задолженность по заказчикам по состоянию на 31.03.2026',
         type: 'charts',
         charts: [
-            { metric: 'contractAmount', title: 'Сумма контрактов' },
+            { metric: 'contractAmount', title: 'Цена контрактов' },
             { metric: 'debetTotal', title: 'Дебиторская задолженность' },
             { metric: 'debetOverdose', title: 'Просроченная дебиторская задолженность' }
         ]
     },
     {
-        title: 'Подробная аналитика заказчика',
+        title: 'Анализ дебиторской задолженности заказчика',
         type: 'customer-analytics'
     },
     {
-        title: 'Аналитика Подрядчика',
+        title: 'Анализ подрядчиков, выполняющих работы для нескольких заказчиков',
         type: 'contractor-analytics'
     }
 ];

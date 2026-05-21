@@ -28,7 +28,7 @@ func (h *Handler) getResponse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpx.RespondJSON(w, pageDTO)
-	slog.Info("GetResponse", "pageDto", pageDTO)
+	slog.Info("GetResponse", responseLogAttr(pageDTO))
 }
 
 func (h *Handler) getResponseWithMIP(w http.ResponseWriter, r *http.Request) {
@@ -39,5 +39,29 @@ func (h *Handler) getResponseWithMIP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpx.RespondJSON(w, pageDTO)
-	slog.Info("GetResponseWithMIP", "pageDto", pageDTO)
+	slog.Info("GetResponseWithMIP", responseLogAttr(pageDTO))
+}
+
+func responseLogAttr(response *Response) slog.Attr {
+	if response == nil {
+		return slog.Group("response", "present", false)
+	}
+
+	return slog.Group(
+		"response",
+		"present", true,
+		"id", intPtrValue(response.ID),
+		"count_source_org", response.CountSourceOrg,
+		"count_contracts", response.CountContracts,
+		"sum_contract_amount", response.SumContractAmount,
+		"sum_debet_total", response.SumDebetTotal,
+		"sum_debet_overdue", response.SumDebetOverdue,
+	)
+}
+
+func intPtrValue(value *int) any {
+	if value == nil {
+		return nil
+	}
+	return *value
 }

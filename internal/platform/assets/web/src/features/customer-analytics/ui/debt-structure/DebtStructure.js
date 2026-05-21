@@ -240,7 +240,7 @@ export class DebtStructure {
         fetchFn(orgName, contractorName)
             .then((data) => {
                 const body = modal.querySelector('.modal-body');
-                renderContractorTable(body, data, (objectName) => this.showObjectModal(objectName));
+                renderContractorTable(body, data, (objectName) => this.showObjectModal(objectName, contractorName));
             })
             .catch((err) => {
                 const message = getUserFriendlyError(err, 'Не удалось загрузить контракты подрядчика');
@@ -267,7 +267,7 @@ export class DebtStructure {
         }
     }
 
-    async showObjectModal(objectName) {
+    async showObjectModal(objectName, counterpartyName = '') {
         this.closeObjectModal();
 
         const overlay = document.createElement('div');
@@ -282,7 +282,7 @@ export class DebtStructure {
         const header = document.createElement('div');
         header.className = 'modal-header';
         const title = document.createElement('h3');
-        title.textContent = `Аналитика объекта: ${objectName}`;
+        title.textContent = `Объект: ${objectName}`;
 
         const closeBtn = document.createElement('button');
         closeBtn.className = 'modal-close';
@@ -303,7 +303,7 @@ export class DebtStructure {
         this.objectModal = overlay;
 
         try {
-            const rawData = await fetchObjectData(objectName);
+            const rawData = await fetchObjectData(objectName, counterpartyName);
             this.renderObjectAnalytics(body, rawData || []);
         } catch (err) {
             const message = getUserFriendlyError(err, 'Не удалось загрузить аналитику по объекту');
@@ -342,7 +342,7 @@ export class DebtStructure {
         this.objectModalChart = echarts.init(chartContainer);
 
         const option = {
-            title: { text: 'График задолженности по годам', left: 'center' },
+            title: { text: 'График задолженности по периодам', left: 'center' },
             tooltip: { trigger: 'axis' },
             legend: { data: chartData.series.map((series) => series.name), bottom: 0 },
             xAxis: { type: 'category', data: chartData.categories },

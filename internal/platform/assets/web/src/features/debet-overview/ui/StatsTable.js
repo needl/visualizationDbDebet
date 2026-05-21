@@ -16,7 +16,7 @@ export class StatsTable {
         thead.innerHTML = `
             <tr>
                 <th>Заказчик</th>
-                <th>Сумма контрактов</th>
+                <th>Цена контрактов</th>
                 <th>Дебиторская задолженность</th>
                 <th>Соотношение дебиторской задолженности к сумме контрактов</th>
             </tr>
@@ -32,11 +32,11 @@ export class StatsTable {
             tr.appendChild(tdName);
 
             const tdContract = document.createElement('td');
-            tdContract.textContent = (row.contractAmount / 1_000_000_000).toFixed(1).toLocaleString('ru-RU').replace('.', ',') + ' млрд ₽';
+            tdContract.textContent = (row.contractAmount / 1_000_000_000).toLocaleString('ru-RU') + ' млрд ₽';
             tr.appendChild(tdContract);
 
             const tdDebet = document.createElement('td');
-            tdDebet.textContent = (row.debetTotal / 1_000_000_000).toFixed(1).toLocaleString('ru-RU').replace('.', ',') + ' млрд ₽';
+            tdDebet.textContent = (row.debetTotal / 1_000_000_000).toLocaleString('ru-RU') + ' млрд ₽';
             tr.appendChild(tdDebet);
 
             const tdCoeff = document.createElement('td');

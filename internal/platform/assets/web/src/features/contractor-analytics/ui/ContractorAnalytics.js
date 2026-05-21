@@ -15,9 +15,7 @@ function escapeHtml(value) {
 
 function formatMoney(value) {
     const amount = Number(value) || 0;
-    return new Intl.NumberFormat('ru-RU', {
-        maximumFractionDigits: 0
-    }).format(amount) + ' ₽';
+    return `${new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(amount)} ₽`;
 }
 
 function formatPercent(value, fractionDigits = 0) {
@@ -34,6 +32,23 @@ function formatDate(value) {
     return date.toLocaleDateString('ru-RU');
 }
 
+function formatReadiness(value) {
+    if (value === null || value === undefined) return 'Нет данных';
+    const text = String(value).trim();
+    return text === '' ? 'Нет данных' : text;
+}
+
+function parseReadinessToPercent(value) {
+    if (value === null || value === undefined) return null;
+    const normalized = String(value).trim().replaceAll(',', '.').replaceAll('%', '');
+    if (!normalized) return null;
+
+    const parsed = Number(normalized);
+    if (Number.isNaN(parsed)) return null;
+
+    return Math.max(0, Math.min(100, parsed));
+}
+
 function riskClass(level) {
     switch (level) {
     case 'ok':
@@ -48,9 +63,16 @@ function riskClass(level) {
 }
 
 function statusMeta(details) {
+    const overdueDebt = Number(details?.overdue_debt_amount) || 0;
+    const endDate = details?.work_end_date ? new Date(details.work_end_date) : null;
+    const isOverdueByDates = overdueDebt > 0 && endDate && !Number.isNaN(endDate.getTime()) && endDate < new Date();
+    if (isOverdueByDates) {
+        return { text: 'Просрочен', className: 'ca-status-overdue' };
+    }
+
     const raw = String(details?.status || '').toLowerCase();
-    if (raw.includes('проср')) return { text: 'Просрочен', className: 'ca-status-overdue' };
-    if (raw.includes('работ')) return { text: 'В работе', className: 'ca-status-active' };
+    if (raw.includes('проср') || raw.includes('рїс')) return { text: 'Просрочен', className: 'ca-status-overdue' };
+    if (raw.includes('работ') || raw.includes('сђр°р±')) return { text: 'В работе', className: 'ca-status-active' };
     return { text: 'Нет данных', className: 'ca-status-unknown' };
 }
 
@@ -65,6 +87,10 @@ export class ContractorAnalytics {
         this.loadingContractors = false;
         this.error = null;
         this.requestToken = 0;
+        this.connectionFrame = 0;
+        this.connectionMarkerSeq = 0;
+        this.handleResize = () => this.scheduleConnectionsRender();
+        window.addEventListener('resize', this.handleResize);
         this.init();
     }
 
@@ -97,7 +123,6 @@ export class ContractorAnalytics {
             const data = await fetchContractorAnalytics(contractorName);
             if (token !== this.requestToken) return;
 
-            // Детальную карточку справа показываем только после явного клика по объекту.
             this.analytics = {
                 ...data,
                 selected_object: null
@@ -106,19 +131,14 @@ export class ContractorAnalytics {
         } catch (err) {
             if (token !== this.requestToken) return;
             const message = String(err?.message || '');
-            this.emptyStateMessage = '';
+
             if (message.includes('contractor has no objects')) {
                 this.emptyStateMessage = 'По выбранному подрядчику нет объектов (construction_object).';
                 this.error = null;
                 this.analytics = null;
                 return;
             }
-            this.error = `Не удалось загрузить аналитику: ${message}`;
-            if (false) {
-                this.error = 'По выбранному подрядчику нет объектов (construction_object).';
-            } else {
-                this.error = `Не удалось загрузить аналитику: ${message}`;
-            }
+
             this.error = `Не удалось загрузить аналитику: ${message}`;
             this.analytics = null;
         } finally {
@@ -154,6 +174,87 @@ export class ContractorAnalytics {
         }
     }
 
+    scheduleConnectionsRender() {
+        if (this.connectionFrame) {
+            cancelAnimationFrame(this.connectionFrame);
+        }
+
+        this.connectionFrame = requestAnimationFrame(() => {
+            this.connectionFrame = 0;
+            this.renderConnections();
+        });
+    }
+
+    renderConnections() {
+        const groups = this.container.querySelectorAll('[data-ca-group]');
+        if (groups.length === 0) return;
+
+        const namespace = 'http://www.w3.org/2000/svg';
+        groups.forEach((group) => {
+            const linksLayer = group.querySelector('[data-ca-links]');
+            const customerNode = group.querySelector('[data-ca-customer-node]');
+            const objectNodes = group.querySelectorAll('[data-ca-object-node]');
+
+            if (!linksLayer || !customerNode || objectNodes.length === 0) {
+                if (linksLayer) linksLayer.textContent = '';
+                return;
+            }
+
+            const groupRect = group.getBoundingClientRect();
+            const customerRect = customerNode.getBoundingClientRect();
+            const width = Math.max(1, Math.ceil(groupRect.width));
+            const height = Math.max(1, Math.ceil(groupRect.height));
+
+            linksLayer.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            linksLayer.setAttribute('width', String(width));
+            linksLayer.setAttribute('height', String(height));
+            linksLayer.textContent = '';
+
+            const markerID = `ca-link-arrow-${this.connectionMarkerSeq++}`;
+            const arrowSize = 5.4;
+            const defs = document.createElementNS(namespace, 'defs');
+            const marker = document.createElementNS(namespace, 'marker');
+            marker.setAttribute('id', markerID);
+            marker.setAttribute('markerWidth', String(arrowSize));
+            marker.setAttribute('markerHeight', String(arrowSize));
+            marker.setAttribute('refX', String(arrowSize - 0.2));
+            marker.setAttribute('refY', String(arrowSize / 2));
+            marker.setAttribute('orient', 'auto');
+            marker.setAttribute('markerUnits', 'strokeWidth');
+
+            const markerPath = document.createElementNS(namespace, 'path');
+            markerPath.setAttribute('d', `M0,0 L${arrowSize},${arrowSize / 2} L0,${arrowSize} z`);
+            markerPath.setAttribute('fill', '#60a5fa');
+            marker.appendChild(markerPath);
+            defs.appendChild(marker);
+            linksLayer.appendChild(defs);
+
+            const startXBase = customerRect.right - groupRect.left;
+            const startYBase = customerRect.top - groupRect.top + customerRect.height / 2;
+
+            objectNodes.forEach((objectNode) => {
+                const objectRect = objectNode.getBoundingClientRect();
+                const startX = startXBase;
+                const startY = startYBase;
+                const endX = objectRect.left - groupRect.left;
+                const endY = objectRect.top - groupRect.top + objectRect.height / 2;
+                const deltaX = endX - startX;
+                const bend = Math.max(24, Math.abs(deltaX) * 0.45);
+
+                const control1X = startX + bend;
+                const control1Y = startY;
+                const control2X = deltaX >= 0 ? endX - bend : endX + bend;
+                const control2Y = endY;
+
+                const path = document.createElementNS(namespace, 'path');
+                path.setAttribute('d', `M ${startX} ${startY} C ${control1X} ${control1Y}, ${control2X} ${control2Y}, ${endX} ${endY}`);
+                path.setAttribute('class', 'ca-link-path');
+                path.setAttribute('marker-end', `url(#${markerID})`);
+                linksLayer.appendChild(path);
+            });
+        });
+    }
+
     bindEvents() {
         const select = this.container.querySelector('[data-ca-select]');
         if (select) {
@@ -169,6 +270,7 @@ export class ContractorAnalytics {
                     this.render();
                     return;
                 }
+
                 this.loadAnalytics(contractorName);
             });
         }
@@ -198,10 +300,6 @@ export class ContractorAnalytics {
                     <div class="ca-summary-value">${summary.objects_count ?? 0}</div>
                 </div>
                 <div class="ca-summary-card">
-                    <div class="ca-summary-label">Средняя готовность</div>
-                    <div class="ca-summary-value">${formatPercent(summary.avg_readiness_percent)}</div>
-                </div>
-                <div class="ca-summary-card">
                     <div class="ca-summary-label">Просроченные объекты</div>
                     <div class="ca-summary-value">${summary.overdue_objects_count ?? 0}</div>
                 </div>
@@ -222,8 +320,9 @@ export class ContractorAnalytics {
             <div class="ca-tree-root-node">${escapeHtml(this.analytics.contractor_name || this.selectedContractor)}</div>
             <div class="ca-customers">
                 ${customers.map((customer) => `
-                    <section class="ca-customer-group">
-                        <div class="ca-customer-node">
+                    <section class="ca-customer-group" data-ca-group>
+                        <svg class="ca-links-layer" data-ca-links aria-hidden="true"></svg>
+                        <div class="ca-customer-node" data-ca-customer-node>
                             <div class="ca-customer-name">${escapeHtml(customer.customer_name || 'Без названия')}</div>
                             <div class="ca-customer-meta">${customer.objects_count || 0} объекта</div>
                         </div>
@@ -234,18 +333,16 @@ export class ContractorAnalytics {
         const overdueAmount = Number(object.overdue_debt_amount);
         const isOverdueObject = Number.isFinite(overdueAmount) && overdueAmount > 0;
         const overdueClass = isOverdueObject ? ' ca-object-overdue' : '';
-        const readiness = object.readiness_percent === null || object.readiness_percent === undefined
-            ? 'нет данных'
-            : formatPercent(object.readiness_percent);
+        const readiness = formatReadiness(object.readiness_percent);
 
         return `
                                     <div class="ca-object-row">
-                                        <span class="ca-link-connector" aria-hidden="true"></span>
                                         <button
                                             type="button"
                                             class="ca-object-node${selectedClass}${overdueClass}"
                                             data-ca-customer="${escapeHtml(object.customer_name || customer.customer_name || '')}"
                                             data-ca-object="${escapeHtml(object.object_name || '')}"
+                                            data-ca-object-node
                                         >
                                             <span class="ca-object-dot ${riskClass(object.risk_level)}"></span>
                                             <span class="ca-object-content">
@@ -272,8 +369,9 @@ export class ContractorAnalytics {
         }
 
         const status = statusMeta(details);
-        const readiness = Number(details.readiness_percent);
-        const progress = Number.isNaN(readiness) ? 0 : Math.max(0, Math.min(100, readiness));
+        const readinessText = formatReadiness(details.readiness_percent);
+        const readinessPercent = parseReadinessToPercent(details.readiness_percent);
+        const progress = readinessPercent === null ? 0 : readinessPercent;
 
         return `
             <div class="ca-details">
@@ -285,9 +383,9 @@ export class ContractorAnalytics {
                 <div class="ca-details-grid">
                     <div class="ca-detail-row"><span>Заказчик</span><strong>${escapeHtml(details.customer_name || '—')}</strong></div>
                     <div class="ca-detail-row"><span>Подрядчик</span><strong>${escapeHtml(details.contractor_name || '—')}</strong></div>
-                    <div class="ca-detail-row"><span>Сумма контракта</span><strong>${formatMoney(details.contract_sum)}</strong></div>
+                    <div class="ca-detail-row"><span>Цена контракта</span><strong>${formatMoney(details.contract_sum)}</strong></div>
                     <div class="ca-detail-row"><span>Перечислено</span><strong>${formatMoney(details.paid_sum)}</strong></div>
-                    <div class="ca-detail-row"><span>Процент готовности</span><strong>${formatPercent(details.readiness_percent)}</strong></div>
+                    <div class="ca-detail-row"><span>Процент готовности</span><strong>${escapeHtml(readinessText)}</strong></div>
                     <div class="ca-detail-row"><span>ТДЦ</span><strong>${formatMoney(details.tdc_sum)}</strong></div>
                     <div class="ca-detail-row"><span>РВ</span><strong>${details.rv_exists ? 'Да' : 'Нет'}</strong></div>
                     <div class="ca-detail-row"><span>Дебиторская задолженность</span><strong>${formatMoney(details.debet_sum)}</strong></div>
@@ -298,7 +396,7 @@ export class ContractorAnalytics {
                 <div class="ca-progress-section">
                     <div class="ca-progress-header">
                         <span>Прогресс работ</span>
-                        <strong>${formatPercent(details.readiness_percent)}</strong>
+                        <strong>${escapeHtml(readinessText)}</strong>
                     </div>
                     <div class="ca-progress-track">
                         <div class="ca-progress-fill" style="width:${progress}%;"></div>
@@ -352,12 +450,13 @@ export class ContractorAnalytics {
                         <span><i class="ca-object-dot ca-risk-ok"></i>(>=70%)</span>
                         <span><i class="ca-object-dot ca-risk-risk"></i>(30-70%)</span>
                         <span><i class="ca-object-dot ca-risk-critical"></i>(<30%)</span>
-                        <span><i class="ca-object-dot ca-risk-no-data"></i> Нет данных</span>
+                        <span><i class="ca-object-dot ca-risk-no-data"></i>Нет данных</span>
                     </div>
                 ` : ''}
             </div>
         `;
 
         this.bindEvents();
+        this.scheduleConnectionsRender();
     }
 }
