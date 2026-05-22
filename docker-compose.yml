@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:18.4-alpine3.23
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:?DB_USER is required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB: ${DB_NAME:?DB_NAME is required}
+    volumes:
+      - pg_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  app:
+    image: ${APP_IMAGE:?APP_IMAGE is required}
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: "${DB_PORT:-5432}"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      DB_NAME: ${DB_NAME:?DB_NAME is required}
+      DB_SSLMODE: "${DB_SSLMODE:-disable}"
+      PORT: "${PORT:-8181}"
+    ports:
+      - "${PORT:-8181}:${PORT:-8181}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pg_data:
+    external: true
+    name: ${PG_VOLUME_NAME:?PG_VOLUME_NAME is required}

@@ -5,9 +5,9 @@ export const dashboardConfig = [
         metrics: [
             { key: 'count_source_org', label: 'Количество заказчиков', format: 'number' },
             { key: 'count_contracts', label: 'Количество контрактов', format: 'number' },
-            { key: 'sum_contract_amount', label: 'Сумма контрактов', format: 'currency' },
-            { key: 'sum_debet_total', label: 'Сумма дебиторской задолженности', format: 'currency' },
-            { key: 'sum_debet_overdue', label: 'Сумма просроченной задолженности', format: 'currency' }
+            { key: 'sum_contract_amount', label: 'Цена контрактов', format: 'currency' },
+            { key: 'sum_debet_total', label: 'Дебиторская задолженность', format: 'currency' },
+            { key: 'sum_debet_overdue', label: 'Просроченная задолженность', format: 'currency' }
         ],
         table: true,
         chart: {

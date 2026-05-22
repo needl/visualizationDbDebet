@@ -33,3 +33,4 @@ go.work.sum
 /AGENTS.md
 /node_modules/
 /.tools/
+/artifacts/

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"os"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -26,12 +27,14 @@ func Load() (*Config, error) {
 	v.AutomaticEnv()
 	v.SetDefault("DB_SSLMODE", "disable")
 
-	if err := v.ReadInConfig(); err != nil {
-		if _, ok := errors.AsType[viper.ConfigFileNotFoundError](err); ok {
+	if _, err := os.Stat(".env"); err != nil {
+		if errors.Is(err, os.ErrNotExist) {
 			slog.Warn("config file .env not found, using environment variables")
 		} else {
-			return nil, fmt.Errorf("failed to read config file: %w", err)
+			return nil, fmt.Errorf("check config file .env: %w", err)
 		}
+	} else if err := v.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
 	cfg := &Config{

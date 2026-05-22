@@ -11,7 +11,6 @@ func TestLoad_FromEnvWithoutFile(t *testing.T) {
 	dir := t.TempDir()
 	withWorkingDir(t, dir)
 	setBaseEnv(t)
-	createEnvFile(t, dir, "")
 
 	t.Setenv("DB_HOST", " localhost ")
 	t.Setenv("DB_PORT", " 5432 ")
@@ -83,7 +82,6 @@ func TestLoad_MissingRequiredValues(t *testing.T) {
 	dir := t.TempDir()
 	withWorkingDir(t, dir)
 	setBaseEnv(t)
-	createEnvFile(t, dir, "")
 
 	t.Setenv("DB_HOST", "localhost")
 	t.Setenv("DB_PORT", "5432")
@@ -147,13 +145,5 @@ func setBaseEnv(t *testing.T) {
 	}
 	for _, k := range keys {
 		t.Setenv(k, "")
-	}
-}
-
-func createEnvFile(t *testing.T, dir string, content string) {
-	t.Helper()
-	path := filepath.Join(dir, ".env")
-	if err := os.WriteFile(path, []byte(content), 0o600); err != nil {
-		t.Fatalf("failed to write .env: %v", err)
 	}
 }

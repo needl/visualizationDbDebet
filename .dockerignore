@@ -1,0 +1,13 @@
+.git
+.idea
+.tools
+node_modules
+.env
+*.exe
+*.png
+
+# Build/test artifacts
+coverage.out
+*.test
+bin/
+dist/
