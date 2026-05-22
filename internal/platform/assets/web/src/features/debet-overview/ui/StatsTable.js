@@ -1,3 +1,15 @@
+const HUNDRED_MILLION = 100_000_000;
+
+function formatBillionsRoundedUp(value) {
+    const numericValue = Number(value) || 0;
+    const roundedUpBillions = Math.ceil(numericValue / HUNDRED_MILLION) / 10;
+
+    return roundedUpBillions.toLocaleString('ru-RU', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+    }) + ' млрд ₽';
+}
+
 export class StatsTable {
     constructor(container) {
         this.container = container;
@@ -32,11 +44,11 @@ export class StatsTable {
             tr.appendChild(tdName);
 
             const tdContract = document.createElement('td');
-            tdContract.textContent = (row.contractAmount / 1_000_000_000).toLocaleString('ru-RU') + ' млрд ₽';
+            tdContract.textContent = formatBillionsRoundedUp(row.contractAmount);
             tr.appendChild(tdContract);
 
             const tdDebet = document.createElement('td');
-            tdDebet.textContent = (row.debetTotal / 1_000_000_000).toLocaleString('ru-RU') + ' млрд ₽';
+            tdDebet.textContent = formatBillionsRoundedUp(row.debetTotal);
             tr.appendChild(tdDebet);
 
             const tdCoeff = document.createElement('td');
