@@ -154,6 +154,29 @@ func (r *Repository) findContractorsWithBlockFactors(
 		return nil, fmt.Errorf("%w: %s", errColumnNotAllowed, columnName)
 	}
 
+	
+	if columnName == 'all_risks'
+		query := fmt.Sprintf(`
+		select
+			min(d.counterparty_name) as name,
+			sum(d.contract_amount) as amount,
+			sum(d.debt_2026_03_31_total) as debet_total,
+			sum(d.debt_2026_03_31_overdue) as debet_overdue
+		from debet_new d
+		inner join blockfactor b on d.counterparty_inn = b.kod_nalogoplatelshchika
+		where d.source_org_name = $1
+			and (priznanie_bankrotom = 1 or likvidatsiya = 1 or nedostovernost_egryul = 1 or isklyuchenie_egryul = 1
+					or inostrannye_agenty = 1
+					or ekstremizm_terrorizm = 1
+					or reestr_nedobrosovestnyh_postavshchikov = 1
+					or administrativnaya_otvetstvennost_19_28 = 1
+					or namerenie_bankrotstvo = 1
+					or blokirovka_schetov = 1
+					or srednespisochnaya_chislennost_le_1 = 1)
+		group by d.counterparty_inn;
+	`, columnName)
+
+	else 
 	query := fmt.Sprintf(`
 		select
 			min(d.counterparty_name) as name,
