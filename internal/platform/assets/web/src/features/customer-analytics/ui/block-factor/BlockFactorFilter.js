@@ -29,7 +29,7 @@ export class BlockFactorFilter {
             nam_bankrot_count: 'Намерение о банкротстве',
             blokirovka_count: 'Блокировка счетов',
             chisl_count: 'Численность менее 1',
-            all_risks: 'Все риски'
+            all_risks_count: 'Все риски'
         };
 
         this.columnMap = {
