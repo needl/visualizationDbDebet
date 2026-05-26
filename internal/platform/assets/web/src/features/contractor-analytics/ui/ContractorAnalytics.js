@@ -451,12 +451,12 @@ export class ContractorAnalytics {
                         <span><i class="ca-object-dot ca-risk-risk"></i>(30-70%)</span>
                         <span><i class="ca-object-dot ca-risk-critical"></i>(<30%)</span>
                         <span><i class="ca-object-dot ca-risk-no-data"></i>Нет данных</span>
-                         <button type="button" class="ca-object-node ca-object-overdue">
+                         <button type="button" class="ca-object-node ca-object-overdue" style="width: 150px;">
                         <span class="ca-object-content">
                          <span class="ca-object-name">Просроченная дебиторская задолженность</span>
                         </span>
                      </button>
-                     <button type="button" class="ca-object-node">
+                     <button type="button" class="ca-object-node" style="width: 150px;>
                         <span class="ca-object-content">
                          <span class="ca-object-name">Текущая дебиторская задоженность</span>
                         </span>
