@@ -452,6 +452,12 @@ export class ContractorAnalytics {
                         <span><i class="ca-object-dot ca-risk-critical"></i>(<30%)</span>
                         <span><i class="ca-object-dot ca-risk-no-data"></i>Нет данных</span>
                     </div>
+                    <div class="ca-legend">
+                        <span><i class="text"></i>Тип дебиторской задолженности: </span>
+                        <span><i class="ca-object-dot ca-risk-ok"></i>Просроченная дебиторская задолженность</span>
+                        <span><i class="ca-object-dot ca-risk-risk"></i>Текущая дебиторская задоженность</span>
+                    </div>    
+                    
                 ` : ''}
             </div>
         `;
