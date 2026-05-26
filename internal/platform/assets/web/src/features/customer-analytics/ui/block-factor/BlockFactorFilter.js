@@ -44,7 +44,7 @@ export class BlockFactorFilter {
             nam_bankrot_count: 'namerenie_bankrotstvo',
             blokirovka_count: 'blokirovka_schetov',
             chisl_count: 'srednespisochnaya_chislennost_le_1',
-            all_risks: 'Все риски'
+            all_risks_count: 'all_risks'
         };
 
         this.render();

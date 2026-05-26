@@ -33,5 +33,5 @@ type BlockFactors struct {
 	IntentionBankrupt              *int `db:"nam_bankrot_count" json:"nam_bankrot_count"`
 	AccountBlockingCount           *int `db:"blokirovka_count" json:"blokirovka_count"`
 	AvgWorkersListLessThanOneCount *int `db:"chisl_count" json:"chisl_count"`
-	AllRisks 					   *int `db:"all_risks" json:"all_risks"`
+	AllRisks 					   *int `db:"all_risks_count" json:"all_risks_count"`
 }
