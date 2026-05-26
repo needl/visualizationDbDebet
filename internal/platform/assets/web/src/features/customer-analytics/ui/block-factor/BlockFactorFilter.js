@@ -28,7 +28,8 @@ export class BlockFactorFilter {
             admin_otvet_count: 'Административные правонарушения (19.28)',
             nam_bankrot_count: 'Намерение о банкротстве',
             blokirovka_count: 'Блокировка счетов',
-            chisl_count: 'Численность менее 1'
+            chisl_count: 'Численность менее 1',
+            all_risks: 'Все риски'
         };
 
         this.columnMap = {
@@ -42,7 +43,8 @@ export class BlockFactorFilter {
             admin_otvet_count: 'administrativnaya_otvetstvennost_19_28',
             nam_bankrot_count: 'namerenie_bankrotstvo',
             blokirovka_count: 'blokirovka_schetov',
-            chisl_count: 'srednespisochnaya_chislennost_le_1'
+            chisl_count: 'srednespisochnaya_chislennost_le_1',
+            all_risks: 'Все риски'
         };
 
         this.render();

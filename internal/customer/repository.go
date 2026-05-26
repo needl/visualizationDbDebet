@@ -129,7 +129,17 @@ func (r *Repository) findCountBlockFactorsByCustomerID(ctx context.Context, id s
 			sum(b.administrativnaya_otvetstvennost_19_28) as admin_otvet_count,
 			sum(b.namerenie_bankrotstvo) as nam_bankrot_count,
 			sum(b.blokirovka_schetov) as blokirovka_count,
-			sum(b.srednespisochnaya_chislennost_le_1) as chisl_count
+			sum(b.srednespisochnaya_chislennost_le_1) as chisl_count,
+			sum(b.priznanie_bankrotom)+
+			sum(b.likvidatsiya)+
+			sum(b.nedostovernost_egryul)+
+			sum(b.isklyuchenie_egryul)+
+			sum(b.inostrannye_agenty)+
+			sum(b.ekstremizm_terrorizm)+
+			sum(b.reestr_nedobrosovestnyh_postavshchikov)+
+			sum(b.administrativnaya_otvetstvennost_19_28)+
+			sum(b.namerenie_bankrotstvo)+sum(b.blokirovka_schetov)+
+			sum(b.srednespisochnaya_chislennost_le_1) as all_risks
 		from (
 			select distinct counterparty_inn
 			from debet_new

@@ -146,6 +146,7 @@ func (r *Repository) findContractorsWithBlockFactors(
 		"namerenie_bankrotstvo":                  true,
 		"blokirovka_schetov":                     true,
 		"srednespisochnaya_chislennost_le_1":     true,
+		"all_risks":     true,
 	}
 
 	if !allowedColumns[columnName] {
